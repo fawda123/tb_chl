@@ -19,10 +19,10 @@
 
 # Give a fortune cookie, but only to interactive sessions
 # (This would need the fortunes package to be installed.)
-
+.libPaths('C:\\Users\\mbeck\\R\\library')
+ 
 if (interactive()) 
    fortunes::fortune()
 
-cat('Hi Marcus!','\n')
+cat('What am I??','\n')
 
-.libPaths('C:\\Users\\mbeck\\R\\library')

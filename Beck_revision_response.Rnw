@@ -1,0 +1,369 @@
+\documentclass[letterpaper,12pt,oneside]{article}
+\usepackage[paperwidth=8.5in,paperheight=11in,top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{setspace}
+\usepackage[colorlinks=true,allcolors=Blue]{hyperref}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{lineno}
+\usepackage{array}
+\usepackage{times}
+\usepackage{cleveref}
+\usepackage{acronym}
+\usepackage[position=t]{subfig}
+\usepackage{paralist}
+\usepackage[noae]{Sweave}
+\usepackage{natbib}
+\usepackage{array}
+\usepackage{pdflscape}
+\bibpunct{(}{)}{,}{a}{}{,}
+
+%page margins and section title formatting
+\linespread{1}
+\setlength{\footskip}{0.5in}
+\titleformat*{\section}{\singlespace\Large\bf}
+\titleformat*{\subsection}{\singlespace\large\bf\em}
+\titleformat*{\subsubsection}{\singlespace\normalsize\bf}
+\titlespacing{\section}{0in}{0in}{0in}
+\titlespacing{\subsection}{0in}{0in}{0in}
+\titlespacing{\subsubsection}{0in}{0in}{0in}
+
+%cleveref options
+\crefname{table}{Table}{Tables}
+\crefname{figure}{Fig.}{Figs.}
+\renewcommand{\figurename}{Fig.}
+
+%acronyms
+\acrodef{chl}[chl-\textit{a}]{chlorophyll-\textit{a}}
+\acrodef{CV}{coefficient of variation}
+\acrodef{ENSO}{El Ni\~{n}o-Southern Oscillation}
+\acrodef{EPA}{Environmental Protection Agency}
+\acrodef{EPC}{Environmental Protection Commission}
+\acrodef{IQR}{interquartile range}
+\acrodef{ppt}{parts per thousand}
+\acrodef{RMSE}[$RMSE$]{root mean square error}
+\acrodef{SST}{Sea Surface Temperature}
+\acrodef{TN}{total nitrogen}
+\acrodef{WRTDS}{Weighted Regressions on Time, Discharge, and Season}
+
+%assorted functions
+%for multiple rows in table headers
+\newcommand{\head}[2]{\multicolumn{1}{>{\arraybackslash}p{#1}}{#2}}
+%for micrograms per litre
+\newcommand{\mugl}{$\mu$g L$^{-1}$}
+%90th and 10th percentile models
+\newcommand{\nine}{90\textsuperscript{th} percentile }
+\newcommand{\ten}{10\textsuperscript{th} percentile }
+%for supplemental figures/tables
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+     
+
+%knitr options
+<<setup,include=F,cache=F>>=
+.libPaths('C:\\Users\\mbeck\\R\\library')
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='M:/docs/manuscripts/tb_chl/figs/', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
+options(replace.assign=TRUE,width=90,digits=1)
+@
+
+<<data_imp,include=F,cache=F>>=
+source('M:/r_code/EPC/epc_dat.r')
+
+#reorder factors for relevant data frames
+seg.levs<-c('Hillsborough Bay','Old Tampa Bay','Middle Tampa Bay','Lower Tampa Bay')
+seg.names<-c('HB','OTB','MTB','LTB')
+tb.dat$seg<-factor(tb.dat$seg,levels=seg.levs,labels=seg.names)
+epc.est$seg<-factor(epc.est$seg,levels=seg.levs,labels=seg.names)
+epc.est.act$seg<-factor(epc.est.act$seg,levels=seg.levs,labels=seg.names)
+sal.grd$seg<-factor(sal.grd$seg,levels=seg.levs,labels=seg.names)
+sal.nrm$seg<-factor(sal.nrm$seg,levels=seg.levs,labels=seg.names)
+sg.dat$seg<-factor(sg.dat$seg,levels=seg.levs,labels=seg.names)
+tb.chl$seg<-factor(tb.chl$seg,levels=seg.levs,labels=seg.names)
+
+#mean obs values for chl by seg
+chl.mean.o<-lapply(split(tb.dat,tb.dat$seg),function(x) exp(mean(x$Chla_ugl)))
+#percent decrease in obs chl by seg before and after 1980
+chl.per.o<-lapply(
+  split(tb.dat,tb.dat$seg),
+  function(x){
+    mean.prior<-exp(mean(x$Chla_ugl[as.numeric(x$year)<1980]))
+    mean.after<-exp(mean(x$Chla_ugl[as.numeric(x$year)>=1980]))
+    100*(mean.prior-mean.after)/mean.prior
+    }
+  )
+#percent decrease bay-wide
+chl.per.o2<-{
+  mean.prior<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)<1980]))
+  mean.after<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)>=1980]))
+  100*(mean.prior-mean.after)/mean.prior
+  }
+#percent decrease in chl for H Bay 1983 - 1984
+hdrop<-function(yr.1,yr.2){
+  tmp<-tb.dat[tb.dat$seg=='HB',]
+  mean.prior<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.1]))
+  mean.after<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.2]))
+  100*(mean.prior-mean.after)/mean.prior
+  }
+#observed maximum for el nino
+chl.nino.o<-lapply(
+  split(tb.dat,tb.dat$seg),
+  function(x){
+    x<-x[as.numeric(x$year)>=1990 & as.numeric(x$year)<2000,]
+    ind<-which.max(x$Chla_ugl)
+    out<-x[ind,][,c('month.name','year','Chla_ugl')]
+    out$Chla_ugl<-exp(out$Chla_ugl)
+    out
+    }
+  )
+#obs chl for month, whole bay
+chl.mo.o<-ddply(
+  tb.dat,
+  .(month.name),
+  .fun=function(x) exp(mean(x$Chla_ugl))
+  )
+chl.mo.o<-chl.mo.o[chl.mo.o$month.name %in% c('February','September'),]
+#obs chl for month, by segment
+chl.mo.o2<-ddply(
+  tb.dat,
+  .(seg,month.name),
+  .fun=function(x) exp(mean(x$Chla_ugl))
+  )
+chl.mo.o2<-chl.mo.o2[chl.mo.o2$month.name %in% c('February','September'),]
+#correlation of chlorophyll with sal all data
+sal.cor<-cor.test(tb.dat$sal.ref,tb.dat$Chla_ugl)
+#correlation of chlorophyll w/ sal before/after WWT
+sal.cor2<-ddply(
+  tb.dat,
+  .(seg),
+  .fun=function(x){ 
+      tmp<-cor.test(~Chla_ugl+sal.ref,x)
+      with(tmp,c(estimate,p.value))
+    }
+  )
+#mod performance, 'null.dat' is data.frame used for performance table below
+#contains rmse and rsq
+null.dat<-ddply(
+  epc.est.act,
+  .(seg),
+  .fun=function(x){
+    
+    ols<-lm(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      data=x
+      ) 
+    
+    quant.hi<-rq(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      tau=0.9,
+      data=x
+      )
+    
+    quant.lo<-rq(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      tau=0.1,
+      data=x
+      )
+    
+    #rsq and rmse by seg and model type
+    data.frame(
+      nl.md=c(
+        rsq.fun(resid(ols),x$Chla_ugl),
+        sqrt(sum(resid(ols)^2)/(length(resid(ols))))
+        ),
+      wt.md=c(
+        rsq.fun(x$res.md,x$Chla_ugl),
+        sqrt(sum(x$res.md^2)/(length(x$res.md)))
+        ),
+      nl.hi=c(
+        rsq.rq.fun(resid(quant.hi),x$Chla_ugl,0.9),
+        sqrt(sum(resid(quant.hi)^2)/(length(resid(quant.hi))))
+        ),
+      wt.hi=c(
+        rsq.rq.fun(x$res.hi,x$Chla_ugl,0.9),
+        sqrt(sum(x$res.hi^2)/(length(x$res.hi)))
+        ),
+      nl.lo=c(
+        rsq.rq.fun(resid(quant.lo),x$Chla_ugl,0.1),
+        sqrt(sum(resid(quant.lo)^2)/(length(resid(quant.lo))))
+        ),
+      wt.lo=c(
+        rsq.rq.fun(x$res.lo,x$Chla_ugl,0.1),
+        sqrt(sum(x$res.lo^2)/(length(x$res.lo)))
+        )
+      )
+ 
+    }
+  )
+null.dat<-data.frame(stat=rep(c('rsq','rmse'),nrow(null.dat)/2),null.dat)
+#perf list, permutation of null.dat
+perf.ls<-list(
+  #perf for wtd mods
+  wtq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.hi')],
+  wtq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.lo')],
+  wtmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.md')],
+  wtq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.hi')],
+  wtq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.lo')],
+  wtmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.md')],
+  #perf for null mods
+  nlq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.hi')],
+  nlq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.lo')],
+  nlmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.md')],
+  nlq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.hi')],
+  nlq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.lo')],
+  nlmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.md')]
+  )
+nl.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.hi','nl.lo')])
+wt.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.hi','wt.lo')])
+nl.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.md')])
+wt.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.md')])
+#cv for salinity normalized predictions by model, segment, and year
+nrm.cv<-melt(sal.nrm,measure.vars=c('norm.md','norm.hi','norm.lo'))
+nrm.cv<-ddply(
+  nrm.cv,
+  .(seg,year,variable),
+  .fun=function(x) cv(x$value)
+  )
+nrm.cv<-lapply(split(nrm.cv,nrm.cv$seg),function(x) split(x,x$variable))
+#CV ranges by segment and model
+#lapply(nrm.cv,function(x) lapply(x,function(y) diff(range(y$V1))))
+#cv for salinity normalized predictions by model, segment and season
+nrm.cv.s<-sal.nrm
+nrm.cv.s$seas<-cut(as.numeric(as.character(sal.nrm$month.num)),
+  c(-Inf,0.2,0.45,0.7,+Inf),
+  labels=c('JFM','AMJ','JAS','OND')
+  )
+nrm.cv.s<-melt(nrm.cv.s,measure.vars=c('norm.md','norm.hi','norm.lo'))
+nrm.cv.s<-ddply(
+  nrm.cv.s,
+  .(seg,seas,variable),
+  .fun=function(x) cv(x$value)
+  )
+nrm.cv.s<-lapply(split(nrm.cv.s,nrm.cv.s$seg),function(x) split(x,x$variable))
+## regression of continuous enso index values for only sig relationship
+est.seas<-epc.est.act
+seas.ls<-list(
+  JFM=c('January','February','March'),
+  AMJ=c('April','May','June'),
+  JAS=c('July','August','September'),
+  OND=c('October','November','December')
+  )
+season<-rep(NA,nrow(est.seas))
+for(i in 1:length(seas.ls)) 
+  season[est.seas$month.name %in% seas.ls[[i]]]<-names(seas.ls)[i]
+est.seas$season<-season
+#split for scaling of hi and lo residuals by segment
+est.seas<-split(est.seas,est.seas$seg)
+est.seas<-lapply(
+  est.seas,
+  function(x){
+    x$res.hi<-scale(x$res.hi,center=T,scale=F)
+    x$res.lo<-scale(x$res.lo,center=T,scale=F)
+    x
+    }
+  )
+est.seas<-do.call('rbind',est.seas)
+est.seas<-melt(est.seas,measure.vars=c('res.md','res.hi','res.lo'))
+est.seas<-aggregate(value~seg+year+season+variable,est.seas,mean)
+enso.seas<-enso[,c('year','season','cat.seas','enso.seas')]
+enso.est.seas<-merge(est.seas,enso.seas,by=c('year','season'))
+enso.est.seas<-subset(enso.est.seas,subset=seg=='LTB' & variable=='res.lo' & season=='AMJ')
+enso.mod<-summary(lm(value~enso.seas,enso.est.seas)) #this is used
+rm(list=c('est.seas','enso.est.seas','season','seas.ls','enso.seas'))
+
+@
+
+%function to format p values
+<<pform,cache=T>>=
+p_form<-function(x, tex_out=F){
+  if(x<0.005) out<-'< 0.005'
+  else{
+    if(x<0.05&x>=0.005) out<-as.character(format(round(x,3),nsmall=3))
+    else out<-'ns'
+    }
+  if(tex_out == F) out
+  else{
+    if(out=='< 0.005') '$p<$ 0.005'
+    else{
+      if(out=='ns') '$p=$ ns'
+      else paste('$p=$',out,sep=' ')
+      }
+    }
+  }
+@
+
+\begin{document}
+
+\raggedbottom
+\raggedright
+\urlstyle{same}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}
+
+\textit{Response to review comments from Dr. Robert Hirsch, author response in italics\\
+Prepared July 9\textsuperscript{th}, 2014, M. Beck}
+
+Marcus and James: I have reviewed your manuscript “Adaptation of a weighted regression approach to evaluating water quality trends in an estuary.”  I think this is a great contribution to description of water quality change.  I’m so pleased that you were able to see a good way of extending my approach from the river environment to the estuary environment.  I’m anxious to see your work get published and to see this type of work get wide-spread notice and use.  I wonder if the Journal of the American Water Resources Association is the right place to publish it, because I don’t think the estuarine research community will likely see it there.  Something more in the mainstream of estuarine research publication may have a higher impact.
+
+\textit{We will submit the manuscript to Environmental Modeling and Assessment, Springer.}
+
+I had a few concerns.  I had particularly difficulty with Table 4 (I really couldn’t understand what the numbers in the table actually represent) and hence I couldn’t really understand the interpretations you made.  I also have concerns that Figure 8 may not be a stable and reliable method of understanding trends in relationships.  I’ve made a suggestion of another way to achieve that end.
+
+\textit{See response to individual comments below.}
+
+Below are a list of more detailed comments.  Please feel free to ask me if you have any concerns or if you found my suggestions obsure or unworkable..  Thank you for asking me to review this excellent paper.
+
+Sincerely yours, Robert M. Hirsch, Research Hydrologist, USGS  (rhirsch@usgs.gov)
+
+Line 256, you seem to be focused on a particular year-to-year change of 48.5\% but couldn’t some of that be an effect of salinity or some other factor.  It seems to me that any comparison of particular years is really contrary to what you are trying to do in this paper and you should leave it to the WRTDS results to show where the steep change takes place and that it isn’t right at the same time as the treatment took place.
+
+\textit{Lines 251 -- 258 were removed since they describe observed chlorophyll that may also vary by salinity.}
+
+Fig 3.  I don’t understand the dashed line in the lower left panel of the figure.  Also, I think most of the dots in the upper panel are ones with zero weight.  As such, you might want to reduce them to just a tiny point.  It is hard to grasp the transition from zero weight up to modest weight to a high weight. 
+
+\textit{Dashed line was removed.  Point size differences in the top plot were also changed to reduce size of tiny points (figure caption revised for emphasis as well).}
+
+Figures 4 and 7, there is so much jaggedness due to the seasonality that the main patterns don’t show up very well.  What would it be like to pick out the most critical month of the year and just show these figures for that month? You could put the other months into figures in supplemental material.  I just think that these are rather hard to interpret because of the strong seasonal variation.
+
+\textit{Figure 4 was changed to only include January and July, supplementary figure was included to show predicted and observed \ac{chl} for all months.  Points were removed from Figure 7 to emphasize changes in inter-annual variability, caption revised accordingly.}
+
+Sentence on lines 304-306.  The wording seems odd.  Do you mean that the mean shows little trend but the range (or variability) appears to be decreasing (90th percentile decreases and 10th percentile increases).
+
+\textit{Changed sentence to `Decreases in the variability of \ac{chl} for Lower Tampa Bay in recent years are also apparent such that the \nine model is decreasing and \ten model is increasing, wheras predictions from the mean model are relatively constant.'}
+
+Table 4.  I don’t think I understand it.  Are these numbers chl-a levels or are they a coefficient of variation (in \%).  Whatever they are, how were they computed?  The text (on lines 318 – 320) and the table are obscure to me.   I don’t understand the idea of a CV of a model.  Is it the standard error divided by the predicted value?  This is usually not considered a CV, but maybe something like a standard error in percent.  Lines 325 through 330 make it appear that the table includes both chl-a levels and CVs.  Again, I’m confused here.
+
+\textit{Paragraph was revised for clarity: `Of potential interest is an evaluation of between-year variability for all salinity-normalized estimates.  Specifically, between-year comparisons of \ac{chl} estimates for each model indicated that the range has not been constant throughout the time series (Table 4 and Fig. 7).  Maximum within-year variability (as annual standard deviation divided by the mean) for all models was generally observed in recent years, with exceptions for models in Lower Tampa Bay where maximum variability was observed in \Sexpr{nrm.cv$OTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'V1']}\%) for the mean model, \Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'V1']}\%) for the \nine model, and \Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'V1']}\%) for the \ten model.  Increasing variability throughout the time series was particularly pronounced for the \nine model for Old Tampa Bay with annual variation ranging from \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'year']}  to \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'year']}.  Variability in salinity-normalized \ac{chl} estimates across seasons were comparable, although variability was reduced in summer months (Table 4).  Additionally, high variability was observed for Hillsborough Bay in winter and for Lower Tampa Bay in fall.'}
+
+\textit{Table 4 caption was revised for clarity: `Variability in \ac{chl} (\mugl) for Bay segments by year and seasons using salinity-normalized predictions.  Variability (\%) was quantified as the standard deviation of predictions by year (or season) category divided by the mean of predictions by year (or season) category...'}
+
+Paragraph starting at line 400.  I’m having some trouble with the idea that since the inputs were dominantly point source in the early years, that salinity would have little influence on chl-a concentration.  Indeed, it would have little influence on the nutrient inputs, but high water inflows would tend to dilute the nutrients and that could result in lower chl-a.  You state: “For example, the relationship of salinity with chlorophyll for Hillsborough Bay during earlier periods indicated no trend as expected, whereas the opposite was true for later periods.”  Where is this shown in the results? 
+
+\textit{Line 400--404 were revised to more clearly emphasize changes in drivers of \ac{chl} production in Tampa Bay: `Pollutant sources for Tampa Bay have changed over time with an increasing dominance of non-point sources in recent years.  Changes in pollutant sources may affect the relationship between \ac{chl} and freshwater inputs (i.e., salinity).  Nutrient concentrations and discharge are correlated regardless of pollutant sources, whereas the relationship between nutrient loading and discharge may vary.  Increasing discharge with non-point sources of pollution is related to both increasing load and decreasing cocentration of nutrients.  Conversely, increasing discharge with point-sources of pollution may only be related to decreasing concentration since total load remains constant. Reduction of point sources of pollution in Tampa Bay and increasing dominance of non-point sources suggests that \ac{chl} relationships with discharge may be dynamic over time.'}
+
+Lines 509 – 511.  I don’t understand this sentence.  It sounds almost circular.
+
+\textit{Changed to: `Lack of correlation with seagrass data may have been related to sample size given that only annual estimates of seagrass coverage were available.'}
+
+The development of Figure 8 and the explanation of this information is troubling to me.  I don’t use the slope coefficients themselves because I think there is too much of a risk of colinearity with the other coefficients.  I am not at all sure that the results shown on figure 8 are really meaningful.  Why would the curves for Hillsboro Bay go from flat, to downward, to upward, to downward?  I think that there is a more reliable way to describe the changing dynamics of the system.  I would suggest the following:  Pick a particular time of year (perhaps a date that is usually around the chlorophyll peak) and make predictions of chlorophyll-a for different salinity levels.  You can produce several such curves on one graph: say one for 1977, one for 1985, one for 1995, and one for 2006.  This will give you a more meaningful idea of how chlorophyll changes as a function of salinity and how that relationship changes over time.  In my implementation of WRTDS in the EGRET software that is the plotConcQSmooth graphic.  You would just be using salinity in place of Q in such graphs.
+
+\textit{Figure 8 was changed in accordance with the suggestion.  The text was also modified to reflect this change, specifically the paragraphs beginning on lines 331 and 416.  Overall conclusions remain the same.}
+
+An overall comment:  I think the paper could benefit from some tables of results.  For example, for each estuary segment, and for a selected critical time of year, you could show the expected chl-a level changes from 1980 to 2010 – once for high salinity, moderate salinity, and low salinity.  In addition, you could provide an overall summary of changes in the salinity normalized chl-a levels, by season, as the most straightforward way to describe the overall change in the system.  I think this would provide a nice way of summarizing the extent of the improvement.  
+
+\textit{A new table was added to describe expected \ac{chl} changes from 1974--2012 and 2005-2012 (table 3).  The text was modified on lines 275 (`Predicted changes in \ac{chl} by segment from 1974 to 2012 showed consistent declines throughout the time series (Table 2), as suggested by observed \ac{chl} in Fig. 2a.') and 382 (`The approach allows for reconstruction of observed trends  with more accuracy (Figs. S1 and 4), as well as the ability to predict \ac{chl} response to changes in freshwater inputs that are temporally consistent for different periods of observation (Table 2).') to describe the table.}
+
+\textit{Seasonal summaries of salinity-normalized results were added to Table 3 (Table 4 in revised text), text was added to line 317 to describe the addition: `Seasonal trends in salinity-normalized estimates indicated higher \ac{chl} concentrations in warmer months and generally decreasing concentrations throughout the time series.'}
+
+\end{document}

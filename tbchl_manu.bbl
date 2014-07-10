@@ -1,4 +1,4 @@
-\begin{thebibliography}{41}
+\begin{thebibliography}{40}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -111,7 +111,7 @@ Lewis, R.~R. and R.~L. Whitman, 1985. A new geographic description of the
 \bibitem[{Lipp \emph{et~al.}(2001)Lipp, Schmidt, Luther, and Rose}]{Lipp01}
 Lipp, E.~K., N.~Schmidt, M.~E. Luther, and J.~B. Rose, 2001. Determining the
   effects of {E}l {N}i\~{n}o-{S}outhern {O}scillation events on coastal water
-  quality. Estuaries 24(4):491--497.
+  quality. Estuaries and Coasts 24(4):491--497.
 
 \bibitem[{Medalie \emph{et~al.}(2012)Medalie, Hirsch, and
   Archfield}]{Medalie12}
@@ -125,12 +125,6 @@ Moyer, D.~L., R.~M. Hirsch, and K.~E. Hyer, 2012. Comparison of two
   trends in the {C}hesapeake {B}ay Watershed, Technical Report Scientific
   Investigations Report 2012-544, US Geological Survey, US Department of the
   Interior, Reston, Virginia.
-
-\bibitem[{Murrell \emph{et~al.}(2007)Murrell, Hagy, Lores, and
-  Greene}]{Murrell07}
-Murrell, M.~C., J.~D. Hagy, E.~M. Lores, and R.~M. Greene, 2007. Phytoplankton
-  production and nutrient distributions in a subtropical esuary: Importance of
-  freshwater flow. Estuaries and Coasts 30(3):390--402.
 
 \bibitem[{Nixon(1995)}]{Nixon95}
 Nixon, S.~W., 1995. Coastal marine eutrophication: A definition, social causes,
@@ -176,7 +170,7 @@ Schaeffer, B.~A., J.~D. Hagy, R.~N. Conmy, J.~C. Lehrter, and R.~P. Stumpf,
 
 \bibitem[{Schmidt and Luther(2002)}]{Schmidt02}
 Schmidt, N. and M.~E. Luther, 2002. {ENSO} impacts on salinity in {T}ampa
-  {B}ay, {F}lorida. Estuaries 25(5):976--984.
+  {B}ay, {F}lorida. Estuaries and Coasts 25(5):976--984.
 
 \bibitem[{Sprague \emph{et~al.}(2011)Sprague, Hirsch, and
   Aulenbach}]{Sprague11}
