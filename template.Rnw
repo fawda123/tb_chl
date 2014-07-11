@@ -1,0 +1,557 @@
+\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+% \documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+
+% packages
+\smartqed  
+\usepackage{mathptmx}  
+\usepackage[paperwidth=8.5in,paperheight=11in,top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{acronym}
+\usepackage{hyperref}
+\usepackage{cleveref} %after hyperref
+\usepackage{titlesec}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+%acronyms
+\acrodef{chl}[chl-\textit{a}]{chlorophyll-\textit{a}}
+\acrodef{CV}{coefficient of variation}
+\acrodef{ENSO}{El Ni\~{n}o-Southern Oscillation}
+\acrodef{EPA}{Environmental Protection Agency}
+\acrodef{EPC}{Environmental Protection Commission}
+\acrodef{IQR}{interquartile range}
+\acrodef{ppt}{parts per thousand}
+\acrodef{RMSE}[$RMSE$]{root mean square error}
+\acrodef{SST}{Sea Surface Temperature}
+\acrodef{TN}{total nitrogen}
+\acrodef{WRTDS}{Weighted Regressions on Time, Discharge, and Season}
+
+%cleveref options
+\crefname{table}{Table}{Tables}
+\crefname{figure}{Fig.}{Figs.}
+\renewcommand{\figurename}{Fig.}
+
+% needed to make cleveref play nice with springer template
+\makeatletter \let\cl@chapter\relax \makeatother
+
+%assorted functions
+%for multiple rows in table headers
+\newcommand{\head}[2]{\multicolumn{1}{>{\arraybackslash}p{#1}}{#2}}
+%for micrograms per litre
+\newcommand{\mugl}{$\mu$g L$^{-1}$}
+%90th and 10th percentile models
+\newcommand{\nine}{90\textsuperscript{th} percentile }
+\newcommand{\ten}{10\textsuperscript{th} percentile }
+%for supplemental figures/tables
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+
+\journalname{Environmental Modeling and Assessment}
+
+%%%%%%
+%knitr stuff
+     
+%knitr options
+<<setup,include=F,cache=F>>=
+.libPaths('C:\\Users\\mbeck\\R\\library')
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='M:/docs/manuscripts/tb_chl/figs/', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
+options(replace.assign=TRUE,width=90,digits=1)
+@
+
+<<data_imp,include=F,cache=F>>=
+source('M:/r_code/EPC/epc_dat.r')
+
+#reorder factors for relevant data frames
+seg.levs<-c('Hillsborough Bay','Old Tampa Bay','Middle Tampa Bay','Lower Tampa Bay')
+seg.names<-c('HB','OTB','MTB','LTB')
+tb.dat$seg<-factor(tb.dat$seg,levels=seg.levs,labels=seg.names)
+epc.est$seg<-factor(epc.est$seg,levels=seg.levs,labels=seg.names)
+epc.est.act$seg<-factor(epc.est.act$seg,levels=seg.levs,labels=seg.names)
+sal.grd$seg<-factor(sal.grd$seg,levels=seg.levs,labels=seg.names)
+sal.nrm$seg<-factor(sal.nrm$seg,levels=seg.levs,labels=seg.names)
+sg.dat$seg<-factor(sg.dat$seg,levels=seg.levs,labels=seg.names)
+tb.chl$seg<-factor(tb.chl$seg,levels=seg.levs,labels=seg.names)
+
+#mean obs values for chl by seg
+chl.mean.o<-lapply(split(tb.dat,tb.dat$seg),function(x) exp(mean(x$Chla_ugl)))
+#percent decrease in obs chl by seg before and after 1980
+chl.per.o<-lapply(
+  split(tb.dat,tb.dat$seg),
+  function(x){
+    mean.prior<-exp(mean(x$Chla_ugl[as.numeric(x$year)<1980]))
+    mean.after<-exp(mean(x$Chla_ugl[as.numeric(x$year)>=1980]))
+    100*(mean.prior-mean.after)/mean.prior
+    }
+  )
+#percent decrease bay-wide
+chl.per.o2<-{
+  mean.prior<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)<1980]))
+  mean.after<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)>=1980]))
+  100*(mean.prior-mean.after)/mean.prior
+  }
+#percent decrease in chl for H Bay 1983 - 1984
+hdrop<-function(yr.1,yr.2){
+  tmp<-tb.dat[tb.dat$seg=='HB',]
+  mean.prior<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.1]))
+  mean.after<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.2]))
+  100*(mean.prior-mean.after)/mean.prior
+  }
+#observed maximum for el nino
+chl.nino.o<-lapply(
+  split(tb.dat,tb.dat$seg),
+  function(x){
+    x<-x[as.numeric(x$year)>=1990 & as.numeric(x$year)<2000,]
+    ind<-which.max(x$Chla_ugl)
+    out<-x[ind,][,c('month.name','year','Chla_ugl')]
+    out$Chla_ugl<-exp(out$Chla_ugl)
+    out
+    }
+  )
+#obs chl for month, whole bay
+chl.mo.o<-ddply(
+  tb.dat,
+  .(month.name),
+  .fun=function(x) exp(mean(x$Chla_ugl))
+  )
+chl.mo.o<-chl.mo.o[chl.mo.o$month.name %in% c('February','September'),]
+#obs chl for month, by segment
+chl.mo.o2<-ddply(
+  tb.dat,
+  .(seg,month.name),
+  .fun=function(x) exp(mean(x$Chla_ugl))
+  )
+chl.mo.o2<-chl.mo.o2[chl.mo.o2$month.name %in% c('February','September'),]
+#correlation of chlorophyll with sal all data
+sal.cor<-cor.test(tb.dat$sal.ref,tb.dat$Chla_ugl)
+#correlation of chlorophyll w/ sal before/after WWT
+sal.cor2<-ddply(
+  tb.dat,
+  .(seg),
+  .fun=function(x){ 
+      tmp<-cor.test(~Chla_ugl+sal.ref,x)
+      with(tmp,c(estimate,p.value))
+    }
+  )
+#mod performance, 'null.dat' is data.frame used for performance table below
+#contains rmse and rsq
+null.dat<-ddply(
+  epc.est.act,
+  .(seg),
+  .fun=function(x){
+    
+    ols<-lm(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      data=x
+      ) 
+    
+    quant.hi<-rq(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      tau=0.9,
+      data=x
+      )
+    
+    quant.lo<-rq(
+      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
+      tau=0.1,
+      data=x
+      )
+    
+    #rsq and rmse by seg and model type
+    data.frame(
+      nl.md=c(
+        rsq.fun(resid(ols),x$Chla_ugl),
+        sqrt(sum(resid(ols)^2)/(length(resid(ols))))
+        ),
+      wt.md=c(
+        rsq.fun(x$res.md,x$Chla_ugl),
+        sqrt(sum(x$res.md^2)/(length(x$res.md)))
+        ),
+      nl.hi=c(
+        rsq.rq.fun(resid(quant.hi),x$Chla_ugl,0.9),
+        sqrt(sum(resid(quant.hi)^2)/(length(resid(quant.hi))))
+        ),
+      wt.hi=c(
+        rsq.rq.fun(x$res.hi,x$Chla_ugl,0.9),
+        sqrt(sum(x$res.hi^2)/(length(x$res.hi)))
+        ),
+      nl.lo=c(
+        rsq.rq.fun(resid(quant.lo),x$Chla_ugl,0.1),
+        sqrt(sum(resid(quant.lo)^2)/(length(resid(quant.lo))))
+        ),
+      wt.lo=c(
+        rsq.rq.fun(x$res.lo,x$Chla_ugl,0.1),
+        sqrt(sum(x$res.lo^2)/(length(x$res.lo)))
+        )
+      )
+ 
+    }
+  )
+null.dat<-data.frame(stat=rep(c('rsq','rmse'),nrow(null.dat)/2),null.dat)
+#perf list, permutation of null.dat
+perf.ls<-list(
+  #perf for wtd mods
+  wtq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.hi')],
+  wtq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.lo')],
+  wtmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.md')],
+  wtq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.hi')],
+  wtq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.lo')],
+  wtmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.md')],
+  #perf for null mods
+  nlq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.hi')],
+  nlq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.lo')],
+  nlmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.md')],
+  nlq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.hi')],
+  nlq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.lo')],
+  nlmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.md')]
+  )
+nl.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.hi','nl.lo')])
+wt.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.hi','wt.lo')])
+nl.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.md')])
+wt.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.md')])
+#cv for salinity normalized predictions by model, segment, and year
+nrm.cv<-melt(sal.nrm,measure.vars=c('norm.md','norm.hi','norm.lo'))
+nrm.cv<-ddply(
+  nrm.cv,
+  .(seg,year,variable),
+  .fun=function(x) cv(x$value)
+  )
+nrm.cv<-lapply(split(nrm.cv,nrm.cv$seg),function(x) split(x,x$variable))
+#CV ranges by segment and model
+#lapply(nrm.cv,function(x) lapply(x,function(y) diff(range(y$V1))))
+#cv for salinity normalized predictions by model, segment and season
+nrm.cv.s<-sal.nrm
+nrm.cv.s$seas<-cut(as.numeric(as.character(sal.nrm$month.num)),
+  c(-Inf,0.2,0.45,0.7,+Inf),
+  labels=c('JFM','AMJ','JAS','OND')
+  )
+nrm.cv.s<-melt(nrm.cv.s,measure.vars=c('norm.md','norm.hi','norm.lo'))
+nrm.cv.s<-ddply(
+  nrm.cv.s,
+  .(seg,seas,variable),
+  .fun=function(x) cv(x$value)
+  )
+nrm.cv.s<-lapply(split(nrm.cv.s,nrm.cv.s$seg),function(x) split(x,x$variable))
+## regression of continuous enso index values for only sig relationship
+est.seas<-epc.est.act
+seas.ls<-list(
+  JFM=c('January','February','March'),
+  AMJ=c('April','May','June'),
+  JAS=c('July','August','September'),
+  OND=c('October','November','December')
+  )
+season<-rep(NA,nrow(est.seas))
+for(i in 1:length(seas.ls)) 
+  season[est.seas$month.name %in% seas.ls[[i]]]<-names(seas.ls)[i]
+est.seas$season<-season
+#split for scaling of hi and lo residuals by segment
+est.seas<-split(est.seas,est.seas$seg)
+est.seas<-lapply(
+  est.seas,
+  function(x){
+    x$res.hi<-scale(x$res.hi,center=T,scale=F)
+    x$res.lo<-scale(x$res.lo,center=T,scale=F)
+    x
+    }
+  )
+est.seas<-do.call('rbind',est.seas)
+est.seas<-melt(est.seas,measure.vars=c('res.md','res.hi','res.lo'))
+est.seas<-aggregate(value~seg+year+season+variable,est.seas,mean)
+enso.seas<-enso[,c('year','season','cat.seas','enso.seas')]
+enso.est.seas<-merge(est.seas,enso.seas,by=c('year','season'))
+enso.est.seas<-subset(enso.est.seas,subset=seg=='LTB' & variable=='res.lo' & season=='AMJ')
+enso.mod<-summary(lm(value~enso.seas,enso.est.seas)) #this is used
+rm(list=c('est.seas','enso.est.seas','season','seas.ls','enso.seas'))
+
+@
+
+%function to format p values
+<<pform,cache=T>>=
+p_form<-function(x, tex_out=F){
+  if(x<0.005) out<-'< 0.005'
+  else{
+    if(x<0.05&x>=0.005) out<-as.character(format(round(x,3),nsmall=3))
+    else out<-'ns'
+    }
+  if(tex_out == F) out
+  else{
+    if(out=='< 0.005') '$p<$ 0.005'
+    else{
+      if(out=='ns') '$p=$ ns'
+      else paste('$p=$',out,sep=' ')
+      }
+    }
+  }
+@
+
+%%%%%%
+\begin{document}
+
+\title{Adaptation of a weighted regression approach to evaluate water quality trends in an estuary
+}
+
+\titlerunning{Weighted regression for an estuary}        
+
+\author{Marcus W. Beck       \and
+        James D. Hagy III
+}
+
+\institute{
+  M. Beck \at
+  ORISE Research Participation Program \\
+  USEPA National Health and Environmental Effects Research Laboratory \\
+  Gulf Ecology Division, 1 Sabine Island Drive, Gulf Breeze, FL 32561 \\
+  Tel.: +18509342480\\
+  Fax: +18509342401\\
+  \email{beck.marcus@epa.gov}  
+  \and
+  J. Hagy \at
+  USEPA National Health and Environmental Effects Research Laboratory \\
+  Gulf Ecology Division, 1 Sabine Island Drive, Gulf Breeze, FL 32561 \\
+  Tel.: +18509342455\\
+  Fax: +18509342401\\
+  \email{hagy.jim@epa.gov}
+}
+
+\date{Received: date / Accepted: date}
+
+\maketitle
+
+\begin{abstract}
+The increasing availability of long-term monitoring data can improve resolution of temporal and spatial changes in water quality.  In many cases, the fact that changes have occurred is no longer a matter of debate.  However, the relatively simple methods that have been used to evaluate trends in environmental monitoring data in estuaries are often not sufficient to disaggregate the complex effects of multiple environmental drivers, limiting the potential to relate changes to possible causes.  To improve the description of long-term changes in water quality, we adapted a weighted regression approach developed to describe trends in pollutant transport in rivers to analyze a long-term water quality dataset from Tampa Bay, Florida.  The weighted regression approach allows for changes in the relationships between water quality and explanatory variables by using dynamic model parameters and can more clearly resolve the effects of both natural and anthropogenic drivers of ecosystem response.  The model resolved changes in \ac{chl} from 1974 to 2012 at seasonal and multi-annual time scales while considering variation associated with changes in freshwater influence.  Separate models were developed for each of 4 Bay segments to evaluate spatial differences in patterns of long-term change.  Observed trends reflected the known long term decrease in nitrogen loading to Tampa Bay since the 1970s, such that \ac{chl} concentration decreased by \Sexpr{round(chl.per.o2)}\% after municipal improvements in wastewater treament. Although trends in mean \ac{chl} have remained constant since mitigation of point-sources of pollution, model predictions indicated that variation has increased in recent years for upper Bay segments, as well as an overall decrease in low productivity events for the lower Bay. Changes in model parameters for the last decade indicated that the relationship of salinity with \ac{chl} was unimodal rather than continuous for upper Bay segments, such that flushing effects were observed beyond specific thresholds.  Results from our analyses have allowed additional insight into water quality changes in Tampa Bay that has not been possible with traditional modeling approaches and the approach could easily be applied to other systems with long-term datasets.
+\keywords{Chlorophyll \and Estuary \and Salinity \and Tampa Bay \and Trend evaluation \and Weighted regression}
+\end{abstract}
+
+\acresetall
+\section{Introduction} \label{intro}
+
+Eutrophication has been documented in aquatic systems worldwide and is of particular concern for coastal waters that support numerous aquatic life and human uses.  Eutrophication is defined as an increase in the rate of supply of organic matter to a system \cite{Nixon95} and is typically caused by elevated nitrogen or phosphorus loads.  Although nutrients are necessary for the growth of primary producers, excessive anthropogenic inputs can have serious consequences for the structure and function of aquatic systems.  Eutrophication of coastal systems has been associated with depletion of dissolved oxygen from the decomposition of organic matter \cite{Diaz08}, increases in the frequency and severity of harmful algal blooms \cite{Glibert13}, and reduction or extirpation of seagrass communities \cite{Duarte95,Tomasko05}.  System-wide changes can occur as the effects of eutrophication on primary production propogate to upper trophic levels \cite{Powers05}. 
+
+The effects of eutrophication are generally well understood, particularly for freshwater systems. The consequences of nutrient pollution were increasingly obvious by the 1960s such that eutrophication became a central focus of limnological research \cite{Cloern01}.  However, the importance of understanding the relative effects of eutrophication on coastal systems were not realized until several decades later.  For example, Rosenberg \cite{Rosenberg85} described the future hazards of coastal eutrophication nearly twenty years after similar issues were the focus of intense study in freshwater systems.  Approaches for describing nutrient dynamics in coastal systems have relied heavily on freshwater eutrophication models that may not adequately describe idiosyncratic behaviors of individual estuaries.  For example, Cloern \cite{Cloern01} suggests that system-specific attributes modulate coastal response to nutrient inputs, such that more appropriate conceptual models that recognize linked changes in relevant state variables are needed.  To date, empirical models that are flexible and appropriate for site-specific conditions have not been extensively applied to describe nutrient-response dynamics in estuaries.
+
+The increasing availability of long-term, high resolution datasets has further underscored the need to develop quantitative nutrient-response models given the potential to extract detailed information on system dynamics.  In many cases \cite{Caffrey03, Greening06}, long-term datasets have sufficiently described general trends in response to changing nutrient regimes or seasonal dynamics, although unambiguous and quantitative descriptions of responses have been lacking.  For example, temporal variations in phytoplankton growth dynamics are often apparent by season with typical late summer blooms in temperate or tropical systems \cite{Cloern96}, whereas climate variation may contribute to substantial deviation in growth patterns between years \cite{Jassby02}.  Additionally, spatial heterogeneity in algal response to nutrients is common across salinity gradients such that effects of flux variation are most apparent near freshwater inflows \cite{Cloern96}.  Simple statistical models that are constrained by assumptions of linearity and stationarity  of variables through time may not adequately characterize subtleties in the variation of nutrient-response measures at different scales.  Novel techniques that leverage the descriptive capabilities of large datasets are needed to improve our understanding of temporal and spatial variation in chlorophyll dynamics as a measure of eutrophication.
+
+Use of simple descriptive statistics to evaluate the effects of water quality management may be ill-advised given that general trends in monitoring data may reflect both management actions and natural variation in system characteristics.  Hirsch et al. \cite{Hirsch10} developed the \ac{WRTDS} approach to model pollutant concentration in rivers to address these issues and shortcomings of previously-developed models.  \ac{WRTDS} enables a flexible interpretation of water quality changes by estimating multiple parameters that are specific to a given season, year, and discharge for individual observations across the time series.  This allows for a more detailed description of water quality changes than standard regression models that characterize trends using a single set of parameters.  Accordingly, the approach addresses the need to focus on descriptions of change in relation to water quality variables across time, rather than hypothesis testing. The approach has been applied to model pollutant delivery from tributary sources to Chesapeake Bay \cite{Hirsch10,Moyer12,Zhang13}, Lake Champlain \cite{Medalie12}, and the Mississippi River \cite{Sprague11}.  The successful applications to water quality trends in rivers suggest the approach could potentially be applied to estuaries to characterize and better understand long-term changes in water quality.  Moreover, changes in pollutant sources and variation in freshwater inputs over time for many coastal systems warrant the use of novel methods for trend evaluation.  Resolving these changes may improve our understanding of linkages between drivers and responses over time. 
+
+Water quality data have been collected in the Tampa Bay estuary (Florida, USA) for approximately forty years.  The natural history of Tampa Bay and the corresponding data provide a useful opportunity for applying quantitative methods to model nutrient dynamics. Nitrogen loads in the mid 1970s were estimated at $8.2 \times 10^6$ kg yr$^{-1}$, with approximately $5.5 \times 10^6$ kg yr$^{-1}$ entering the upper bay alone \cite{Poe05,Greening06}.  Reduced water clarity associated with phytoplankton biomass contributed to dramatic reduction in the areal coverage of seagrass \cite{Tomasko05} and development of hypoxic events causing a decline in benthic faunal production \cite{Santos80}.  Extensive efforts to reduce nutrient loads to the Bay occurred by the late 1970s, with the most notable being improvements in infrastructure for wastewater treatment in 1979.  Improvements in water clarity and decreases in \ac{chl} were observed bay-wide in the 1980s, with conditions generally remaining constant to present day. Although the nutrient management program has been successful in improving water quality, variation in water quality drivers over time suggests the \ac{WRTDS} method could provide information on system dynamics that are not apparent from the observed data.
+
+The goal of the analysis was to describe changes in algal biomass in an estuary in relation to time, season, and freshwater inputs.  We adapted the \ac{WRTDS} approach developed by Hirsch et al. \cite{Hirsch10} to describe water quality trends using a multi-decadal dataset from Tampa Bay, Florida. The analysis addressed four main objectives.  First, we described the weighted regression model and provided a rationale for its adaptation to estuaries.  Second, we applied the model to the time series in different segments of Tampa Bay to characterize trends in both the mean response of \ac{chl} and the frequency of occurrence of extreme events using quantile regression.  Third, additional factors related to water quality were used to describe the unexplained variance in \ac{chl} growth patterns not characterized by the model.  Specifically, model residuals were compared with variation in seagrass growth, \ac{ENSO} effects, and nitrogen load and concentrations in the Bay.  Finally, we developed informed hypotheses to explain temporal and spatial patterns in \ac{chl} growth in response to large scale drivers that affect water quality.  Results from the analysis provide a natural history of water quality changes in Tampa Bay that is temporally consistent with drivers of change.  This analytical approach may improve our understanding of the nutrient-response paradigm in coastal systems.  
+
+\section{Methods}
+
+\subsection{Data}
+
+We compiled a time series of \ac{chl} concentration (\mugl) in Tampa Bay using data from the Hillsborough County \ac{EPC} \cite{TBEP11}.  Data are monthly at mid-depth for each of 50 stations throughout the Bay (\cref{fig:tb_map}) from 1974 to 2012, producing approximately 456 observations per station ($n=$ \Sexpr{nrow(tb.dat)}, \cref{fig:obsyrmo}).  Stations were visited on a rotating schedule such that one third of all stations were sampled each week.  Bay segments represent management units of interest with distinct chemical and physical differences (\cref{tab:segsum}, \cite{Lewis85}).  Accordingly, station data were averaged by segment.  In addition to \ac{chl}, salinity data were obtained and used as a tracer of freshwater influence on water quality.  We expected that salinity was an important factor influencing interpretation of \ac{chl} trends relative to the effects of additional factors (e.g., date, nutrient load, seagrass, etc.).  Salinity data were converted to dimensionless values that represent the fraction of freshwater \cite{Dyer73}, such that:
+\begin{equation}
+Sal_{ff} = 1 - \frac{Sal_{mea}}{Sal_{ref}}
+\end{equation}
+\noindent where $Sal_{mea}$ is the measured salinity for a given station and $Sal_{ref}$ is salinity at the seaward reference station for each observation date.  Station 94 in the Gulf (\cref{fig:tb_map}) was used for reference salinity.  Chlorophyll concentrations below the detection limit (censored data) were set to one-half the value from the limit to zero \cite{Gilbert87}.  Chlorophyll data were $ln$-transformed because observations were skewed right, similar to a log-normal distribution.  Kolomogorov-Smirnov tests indicated that the raw data were not signicantly different from theoretical log-normal distributions.
+
+\subsection{Weighted regression}
+
+\ac{WRTDS} was adapted to relate chlorophyll concentration to salinity and time:
+\begin{equation}\label{eqn:funform}
+\ln\left(Chl\right) = \beta_0 + \beta_1 t + \beta_2 Sal_{ff} + \beta_3 \sin\left(2\pi t\right) + \beta_4 \cos\left(2\pi t\right) + \epsilon
+\end{equation}
+\noindent where the natural log of \ac{chl} is related to decimal time $t$, salinity $Sal_{ff}$, and unexplained variation $\epsilon$.  Salinity and time are linearly related to \ac{chl} on a sinuisoidal annual time scale (i.e., cylical variation by year). The parameters $\beta_0,\ldots,\beta_4$ are estimated for each observed salinity at time $t$ such that multiple sets of parameters are used to characterize the period of observation.  Decimal time was calculated as the the year and month of each observation as an equivalent decimal (e.g., July 1974 as 1974.5).  Although data were typically not collected on the first of each month, we considered the decimal time coincident with the period of observation.  Additionally, quantile regression models \cite{Cade03} were used to characterize trends at extreme conditional distributions of the data.  Specifically, we adapted the weighted regression approach to model the conditional response at the 10\textsuperscript{th} and 90\textsuperscript{th} quantiles ($\tau=0.1$, and $0.9$, respectively) of the chlorophyll distribution. Quantile regression is analogous to least-squares regression such that a set of $\beta$ parameters that minimizes the error term is estimated, where the minimization function is the sum of the weighted absolute deviations of the fitted values from the observed quantile.  A general interpretation of the fitted values is the distribution of \ac{chl} conditional upon time and salinity for low ($\tau=0.1$) or high ($\tau=0.9$) biomass events, rather than a characterization of `average' conditions using mean models.
+
+The \ac{WRTDS} approach obtains fitted values of the response variable by estimating regression parameters for each unique observation.  Specifically, a regression model was estimated for each of 1,$\ldots$, 456 data points for each Bay segment. Each regression model was weighted by month, year, and salinity such that a unique set of regression parameters for each observation in the time series was obtained. For example, a weighted regression for October 2003 weights other observations in the same year, month, and similar salinity with higher values, whereas observations for different months, years, or salinities receive lower weights (\cref{fig:wtex}).  This weighting approach allows estimation of regression parameters that vary in relation to observed conditions.  Hirsch et al. \cite{Hirsch10} used a tri-cube weighting function:
+\begin{equation}
+w= \left\{ 
+  \begin{array}{l l}
+    \left(1-\left(d/h\right)^3\right)^3 & \quad \textrm{if } |d| \leq h \\
+    0 & \quad \textrm{if } |d| > h 
+  \end{array} \right.
+\end{equation}
+\noindent where the weight $w$ for each observation is defined by the distance $d$ from the current observation within a window $h$. The weights are diminishing in relation to the current observation until the maximum window width is exceeded and a weight of zero is used.  The weight for each observation is the product of all three weights assigned to month, year, and salinity.  Window widths of six months, 10 years, and half the range of $Sal_{ff}$ for each Bay segment were used (\cref{fig:wtex}).  Window widths were increased by 10\% increments during model estimation until a minimum of 100 observations with non-zero weights were obtained \cite{Hirsch10}.
+
+The adapted \ac{WRTDS} approach was used to model and interpret \ac{chl} trends from 1974--2012 for each of the 4 bay segments.  In contrast with \cite{Hirsch10}, estimates were made using monthly observations rather than daily predictions given the available data for Tampa Bay.  Particular attention was given to trends that have not been previously described.  Following Hirsch et al. \cite{Hirsch10}, predicted values were based on interpolation matrices for each model type (mean, \nine, and \ten) to reduce computation time.  Specifically, a sequence of 20 salinity values based on the minimum and maximum values for each segment were used to predict \ac{chl} using the observed month and year.  Model predictions were then linearly interpolated from the grid using closest salinity value to the actual for each date.  Hirsch et al. \cite{Hirsch10} notes that the introduction of bias associated with using imprecise values in place of actual observations to estimate predictions was minimal.  Model performance was based on coefficients of determination ($R^2$) for the mean regression models and pseudo-$R^2$ values that are specific to given quantiles \cite{Koenker99}.  Additionally, \ac{RMSE} was calculated as an alternative measure of performance such that:
+\begin{equation}
+RMSE = \sqrt {{\frac{{\sum\limits_{{i = 1}}^n {{{\left( {{y_i} - {{\hat{y}}_i}} \right)}^2}} }}{{n}}}}
+\end{equation}
+\noindent where $n$ is the number of observations from $1,\ldots,n$ for a given segment, $y_i$ is the observed value of $\ln$-\ac{chl} for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln$-\ac{chl} for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models were compared to conventional (i.e., non-weighted) additive linear models to show potential improvements using the \ac{WRTDS} approach.   
+
+A potential issue for predictions with regression models in $\ln$-transformed space is bias associated with back-transformation \cite{Duan83}.  Specifically, predicted values that are back-transformed by exponention may be biased due to variation in the concentration-salinity (or concentration-discharge) relationship through changes in residual variation across the data domain.  We followed the approach in Moyer et al. \cite{Moyer12} that corrected for back-transformation bias using a scale parameter that is independently estimated for all regression models in the time series.  The scale parameter describes the variance of the residuals such that: 
+\begin{equation}\label{eqn:resvar}
+\hat{\sigma}_\epsilon^2 =\frac{\sum\limits_{{i = 1}}^n w_i \left(y_i - \hat{y}_i \right)^2}{\sum\limits_{{i = 1}}^n w_i }
+\end{equation}
+\noindent where residual variance $\hat{\sigma}_\epsilon^2$ (scale parameter) is the weighted sum of squared errors for chlorophyll for observations $1,\ldots,n$.  Scale parameters were obtained for each unique regression across the time series and used to determine the correction bias in the back-transformation such that:
+\begin{equation}\label{eqn:biascorr}
+\alpha = \exp\left(\frac{\hat{\sigma}_\epsilon^2}{2}\right)
+\end{equation}
+\begin{equation}\label{eqn:backtrans}
+\hat{Chl} = \alpha \exp\left(\beta_0 + \beta_1 t + \beta_2 Sal_{ff} + \beta_3 \sin\left(2\pi t\right) + \beta_4 \cos\left(2\pi t\right)\right)
+\end{equation}
+\noindent where the back-transformed chlorophyll concentration $\hat{Chl}$ is the exponentiated model prediction multiplied by the correction factor $\alpha$ \cite{Moyer12}.  Unique scale and correction bias parameters were obtained for each observation that was back-transformed.  Although differences between results from bias-corrected predictions and simple exponentiation were minimal, \cref{eqn:resvar,eqn:biascorr,eqn:backtrans} were used to create more accurate representations of chlorophyll trends in accordance with developed methods \cite{Hirsch10,Moyer12}. 
+
+In addition to trend description, the \ac{WRTDS} approach can be used to normalize predicted values for a given explanatory variable to allow interpretation of trends in the absence of random variation.  For example, water quality trends related to management actions cannot be precisely evaluated if pollutant concentrations vary with discharge.  Hirsch et al. \cite{Hirsch10} used the approach to normalize trends by flow, whereas our adapted approach was used to normalize by salinity which accounts for both freshwater inputs and tidal exchange.  Normalized predictions were obtained for each observation date by assuming that salinity values for the same month in each year were equally likely to occur across the time series.  That is, salinity is assumed to be uniformly distributed within the range of observed values for the same month between years.  For example, normalization for January 1\textsuperscript{st} 1974 considers all salinity values occuring on January 1\textsuperscript{st} for each year in the time series as equally likely to occur on the observed data.  A normalized value for January 1\textsuperscript{st} 1974 is the average of the predicted values using each of the salinity values as input, while holding month and year constant.  Normalization across the time series is repeated for each observation to obtain salinity-normalized predictions.    
+
+\subsection{Evaluation of model residuals}
+
+An advantage of the \ac{WRTDS} approach is the ability to describe water quality trends by considering changes in the relationships among variables for  different observation periods.  Additional factors not related to time or salinity could be used to describe the unexplained variation in the models ($\epsilon$, \cref{eqn:funform}). Residuals for the mean and quantile models in each Bay segment were related to additional variables with considerable management importance: seagrass growth, \ac{ENSO} climate effects by season and year, and nitrogen load and concentrations.  Conventional statistics were used to obtain a general description of the relationships, such as correlation coefficients and linear regression.
+
+Seagrass coverage in Tampa Bay has been estimated bi-annually since 1988 \cite{Tomasko05}.  Coverage data are based on interpretation of aerial photos to produce raster surfaces with pixels coded as continuous ($>$75\%) or patchy (25\%--75\%) coverage.  Areal coverage of seagrass for years with available data ($n=$ \Sexpr{length(unique(sg.dat$year))}) were estimated by considering seagrass as present (continous or patchy) or absent within each Bay segment.  \ac{ENSO} data obtained from the Climate Prediction Center \cite{CPC13} were based on a three year running-average of \ac{SST} anamolies in the Ni\~{n}o 3.4 region of the Pacific Ocean (5$^{\circ}$N--5$^{\circ}$S, 120$^{\circ}$--170$^{\circ}$W).  \ac{SST} index values greater (less) than 0.4 (-0.4) were considered El Ni\~{n}o (La Ni\~{n}a) conditions, neutral otherwise.  \ac{SST} index values were categorically and quantitatively summarized by year and season using designations in Lipp et al. \cite{Lipp01}: winter - January, February, March; spring - April, May, June; summer - July, August, September; fall - October, November, December.  Finally, monthly loads for \aclu{TN} (\acs{TN}, kg/mo) from 1985--2007 were obtained \cite{Zarbock94,Pribble01,Poe05}, in addition to \ac{TN} concentration from monitoring data \cite{TBEP11}.  Nitrogen loads are based on estimated and measured contributions from nonpoint sources, point sources, atmospheric deposition, groundwater, and losses of phosphate rock and fertilizer from industrial processes.
+
+%\begin{acknowledgements}
+%If you'd like to thank anyone, place your comments here
+%and remove the percent signs.
+%\end{acknowledgements}
+
+% BibTeX users please use one of
+% \bibliographystyle{spbasic}      % basic style, author-year citations
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+% \bibliographystyle{spphys}       % APS-like style for physics
+\bibliography{M:/docs/ref_diss}   % name your BibTeX data base
+
+%%%%%%
+%tables
+
+%segment characteristics
+<<segsum>>=
+#uses function defined in preamble
+#summary of segment characteristics
+
+segs<-c('HB','OTB','MTB','LTB')
+
+#from Lewis and Whitman 85
+area.km2<-c(105.3,200.7,309.9,246.6)
+shore.km<-c(128.6,339.8,262.8,121.6)
+
+#from TBEP 2011
+#wshed area, sqm converted to km2
+#chla in ug/l
+wshed.km2<-round(2.5899999 * c(1281.8,337.6,410.3,127.6), 1)
+chla.12<-round(exp(aggregate(Chla_ugl~seg,data=tb.dat[tb.dat$year==2012,],mean)[,2]),1)
+sal.12<-round(aggregate(Salinity_ppt~seg,data=tb.chl[tb.chl$year==2012,],mean)[,2],1)
+
+#Lewis and Estevez 88
+#mean depth, ft conv to m
+depth.m<-round(0.3048 * c(10.5,9.3,13.5,12.5),1)
+
+#create data for table
+dat<-data.frame(area.km2,shore.km,depth.m,wshed.km2,chla.12,sal.12)
+
+cap.val<-'Summary of characteristics for Tampa Bay segments.  Mean chlorophyll and salinity data for 2012 are shown. Sources: \\cite{Lewis85,Lewis88}.'
+
+foot.val<-'\\footnotesize \\textit{Note:} HB: Hillsborough Bay, OTB: Old Tampa Bay,  MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
+
+cnames<-c('Area (km$^2$)','Shoreline length (km)','Mean depth (m)','Watershed area (km$^2$)','Chlorophyll-\\textit{a} (\\mugl)','Salinity')
+cnames<-paste0('\\head{2cm}{',cnames,'}')
+
+latex(
+  dat,
+  file='',
+  caption.loc='top',
+  caption=cap.val,
+  insert.bottom=foot.val,
+  rowname=segs,
+  colheads=cnames,
+  rowlabel='Segment',
+  label='tab:segsum',
+  digits=5,
+  double.slash=F,
+  multicol=F,
+  col.just=rep('l',ncol(dat))
+  )
+  
+@
+
+%%%%%%
+%figures
+
+%map of TB, made in ArcMap
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{M:/docs/manuscripts/tb_chl/figs/tb_map.pdf}
+\caption{The Tampa Bay estuary located on the west coast of central Florida. The Bay is separated into four segments defined by chemical, physical, and geopolitical boundaries \cite{Lewis85}. Monthly water quality monitoring stations are also indicated by their identification number \cite{Boler01}.}
+\label{fig:tb_map}
+\end{figure}
+
+%obs chlorophyll by year/month, uses station data
+<<obsyrmo,cache=T,include=F>>=
+
+ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
+
+#get median values for chl by year and bay, merge with tb.chl on two columns
+rexp<-"^(\\w+)\\s?(.*)$"
+fill.dat<-melt(unlist(lapply(split(tb.chl,paste(tb.chl$year,tb.chl$seg)),
+  function(x) median(x$Chla_ugl))))
+fill.dat<-data.frame(
+  year=sub(rexp,"\\1",row.names(fill.dat)),
+  seg=sub(rexp,"\\2",row.names(fill.dat)),
+  Median=fill.dat[,1]
+)
+tb.chl.gg<-merge(tb.chl,fill.dat,by.x=c('year','seg'))
+
+p1<-ggplot(tb.chl.gg,aes(x=year,y=Chla_ugl)) + 
+  geom_boxplot(outlier.size=1,fill='grey',outlier.colour=alpha('black', 0.7),size=0.25) + 
+  scale_y_continuous(name=element_blank(),limits=c(0,50)) +
+  #scale_fill_continuous(low='royalblue',high='palegreen3') +
+  theme_bw() + 
+  facet_wrap(~seg) + 
+  scale_x_discrete(
+    name=element_blank(),
+    breaks=function(x) seq(1975,2010,by=5)
+    )
+
+#get median values for chl by year and bay, merge with tb.chl on two columns
+rexp<-"^(\\w+)\\s?(.*)$"
+fill.dat<-melt(unlist(lapply(split(tb.chl,paste(tb.chl$month,tb.chl$se)),
+  function(x) median(x$Chla_ugl))))
+fill.dat<-data.frame(
+  month=sub(rexp,"\\1",row.names(fill.dat)),
+  seg=sub(rexp,"\\2",row.names(fill.dat)),
+  Median=fill.dat[,1]
+  )
+tb.chl.gg<-merge(tb.chl,fill.dat,by.x=c('month','seg'))
+  
+p2<-ggplot(tb.chl.gg,aes(x=month.name,y=Chla_ugl)) + 
+  geom_boxplot(outlier.size=1,outlier.colour=alpha('black', 0.7),fill='grey',size=0.25) + 
+  scale_y_continuous(name=element_blank(),limits=c(0,50)) +
+  scale_x_discrete(
+    name=element_blank(),
+    labels=strsplit('JFMAMJJASOND','')[[1]]
+    ) +
+  #scale_fill_continuous(low='royalblue',high='palegreen3') +
+  theme_bw() + 
+  facet_wrap(~seg) + 
+  theme(
+    axis.title.x = element_text(vjust=-0.5)
+    )
+
+pdf('M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf',height=4,width=7,family='serif')
+print(p1)
+print(p2)
+dev.off()
+#grid.arrange(arrangeGrob(p1,p2,nrow=2,left=textGrob(ylabs,rot=90)))
+@
+\begin{figure}
+\centering
+\subfloat[By year]{
+\includegraphics[width=\textwidth,page=1]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\label{fig:obsyrmo1}
+}
+
+\subfloat[By month]{
+\includegraphics[width=\textwidth,page=2]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\label{fig:obsyrmo2}
+}
+
+\leavevmode\smash{\makebox[0pt]{\hspace{0em}% HORIZONTAL POSITION           
+  \rotatebox[origin=l]{90}{\hspace{19em}% VERTICAL POSITION
+    Chlorophyll-\textit{a} (\mugl)}%
+}}\hspace{0pt plus 1filll}\null
+
+\caption{Observed \ac{chl} data for Tampa Bay segments by \protect\subref{fig:obsyrmo1} year and \protect\subref{fig:obsyrmo2} month aggregations.  Each box is bisected by the median and represents the \ac{IQR} (25\textsuperscript{th} to 75\textsuperscript{th} percentile).  Outliers are present beyond whiskers (1.5$\cdot$\ac{IQR}) and were observed beyond 50 \mugl.  HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay.}
+\label{fig:obsyrmo}
+\end{figure}
+
+\end{document}
+% end of file template.tex

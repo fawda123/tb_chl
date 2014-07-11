@@ -1,0 +1,193 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{Boler01}
+Boler, R.: Surface water quality 1999-2000 {H}illsborough {C}ounty, {F}lorida.
+\newblock Tech. rep., Environmental Protection Commission of Hillsborough
+  County, Tampa, Florida, USA (2001)
+
+\bibitem{Cade03}
+Cade, B.S., Noon, B.R.: A gentle introduction to quantile regression for
+  ecologists.
+\newblock Frontiers in Ecology and the Environment \textbf{1}(8), 412--420
+  (2003)
+
+\bibitem{Caffrey03}
+Caffrey, J.M.: Production, respiration and net ecosystem metabolism in {U.S.}
+  estuaries.
+\newblock Environmental Monitoring and Assessment \textbf{81}(1-3), 207--219
+  (2003)
+
+\bibitem{Cloern96}
+Cloern, J.E.: Phytoplankton bloom dynamics in coastal ecosystems: {A} review
+  with some general lessons from sustained investigation of {S}an {F}rancisco
+  {B}ay, {C}alifornia.
+\newblock Review of Geophysics \textbf{34}(2), 127--168 (1996)
+
+\bibitem{Cloern01}
+Cloern, J.E.: Our evolving conceptual model of the coastal eutrophication
+  problem.
+\newblock Marine Ecology Progress Series \textbf{210}, 223--253 (2001)
+
+\bibitem{CPC13}
+{CPC (Climate Prediction Center)}: {N}ational {W}eather {S}ervice {C}limate
+  {P}rediction {C}enter: Cold and warm episodes by season (2013).
+\newblock
+  \url{http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ensoyears.shtml}.
+  (Accessed September, 2013)
+
+\bibitem{Diaz08}
+Diaz, R.J.: Spreading dead zones and consequences for marine ecosystems.
+\newblock Science \textbf{321}, 926--929 (2008)
+
+\bibitem{Duan83}
+Duan, N.: Smearing estimate: A nonparametric retransformation method.
+\newblock Journal of the American Statistical Association \textbf{78}(383),
+  605--610 (1983)
+
+\bibitem{Duarte95}
+Duarte, C.M.: Submerged aquatic vegetation in relation to different nutrient
+  regimes.
+\newblock Ophelia \textbf{41}, 87--112 (1995)
+
+\bibitem{Dyer73}
+Dyer, K.R.: Estuaries: A Physical Introduction.
+\newblock Wiley, London, United Kingdom (1973)
+
+\bibitem{Gilbert87}
+Gilbert, R.O.: Statistical Methods for Environmental Pollution Monitoring.
+\newblock Van Nostrand Reinhold, New York, USA (1987)
+
+\bibitem{Glibert13}
+Glibert, P.M., Hinkle, D.C., Sturgis, B., Jesien, R.V.: Eutrophication of a
+  {M}aryland/{V}irginia coastal lagoon: A tipping point, ecosytem changes, and
+  potential causes.
+\newblock Estuaries and Coasts  (2013)
+
+\bibitem{Greening06}
+Greening, H., Janicki, A.: Toward reversal of eutrophic conditions in a
+  subtrophical estuary: Water quality and seagrass response to nitrogen loading
+  reductions in {T}ampa {B}ay, {F}lorida, {USA}.
+\newblock Environmental Management \textbf{38}(2), 163--178 (2006)
+
+\bibitem{Hirsch10}
+Hirsch, R.M., Moyer, D.L., Archfield, S.A.: Weighted regressions on time,
+  discharge, and season ({WRTDS}), with an application to {C}hesapeake {B}ay
+  river inputs.
+\newblock Journal of the American Water Resources Association \textbf{46}(5),
+  857--880 (2010)
+
+\bibitem{Jassby02}
+Jassby, A.D., Cloern, J.E., Cole, B.E.: Annual primary production: Patterns and
+  mechanisms of change in a nutrient-rich tidal ecosystem.
+\newblock Limnology and Oceanography \textbf{47}(3), 698--712 (2002)
+
+\bibitem{Koenker99}
+Koenker, R., Machado, J.A.F.: Goodness of fit and related inference processes
+  for quantile regression.
+\newblock Journal of the American Statistical Association \textbf{94}(448),
+  1296--1310 (1999)
+
+\bibitem{Lewis88}
+Lewis, R.R., Estevez, E.D.: The ecology of {T}ampa {B}ay, {F}lorida: An
+  estuarine profile.
+\newblock Tech. Rep. Biological Report 85(7.18), US Fish and Wildlife Service,
+  Washington DC, USA (1988)
+
+\bibitem{Lewis85}
+Lewis, R.R., Whitman, R.L.: A new geographic description of the boundaries and
+  subdivisions of {T}ampa {B}ay.
+\newblock In: S.F. Treat, J.L. Simon, R.R. Lewis, R.L. Whitman (eds.)
+  Proceedings of the Tampa Bay Area Scientific Information Symposium, pp.
+  10--18. Florida Sea Grant Report No. 65, Bellwether Press, Tampa, Florida,
+  USA (1985)
+
+\bibitem{Lipp01}
+Lipp, E.K., Schmidt, N., Luther, M.E., Rose, J.B.: Determining the effects of
+  {E}l {N}i\~{n}o-{S}outhern {O}scillation events on coastal water quality.
+\newblock Estuaries and Coasts \textbf{24}(4), 491--497 (2001)
+
+\bibitem{Medalie12}
+Medalie, L., Hirsch, R.M., Archfield, S.A.: Use of flow-normalization to
+  evaluate nutrient concentration and flux changes in {L}ake {C}hamplain
+  tributaries, 1990-2009.
+\newblock Journal of Great Lakes Research \textbf{38}(SI), 58--67 (2012)
+
+\bibitem{Moyer12}
+Moyer, D.L., Hirsch, R.M., Hyer, K.E.: Comparison of two regression-based
+  approaches for determining nutrient and sediment fluxes and trends in the
+  {C}hesapeake {B}ay watershed.
+\newblock Tech. Rep. Scientific Investigations Report 2012-544, US Geological
+  Survey, US Department of the Interior, Reston, Virginia (2012)
+
+\bibitem{Nixon95}
+Nixon, S.W.: Coastal marine eutrophication: A definition, social causes, and
+  future concerns.
+\newblock Ophelia \textbf{41}, 199--219 (1995)
+
+\bibitem{Poe05}
+Poe, A., Hackett, K., Janicki, S., Pribble, R., Janicki, A.: Estimates of total
+  nitrogen, total phosphorus, total suspended solids, and biochemical oxygen
+  demand loadings to {T}ampa {B}ay, {F}lorida: 1999-2003.
+\newblock Tech. Rep. \#02-05, Tampa Bay Estuary Program, St. Petersburg,
+  Florida, USA (2005)
+
+\bibitem{Powers05}
+Powers, S.P., Peterson, C.H., Christian, R.R., Sullivan, E., Powers, M.J.,
+  Bishop, M.J., Buzzelli, C.P.: Effects of eutrophication on bottom habitat and
+  prey resources of demersal fishes.
+\newblock Marine Ecology Progress Series \textbf{302}, 233--243 (2005)
+
+\bibitem{Pribble01}
+Pribble, R., Janicki, A., Zarbock, H., Janicki, S., Winowitch, M.: Estimates of
+  total nitrogen, total phosphorus, total suspended solids, and biochemical
+  oxygen demand loadings to {T}ampa {B}ay, {F}lorida: 1995-1998.
+\newblock Tech. Rep. \#05-01, Tampa Bay Estuary Program, St. Petersburg,
+  Florida, USA (2001)
+
+\bibitem{Rosenberg85}
+Rosenberg, R.: Eutrophication -- the future marine coastal nuisance?
+\newblock Marine Pollution Bulletin \textbf{16}(6), 227--231 (1985)
+
+\bibitem{Santos80}
+Santos, S.L., Simon, J.L.: Marine soft-bottom community establishment following
+  annual defaunation: Larval or adult recruitment.
+\newblock Marine Ecology - Progress Series \textbf{2}(3), 235--241 (1980)
+
+\bibitem{Sprague11}
+Sprague, L.A., Hirsch, R.M., Aulenbach, B.T.: Nitrate in the {M}ississippi
+  {R}iver and its tributaries, 1980 to 2008: Are we making progress?
+\newblock Environmental Science and Technology \textbf{45}(17), 7209--7216
+  (2011)
+
+\bibitem{TBEP11}
+{TBEP (Tampa Bay Estuary Program)}: {Tampa Bay Water Atlas} (2011).
+\newblock \url{http://www.tampabay.wateratlas.usf.edu/}. (Accessed October,
+  2013)
+
+\bibitem{Tomasko05}
+Tomasko, D.A., Corbett, C.A., Greening, H.S., Raulerson, G.E.: Spatial and
+  temporal variation in seagrass coverage in {S}outhwest {F}lorida: Assessing
+  the relative effects of anthropogenic nutrient load reductions and rainfall
+  in four contiguous estuaries.
+\newblock Marine Pollution Bulletin \textbf{50}(8), 797--805 (2005)
+
+\bibitem{Zarbock94}
+Zarbock, H., Janicki, A., Wade, D., Heimbuch, D., Wilson, H.: Estimates of
+  total nitrogen, total phosphorus, and total suspended solids loadings ot
+  {T}ampa {B}ay, {F}lorida.
+\newblock Tech. Rep. No. 04-94, Prepared for the Tampa Bay National Estuary
+  Program, St. Petersburg, Florida, USA (1994)
+
+\bibitem{Zhang13}
+Zhang, Q., Brady, D.C., Ball, W.P.: Long-term seasonal trends of nitrogen,
+  phosphorus, and suspended sediment load from the non-tidal {S}usquehanna
+  {R}iver {B}asin to {C}hesapeake {B}ay.
+\newblock Science of the Total Environment \textbf{452-453}, 208--221 (2013)
+
+\end{thebibliography}
