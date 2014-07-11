@@ -23,6 +23,11 @@ Caffrey, J.M.: Production, respiration and net ecosystem metabolism in {U.S.}
 \newblock Environmental Monitoring and Assessment \textbf{81}(1-3), 207--219
   (2003)
 
+\bibitem{Carpenter06}
+Carpenter, S.R., Brock, W.A.: Rising variance: A leading indicator of
+  ecological transition.
+\newblock Ecology Letters \textbf{9}(3), 308--315 (2006)
+
 \bibitem{Cloern96}
 Cloern, J.E.: Phytoplankton bloom dynamics in coastal ecosystems: {A} review
   with some general lessons from sustained investigation of {S}an {F}rancisco
@@ -33,6 +38,18 @@ Cloern, J.E.: Phytoplankton bloom dynamics in coastal ecosystems: {A} review
 Cloern, J.E.: Our evolving conceptual model of the coastal eutrophication
   problem.
 \newblock Marine Ecology Progress Series \textbf{210}, 223--253 (2001)
+
+\bibitem{Cloern10}
+Cloern, J.E., Jassby, A.D.: Patterns and scales of phytoplankton variability in
+  estuarine-coastal ecosystems.
+\newblock Estuaries and Coasts \textbf{33}(2), 230--241 (2010)
+
+\bibitem{Cohn92}
+Cohn, T.A., Caulder, D.L., Gilroy, E.J., Zynjuk, L.D., Summers, R.M.: The
+  validity of a simple statistical model for estimating fluvial constituent
+  loads: An empirical study involving nutrient loads entering {C}hesapeake
+  {B}ay.
+\newblock Water Resources Research \textbf{28}(9), 2353--2363 (1992)
 
 \bibitem{CPC13}
 {CPC (Climate Prediction Center)}: {N}ational {W}eather {S}ervice {C}limate
@@ -159,16 +176,40 @@ Santos, S.L., Simon, J.L.: Marine soft-bottom community establishment following
   annual defaunation: Larval or adult recruitment.
 \newblock Marine Ecology - Progress Series \textbf{2}(3), 235--241 (1980)
 
+\bibitem{Schaeffer12}
+Schaeffer, B.A., Hagy, J.D., Conmy, R.N., Lehrter, J.C., Stumpf, R.P.: An
+  approach to developing numeric water quality criteria for coastal waters
+  using the {SeaWiFS} satellite data record.
+\newblock Environmental Science and Technology \textbf{46}(2), 916--922 (2012)
+
+\bibitem{Schmidt02}
+Schmidt, N., Luther, M.E.: {ENSO} impacts on salinity in {T}ampa {B}ay,
+  {F}lorida.
+\newblock Estuaries and Coasts \textbf{25}(5), 976--984 (2002)
+
 \bibitem{Sprague11}
 Sprague, L.A., Hirsch, R.M., Aulenbach, B.T.: Nitrate in the {M}ississippi
   {R}iver and its tributaries, 1980 to 2008: Are we making progress?
 \newblock Environmental Science and Technology \textbf{45}(17), 7209--7216
   (2011)
 
+\bibitem{Stoddard06}
+Stoddard, J.L., Larsen, D.P., Hawkins, C.P., Johnson, R.K., Norris, R.H.:
+  Setting expectations for the ecological condition of streams: The concept of
+  reference condition.
+\newblock Ecological Applications \textbf{16}(4), 1267--1276 (2006)
+
 \bibitem{TBEP11}
 {TBEP (Tampa Bay Estuary Program)}: {Tampa Bay Water Atlas} (2011).
 \newblock \url{http://www.tampabay.wateratlas.usf.edu/}. (Accessed October,
   2013)
+
+\bibitem{Terrell96}
+Terrell, J.W., Cade, B.S., Carpenter, J., Thompson, J.M.: Modeling stream fish
+  habitat limitations from wedge-shaped patterns of variation in standing
+  stock.
+\newblock Transactions of the American Fisheries Society \textbf{125}(1),
+  104--117 (1996)
 
 \bibitem{Tomasko05}
 Tomasko, D.A., Corbett, C.A., Greening, H.S., Raulerson, G.E.: Spatial and
@@ -176,6 +217,11 @@ Tomasko, D.A., Corbett, C.A., Greening, H.S., Raulerson, G.E.: Spatial and
   the relative effects of anthropogenic nutrient load reductions and rainfall
   in four contiguous estuaries.
 \newblock Marine Pollution Bulletin \textbf{50}(8), 797--805 (2005)
+
+\bibitem{Wofsy83}
+Wofsy, S.C.: A simple model to predict extinction coefficients and
+  phytoplankton biomass in eutrophic waters.
+\newblock Limnology and Oceanography \textbf{28}(6), 1144--1155 (1983)
 
 \bibitem{Zarbock94}
 Zarbock, H., Janicki, A., Wade, D., Heimbuch, D., Wilson, H.: Estimates of
