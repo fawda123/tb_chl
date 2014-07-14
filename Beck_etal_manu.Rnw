@@ -469,7 +469,7 @@ Management over several decades has been successful in improving water quality i
 Overall, the ability to describe the data and aspects of long-term changes has been improved by adaptation of the \ac{WRTDS} approach to Tampa Bay. Such techniques are critical for informing the nutrient-response paradigm in coastal systems, providing an incentive for validation with additional long-term datasets.
 
 \begin{acknowledgements}
-We acknowledge the significant efforts of the Hillsborough County Environmental Protection Commission and the Tampa Bay Estuary Program in developing and providing access to high quality data sets.  We also acknowledge the work of R. Hirsch and colleagues on the \ac{WRTDS} model. This study was funded by the US \acl{EPA}, but the contents are solely the views of the authors.  Use of trade names does not constitute endorsement by the US government.
+We acknowledge the significant efforts of the Hillsborough County Environmental Protection Commission and the Tampa Bay Estuary Program in developing and providing access to high quality data sets.  We thank R. Hirsch for providing helpful comments on an earlier draft of the manuscript.  We acknowledge the efforts of R. Hirsch and colleagues for developing the original \ac{WRTDS} method. This study was funded by the US \acl{EPA}, but the contents are solely the views of the authors.  Use of trade names does not constitute endorsement by the US government.
 \end{acknowledgements}
 
 \bibliographystyle{spmpsci} 
@@ -484,7 +484,7 @@ We acknowledge the significant efforts of the Hillsborough County Environmental 
 #uses function defined in preamble
 #summary of segment characteristics
 
-segs<-c('HB','OTB','MTB','LTB')
+segs<-c('HB\\textsuperscript{\\textit{a}}','OTB','MTB','LTB')
 
 #from Lewis and Whitman 85
 area.km2<-c(105.3,200.7,309.9,246.6)
@@ -506,7 +506,7 @@ dat<-data.frame(area.km2,shore.km,depth.m,wshed.km2,chla.12,sal.12)
 
 cap.val<-'Summary of characteristics for Tampa Bay segments.  Mean chlorophyll and salinity data for 2012 are shown. Sources: \\cite{Lewis85,Lewis88}.'
 
-foot.val<-'\\footnotesize \\textit{Note:} HB: Hillsborough Bay, OTB: Old Tampa Bay,  MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
+foot.val<-'\\footnotesize \\textit{\\textsuperscript{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay,  MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
 cnames<-c('Area (km$^2$)','Shoreline length (km)','Mean depth (m)','Watershed area (km$^2$)','Chlorophyll-\\textit{a} (\\mugl)','Salinity')
 cnames<-paste0('\\head{2cm}{',cnames,'}')
@@ -623,10 +623,13 @@ res2 <- get_yrsum(c(2005, 2012))
 mods<-factor(res1$variable,
   labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
 
-segs <- unique(res1$seg)
+segs <- as.character(unique(res1$seg))
+segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 
 to.tab <- cbind(res1[, -c(1:2)], res2[, -c(1:2)])
 cap.val<-'Expected changes in chlorophyll (\\mugl, percent in parentheses) from 1974 to 2012 and 2005 to 2012 from each model and Bay segment at low, moderate, and high values for fraction of freshwater ($Sal_{ff}$).  Values are the estimated differences in predicted \\ac{chl} concentrations for July in each year.  Low, moderate, and high are relative values for each segment for all years during July.'
+
+foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
 latex(
   to.tab,
@@ -641,6 +644,7 @@ latex(
   rgroup=segs,
   n.rgroup=c(rep(3,4)),
   rowname=mods,
+  insert.bottom=foot.val, 
   label='tab:trendest'
   )
 @
@@ -653,6 +657,7 @@ latex(
 
 #row labels
 segs<-levels(null.dat$seg)
+segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 stat<-null.dat$stat
 stat<-factor(stat,levels=c('rsq','rmse'),labels=c('$R^2$','$RMSE$'))
 #retain only data
@@ -660,7 +665,7 @@ null.dat<-subset(null.dat,select=-c(seg,stat))
 
 cap.val<-'Model performance by bay segment comparing non-weighted and weighted regression.  Performance is evaluated using $R^2$ for mean models, pseudo-$R^2$ for 90\\textsuperscript{th} and \\ten ($\\tau$) models, and \\ac{RMSE} for all models (statistics by Bay segment).'
 
-foot.val<-'\\footnotesize \\textit{Note:} HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
+foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
 latex(
   null.dat,
@@ -705,7 +710,7 @@ col.yrs<-paste0('{\\bf ',levels(est$time.cat),'}')
 # season periods
 break.vals<-c(-Inf,0.2,0.45,0.7,+Inf)
 est$seas.cat<-cut(as.numeric(as.character(est$month.num)),break.vals,
-  labels=c('winter','spring','summer','fall')
+  labels=c('winter\\textsuperscript{\\textit{b}}','spring','summer','fall')
   )
 col.seas<-paste0('{\\bf ',levels(est$seas.cat),'}') 
 
@@ -774,6 +779,8 @@ mod.dat1<-data.frame(recast(mod.dat1,seg+model~time.cat+variable))
 
 mods<-factor(mod.dat1$model,labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
 segs<-levels(mod.dat1$seg)
+segs2 <- segs
+
 mod.dat1<-mod.dat1[,-c(1:2)]
 
 #format p values and combine with slope values, seas table
@@ -796,6 +803,7 @@ mod.dat2<-data.frame(recast(mod.dat2,seg+model~seas.cat+variable))
 
 mods<-factor(mod.dat2$model,labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
 segs<-levels(mod.dat2$seg)
+segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 mod.dat2<-mod.dat2[,-c(1:2)]
 
 #combine yr and season tables
@@ -805,7 +813,7 @@ est<-rbind(as.matrix(mod.dat1),mid_cols,mid_cols2,as.matrix(mod.dat2))
 
 cap.val<-'Decadal and seasonal summaries of salinity-normalized \\ac{chl} (\\mugl) trends by Bay segment. Trends are evaluated for models fit through the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} percentile ($\\tau$) distributions.  Mean and slope ($\\Delta$ chl-\\textit{a}) estimates are aggregated by year or season categories using monthly results.  Slopes indicate the change in \\ac{chl} with increasing time for each year or season category.'
 
-foot.val<-'\\footnotesize \\textit{Note:} *$p<0.05$; **$p<0.01$; ***$p<0.001$; HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
+foot.val<-'\\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$\\\\\\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\\\\\\textsuperscript{\\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND' 
 
 out.tab <- capture.output(latex(
   est,
@@ -815,7 +823,7 @@ out.tab <- capture.output(latex(
   caption=cap.val,
   dcolumn=T,
   caption.loc='top',
-  rgroup=c(segs,'','',segs),
+  rgroup=c(segs,'','',segs2),
   n.rgroup=c(rep(3,4),1,1,rep(3,4)),
   n.cgroup=rep(2,4),
   cgroup=col.yrs,
@@ -849,7 +857,7 @@ est$yr.cat<-cut(as.numeric(est$dec.time),break.vals,
 col.yrs<-paste0('{\\bf ',levels(est$yr.cat),'}') 
 break.vals<-c(-Inf,0.2,0.45,0.7,+Inf)
 est$seas.cat<-cut(as.numeric(as.character(est$month.num)),break.vals,
-  labels=c('winter','spring','summer','fall')
+  labels=c('winter\\textsuperscript{\\textit{b}}','spring','summer','fall')
   )
 col.seas<-paste0('{\\bf ',levels(est$seas.cat),'}') 
 
@@ -880,11 +888,13 @@ mods<-c(as.character(mods),'',as.character(mods))
 est<-rbind(as.matrix(yr.est),c('','',col.seas),as.matrix(seas.est))
 
 segs<-c('HB','OTB','MTB','LTB')
+segs2 <- segs
+segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 est<-est[,-c(1:2)]
 
 cap.val<-'Variability in \\ac{chl} (\\mugl) for Bay segments by year and seasons using salinity-normalized predictions.  Variability (\\%) was quantified as the standard deviation of predictions by year (or season) category divided by the mean of predictions by year (or season) category.  Trends are evaluated for models fit through the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'
 
-foot.val<-'\\footnotesize \\textit{Note:} winter: JFM, spring: AMJ, summer: JAS, fall: OND; HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay' 
+foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay\\\\\\textsuperscript{\\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND' 
 
 out.tab<-capture.output(latex(
   est,
@@ -895,7 +905,7 @@ out.tab<-capture.output(latex(
   colheads=col.yrs,
   dcolumn=T,
   caption.loc='top',
-  rgroup=c(segs,'',segs),
+  rgroup=c(segs,'',segs2),
   n.rgroup=c(rep(3,4),1,rep(3,4)),
   rowname=mods,
   label='tab:nrmcv'
@@ -1006,12 +1016,13 @@ cors<-cors[order(cors$seg,cors$variable),]
 mods<-factor(cors$variable,levels=c('res.md','res.hi','res.lo'),labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
 
 segs<-c('HB','MTB','OTB','LTB')
+segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 cors<-cors[,-c(1:2)]
 names(cors)<-c('seagrass','annual','season','load','conc.')
 
 cap.val<-'Correlations between model residuals for each bay segment and potential drivers of \\ac{chl} (\\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), mean ENSO index values by season and year, and total nitrogen load (kg$\\cdot$mo$^{-1}$) and concentration (\\mugl).'
 
-foot.val<-'\\footnotesize \\textit{Note:} *$p<0.05$; **$p<0.01$; ***$p<0.001$; for Pearson correlations, sample size varies from 11 to 308, HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay' 
+foot.val<-'\\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$; for Pearson correlations, sample size varies from 11 to 308\\\\\\textsuperscript{\\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay' 
 
 latex( 
   cors,
