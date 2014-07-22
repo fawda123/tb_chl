@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  14 JUL 2014 12:02
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  22 JUL 2014 18:00
 entering extended mode
 **Beck_etal_manu.tex
 (M:\docs\manuscripts\tb_chl\Beck_etal_manu.tex
@@ -735,10 +735,14 @@ Package acronym Info: Label `acro:chl' overridden on input line 177.
 Package acronym Info: Label `acro:ENSO' newly defined as it shall be overridden
 
 although it is yet undefined on input line 179.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [2]
 Package acronym Info: Label `acro:EPC' newly defined as it shall be overridden
 although it is yet undefined on input line 185.
- [3]
+
+[3]
 Package acronym Info: Label `acro:RMSE' newly defined as it shall be overridden
 
 although it is yet undefined on input line 209.
@@ -748,20 +752,11 @@ Overfull \hbox (7.51837pt too wide) in paragraph at lines 215--216
 -els in $[]$-transformed space is bias as-so-ci-ated with back-transformation
  []
 
-
-Overfull \hbox (12.42253pt too wide) in paragraph at lines 215--216
-\OT1/ptm/m/n/9.5 [[]]. Specif-i-cally, pre-dicted val-ues that are back-transfo
-rmed by ex-po-nen-tion may be bi-ased due to vari-a-tion in the concentration-
- []
-
 [4]
 Package acronym Info: Label `acro:SST' newly defined as it shall be overridden
 although it is yet undefined on input line 234.
- [5] [6] [7] [8] (M:\docs\manuscripts\tb_chl\Beck_etal_manu.bbl
-Underfull \vbox (badness 4792) has occurred while \output is active []
-
- [9]
-[10]) [11]
+ [5] [6] [7] [8] (M:\docs\manuscripts\tb_chl\Beck_etal_manu.bbl [9] [10])
+[11]
 Underfull \hbox (badness 4403) in paragraph at lines 314--314
 []|\OT1/ptm/m/n/8 Shoreline length
  []
@@ -789,14 +784,14 @@ Package array Warning: Column . is already defined on input line 465.
 pdfTeX warning: pdflatex.exe (file M:/docs/manuscripts/tb_chl/figs/tb_map.pdf):
  PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
 
-<M:/docs/manuscripts/tb_chl/figs/tb_map.pdf, id=360, 575.53723pt x 578.49426pt>
+<M:/docs/manuscripts/tb_chl/figs/tb_map.pdf, id=365, 575.53723pt x 578.49426pt>
 File: M:/docs/manuscripts/tb_chl/figs/tb_map.pdf Graphic file (type pdf)
 <use M:/docs/manuscripts/tb_chl/figs/tb_map.pdf>
 Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/tb_map.pdf used on inp
 ut line 565.
 (pdftex.def)             Requested size: 422.77664pt x 424.94542pt.
 
-<M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, id=369, page=1, 505.89pt x 289.08
+<M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, id=374, page=1, 505.89pt x 289.08
 pt>
 File: M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf Graphic file (type pdf)
  <use M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, page 1>
@@ -809,7 +804,7 @@ Overfull \hbox (4.0pt too wide) in paragraph at lines 577--578
  []
 
 
-<M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, id=370, page=2, 505.89pt x 289.08
+<M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, id=375, page=2, 505.89pt x 289.08
 pt>
 File: M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf Graphic file (type pdf)
  <use M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf, page 2>
@@ -823,7 +818,7 @@ Overfull \hbox (4.0pt too wide) in paragraph at lines 582--583
 
 Package acronym Info: Label `acro:IQR' newly defined as it shall be overridden
 although it is yet undefined on input line 589.
-<M:/docs/manuscripts/tb_chl/figs/wtex.pdf, id=375, 505.89pt x 614.295pt>
+<M:/docs/manuscripts/tb_chl/figs/wtex.pdf, id=380, 505.89pt x 614.295pt>
 File: M:/docs/manuscripts/tb_chl/figs/wtex.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/wtex.pdf>
@@ -831,7 +826,7 @@ Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/wtex.pdf used on input
  line 597.
 (pdftex.def)             Requested size: 433.62pt x 526.54932pt.
 
-<M:/docs/manuscripts/tb_chl/figs/predobs.pdf, id=376, 614.295pt x 361.35pt>
+<M:/docs/manuscripts/tb_chl/figs/predobs.pdf, id=381, 614.295pt x 361.35pt>
 File: M:/docs/manuscripts/tb_chl/figs/predobs.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/predobs.pdf>
@@ -839,7 +834,7 @@ Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/predobs.pdf used on in
 put line 610.
 (pdftex.def)             Requested size: 433.62pt x 255.07158pt.
 
-<M:/docs/manuscripts/tb_chl/figs/hbslice.pdf, id=379, 307.1475pt x 180.675pt>
+<M:/docs/manuscripts/tb_chl/figs/hbslice.pdf, id=382, 307.1475pt x 180.675pt>
 File: M:/docs/manuscripts/tb_chl/figs/hbslice.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/hbslice.pdf>
@@ -847,7 +842,7 @@ Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/hbslice.pdf used on in
 put line 622.
 (pdftex.def)             Requested size: 216.81pt x 127.53578pt.
 
-<M:/docs/manuscripts/tb_chl/figs/salnrm.pdf, id=380, 614.295pt x 361.35pt>
+<M:/docs/manuscripts/tb_chl/figs/salnrm.pdf, id=383, 614.295pt x 361.35pt>
 File: M:/docs/manuscripts/tb_chl/figs/salnrm.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/salnrm.pdf>
@@ -855,7 +850,7 @@ Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/salnrm.pdf used on inp
 ut line 634.
 (pdftex.def)             Requested size: 433.62pt x 255.07158pt.
 
-<M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf, id=381, 614.295pt x 361.35pt>
+<M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf, id=384, 614.295pt x 361.35pt>
 File: M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf>
@@ -863,7 +858,7 @@ Package pdftex.def Info: M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf used on in
 put line 646.
 (pdftex.def)             Requested size: 433.62pt x 255.07158pt.
 
-<M:/docs/manuscripts/tb_chl/figs/dyna.pdf, id=382, 614.295pt x 361.35pt>
+<M:/docs/manuscripts/tb_chl/figs/dyna.pdf, id=385, 614.295pt x 361.35pt>
 File: M:/docs/manuscripts/tb_chl/figs/dyna.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/dyna.pdf>
@@ -876,7 +871,7 @@ cs/manuscripts/tb_chl/figs/wtex.pdf>] [18 <M:/docs/manuscripts/tb_chl/figs/pred
 obs.pdf> <M:/docs/manuscripts/tb_chl/figs/hbslice.pdf>] [19 <M:/docs/manuscript
 s/tb_chl/figs/salnrm.pdf> <M:/docs/manuscripts/tb_chl/figs/salnrm2.pdf>] [20 <M
 :/docs/manuscripts/tb_chl/figs/dyna.pdf>]
-<M:/docs/manuscripts/tb_chl/figs/sup.pdf, id=501, 831.105pt x 325.215pt>
+<M:/docs/manuscripts/tb_chl/figs/sup.pdf, id=504, 831.105pt x 325.215pt>
 File: M:/docs/manuscripts/tb_chl/figs/sup.pdf Graphic file (type pdf)
 
 <use M:/docs/manuscripts/tb_chl/figs/sup.pdf>
@@ -887,13 +882,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.678 ...ay, LTB: Lower Tampa Bay.\label{fig:sup}}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{figure.1}) has been already used, duplicat
-e ignored
-<to be read again> 
-                   \relax 
-l.678 ...ay, LTB: Lower Tampa Bay.\label{fig:sup}}
+l.678 ...hrough the mean response.\label{fig:sup}}
                                                    [21
 
 
@@ -913,13 +902,13 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 685.
  ) 
 Here is how much of TeX's memory you used:
- 11070 strings out of 493921
- 176982 string characters out of 3147282
+ 11073 strings out of 493921
+ 177012 string characters out of 3147282
  334404 words of memory out of 3000000
- 14062 multiletter control sequences out of 15000+200000
+ 14064 multiletter control sequences out of 15000+200000
  45125 words of font info for 98 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 36i,12n,47p,2248b,513s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,12n,47p,2248b,515s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fon
@@ -931,9 +920,9 @@ bol/usyr.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/
 Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmbi8a.pfb><C:/Program Files/Mi
 KTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on Beck_etal_manu.pdf (21 pages, 874205 bytes).
+Output written on Beck_etal_manu.pdf (21 pages, 874893 bytes).
 PDF statistics:
- 579 PDF objects out of 1000 (max. 8388607)
- 110 named destinations out of 1000 (max. 500000)
+ 582 PDF objects out of 1000 (max. 8388607)
+ 111 named destinations out of 1000 (max. 500000)
  83 words of extra memory for PDF output out of 10000 (max. 10000000)
 

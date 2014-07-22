@@ -1,6 +1,8 @@
 .Rproj.user
 .Rhistory
-.RData
+cache/*
+*.RData
+*.rdb
 dyna.tif
 hbslice.tif
 obsyrmo.tif
