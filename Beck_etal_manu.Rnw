@@ -339,6 +339,8 @@ To improve the description of long-term changes in water quality, a weighted reg
 \keywords{Trend analysis \and Weighted regression \and Estuary \and Chlorophyll \and Salinity \and Tampa Bay}
 \end{abstract}
 
+\linenumbers
+
 \acresetall
 \section{Introduction} \label{intro}
 
