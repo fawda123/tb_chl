@@ -121,9 +121,6 @@
 
 
 
-%function to format p values
-
-
 %%%%%%
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
@@ -299,15 +296,14 @@ We acknowledge the significant efforts of the Hillsborough County Environmental 
 \end{acknowledgements}
 
 \bibliographystyle{spmpsci} 
-\bibliography{M:/docs/ref_diss}
+\bibliography{ref_diss}
 \clearpage
 
 %%%%%%
 %tables
 
 %segment characteristics
-% latex.default(dat, file = "", caption.loc = "top", caption = cap.val,      insert.bottom = foot.val, rowname = segs, colheads = cnames,      rowlabel = "Segment", label = "tab:segsum", digits = 5, double.slash = F,      multicol = F, col.just = rep("l", ncol(dat))) 
-%
+%latex.default(dat, file = "", caption.loc = "top", caption = cap.val,     insert.bottom = foot.val, rowname = segs, colheads = cnames,     rowlabel = "Segment", label = "tab:segsum", digits = 5, double.slash = F,     multicol = F, col.just = rep("l", ncol(dat)))%
 \begin{table}[!tbp]
 \caption{Summary of characteristics for Tampa Bay segments.  Mean chlorophyll and salinity data for 2012 are shown. Sources: \cite{Lewis85,Lewis88}.\label{tab:segsum}} 
 \begin{center}
@@ -320,15 +316,13 @@ OTB&$200.7$&$339.8$&$2.8$&$ 874.4$&$7.6$&$23.5$\tabularnewline
 MTB&$309.9$&$262.8$&$4.1$&$1062.7$&$6.1$&$27.1$\tabularnewline
 LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \hline
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
+
 \footnotesize \textit{\textsuperscript{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay,  MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\end{table}
 
 
-
 % model trends from predicted results
-% latex.default(to.tab, file = "", rowlabel = "{\\bf Models}",      caption = cap.val, dcolumn = T, caption.loc = "top", cgroup = c("1974-2012",          "2005-2012"), n.cgroup = c(rep(3, 2)), colheads = names(to.tab),      rgroup = segs, n.rgroup = c(rep(3, 4)), rowname = mods, insert.bottom = foot.val,      label = "tab:trendest") 
-%
+%latex.default(to.tab, file = "", rowlabel = "{\\bf Models}",     caption = cap.val, dcolumn = T, caption.loc = "top", cgroup = c("1974-2012",         "2005-2012"), n.cgroup = c(rep(3, 2)), colheads = names(to.tab),     rgroup = segs, n.rgroup = c(rep(3, 4)), rowname = mods, insert.bottom = foot.val,     label = "tab:trendest")%
 \newcolumntype{.}{D{.}{.}{-1}}
 \begin{table}[!tbp]
 \caption{Expected changes in chlorophyll (\mugl, percent in parentheses) from 1974 to 2012 and 2005 to 2012 from each model and Bay segment at low, moderate, and high values for fraction of freshwater ($Sal_{ff}$).  Values are the estimated differences in predicted \ac{chl} concentrations for July in each year.  Low, moderate, and high are relative values for each segment for all years during July.\label{tab:trendest}} 
@@ -359,15 +353,13 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~0.9 $\tau$&0.05 {\footnotesize (0.9)}&0.7 {\footnotesize (9.1)}&2.1 {\footnotesize (24.0)}&&-1.0 {\footnotesize (-14.4)}&-1.9 {\footnotesize (-18.6)}&-3.2 {\footnotesize (-22.7)}\tabularnewline
 ~~0.1 $\tau$&1.8 {\footnotesize (78.6)}&2.0 {\footnotesize (72.8)}&3.0 {\footnotesize ( 99.7)}&&0.8 {\footnotesize (22.8)}&1.2 {\footnotesize (34.1)}&2.1 {\footnotesize (54.4)}\tabularnewline
 \hline
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
+
 \footnotesize \textsuperscript{\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\end{table}
 
 
-
 %model performance vs OLS
-% latex.default(null.dat, file = "", caption.loc = "top", caption = cap.val,      insert.bottom = foot.val, cgroup = c("mean", "0.9 $\\tau$",          "0.1 $\\tau$"), n.cgroup = c(2, 2, 2), colheads = rep(c("Non-wtd",          "Wtd"), 3), rowlabel = "Statistic", rowname = stat, n.rgroup = rep(2,          4), rgroup = segs, label = "tab:modperf", digits = 2,      col.just = rep("l", ncol(null.dat))) 
-%
+%latex.default(null.dat, file = "", caption.loc = "top", caption = cap.val,     insert.bottom = foot.val, cgroup = c("mean", "0.9 $\\tau$",         "0.1 $\\tau$"), n.cgroup = c(2, 2, 2), colheads = rep(c("Non-wtd",         "Wtd"), 3), rowlabel = "Statistic", rowname = stat, n.rgroup = rep(2,         4), rgroup = segs, label = "tab:modperf", digits = 2,     col.just = rep("l", ncol(null.dat)))%
 \begin{table}[!tbp]
 \caption{Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using $R^2$ for mean models, pseudo-$R^2$ for 90\textsuperscript{th} and \ten ($\tau$) models, and \ac{RMSE} for all models (statistics by Bay segment).\label{tab:modperf}} 
 \begin{center}
@@ -393,15 +385,13 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~$R^2$&$0.40$&$0.51$&&$0.26$&$0.37$&&$0.18$&$0.34$\tabularnewline
 ~~$RMSE$&$0.45$&$0.40$&&$0.72$&$0.65$&&$0.77$&$0.68$\tabularnewline
 \hline
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
+
 \footnotesize \textsuperscript{\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\end{table}
 
 
-
 %model trends from salinity-normalized results
-% latex.default(est, file = "", rowlabel = "Models", insert.bottom = foot.val,      caption = cap.val, dcolumn = T, caption.loc = "top", rgroup = c(segs,          "", "", segs2), n.rgroup = c(rep(3, 4), 1, 1, rep(3,          4)), n.cgroup = rep(2, 4), cgroup = col.yrs, rowname = c(as.character(mods),          "", "", as.character(mods)), colheads = rep(c("Mean",          "$\\Delta$ chl-\\textit{a}"), 4), label = "tab:trendsal") 
-%
+%latex.default(est, file = "", rowlabel = "Models", insert.bottom = foot.val,     caption = cap.val, dcolumn = T, caption.loc = "top", rgroup = c(segs,         "", "", segs2), n.rgroup = c(rep(3, 4), 1, 1, rep(3,         4)), n.cgroup = rep(2, 4), cgroup = col.yrs, rowname = c(as.character(mods),         "", "", as.character(mods)), colheads = rep(c("Mean",         "$\\Delta$ chl-\\textit{a}"), 4), label = "tab:trendsal")%
 \newcolumntype{.}{D{.}{.}{-1}}
 \begin{table}[!tbp]
 \caption{Decadal and seasonal summaries of salinity-normalized \ac{chl} (\mugl) trends by Bay segment. Trends are evaluated for models fit through the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} percentile ($\tau$) distributions.  Mean and slope ($\Delta$ chl-\textit{a}) estimates are aggregated by year or season categories using monthly results.  Slopes indicate the change in \ac{chl} with increasing time for each year or season category.\label{tab:trendsal}} 
@@ -432,9 +422,9 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~0.9 $\tau$& 8.32& 0.42 && 8.05&-0.13 && 6.82& 0.12 && 6.56&-0.12*\tabularnewline
 ~~0.1 $\tau$& 2.84& 0.22**&& 2.62&-0.10**&& 2.29& 0.07**&& 2.75& 0.07***\tabularnewline
 \hline
-\multicolumn{1}{l}{\bfseries }&\multicolumn{2}{c}{\bfseries {\bf winter\textsuperscript{\textit{b}}}}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries {\bf spring}}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries {\bf summer}}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries {\bf fall}}\tabularnewline
+{\bfseries }&&&&&&&&&&&\tabularnewline
 \cline{2-3} \cline{5-6} \cline{8-9} \cline{11-12}
-~~&Mean&$\Delta$ chl-\textit{a}&&Mean&$\Delta$ chl-\textit{a}&&Mean&$\Delta$ chl-\textit{a}&&Mean&$\Delta$ chl-\textit{a}\tabularnewline
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}\tabularnewline
 \hline
 {\bfseries HB}&&&&&&&&&&&\tabularnewline
 ~~mean&10.65&-0.45***&&13.75&-0.44***&&22.37&-0.33***&&14.88&-0.39***\tabularnewline
@@ -456,14 +446,12 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~0.9 $\tau$& 4.91&-0.05***&& 5.85&-0.03***&& 9.96&-0.05***&& 8.34&-0.15***\tabularnewline
 ~~0.1 $\tau$& 1.71& 0.01***&& 2.22& 0.00 && 3.73& 0.00 && 2.78& 0.00 \tabularnewline
 \hline
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
+
 \footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$\\\textsuperscript{\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\\\textsuperscript{\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND\end{table}
 
-
 %cv by yr and mo for salinity-normalized predictions
-% latex.default(est, file = "", rowlabel = "{\\bf Models}", insert.bottom = foot.val,      caption = cap.val, colheads = col.yrs, dcolumn = T, caption.loc = "top",      rgroup = c(segs, "", segs2), n.rgroup = c(rep(3, 4), 1, rep(3,          4)), rowname = mods, label = "tab:nrmcv") 
-%
+%latex.default(est, file = "", rowlabel = "{\\bf Models}", insert.bottom = foot.val,     caption = cap.val, colheads = col.yrs, dcolumn = T, caption.loc = "top",     rgroup = c(segs, "", segs2), n.rgroup = c(rep(3, 4), 1, rep(3,         4)), rowname = mods, label = "tab:nrmcv")%
 \newcolumntype{.}{D{.}{.}{-1}}
 \begin{table}[!tbp]
 \caption{Variability in \ac{chl} (\mugl) for Bay segments by year and seasons using salinity-normalized predictions.  Variability (\%) was quantified as the standard deviation of predictions by year (or season) category divided by the mean of predictions by year (or season) category.  Trends are evaluated for models fit through the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} percentile ($\tau$) distributions.\label{tab:nrmcv}} 
@@ -514,14 +502,12 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~0.9 $\tau$&17.8&16.9&17.8&28.6\tabularnewline
 ~~0.1 $\tau$&13.6&21.8&15.7&27.1\tabularnewline
 \hline
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
+
 \footnotesize \textsuperscript{\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay\\\textsuperscript{\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND\end{table}
 
-
 %correlation of model residuals with other variables
-% latex.default(cors, file = "", rowlabel = "Models", insert.bottom = foot.val,      caption = cap.val, caption.loc = "top", rgroup = segs, n.rgroup = rep(3,          4), cgroup = c("", "ENSO", "TN"), n.cgroup = c(1, 2,          2), rowname = mods, label = "tab:cormat") 
-%
+%latex.default(cors, file = "", rowlabel = "Models", insert.bottom = foot.val,     caption = cap.val, caption.loc = "top", rgroup = segs, n.rgroup = rep(3,         4), cgroup = c("", "ENSO", "TN"), n.cgroup = c(1, 2,         2), rowname = mods, label = "tab:cormat")%
 \begin{table}[!tbp]
 \caption{Correlations between model residuals for each Bay segment and potential drivers of \ac{chl} (\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), mean ENSO index values by season and year, and total nitrogen load (kg$\cdot$mo$^{-1}$) and concentration (\mugl).\label{tab:cormat}} 
 \begin{center}
@@ -551,10 +537,9 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 ~~0.9 $\tau$&0.28 &&0.08 &0.03 &&0.06 &0.10 \tabularnewline
 ~~0.1 $\tau$&-0.19 &&0.07 &-0.02 &&0.01 &0.33***\tabularnewline
 \hline
-\end{tabular}
-\end{center}
-\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$; for Pearson correlations, sample size varies from 11 to 308\\\textsuperscript{\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay\end{table}
+\end{tabular}\end{center}
 
+\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$; for Pearson correlations, sample size varies from 11 to 308\\\textsuperscript{\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay\end{table}
 
 \clearpage
 
@@ -564,7 +549,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 %map of TB, made in ArcMap
 \begin{figure}
 \centering
-\includegraphics[width=0.9\textwidth]{M:/docs/manuscripts/tb_chl/figs/tb_map.pdf}
+\includegraphics[width=0.9\textwidth]{figs/tb_map.pdf}
 \caption{The Tampa Bay estuary located on the west coast of central Florida. The Bay is separated into four segments defined by chemical, physical, and geopolitical boundaries \cite{Lewis85}. Monthly water quality monitoring stations are also indicated by their identification number \cite{Boler01}.}
 \label{fig:tb_map}
 \end{figure}
@@ -574,12 +559,12 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}
 \centering
 \subfloat[By year]{
-\includegraphics[width=\textwidth,page=1]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\includegraphics[width=\textwidth,page=1]{figs/obsyrmo.pdf}
 \label{fig:obsyrmo1}
 }
 
 \subfloat[By month]{
-\includegraphics[width=\textwidth,page=2]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\includegraphics[width=\textwidth,page=2]{figs/obsyrmo.pdf}
 \label{fig:obsyrmo2}
 }
 
@@ -596,7 +581,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=6in]{M:/docs/manuscripts/tb_chl/figs/wtex} 
+{\centering \includegraphics[width=6in]{figswtex} 
 
 }
 
@@ -609,7 +594,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=6in]{M:/docs/manuscripts/tb_chl/figs/predobs} 
+{\centering \includegraphics[width=6in]{figspredobs} 
 
 }
 
@@ -621,7 +606,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=3in]{M:/docs/manuscripts/tb_chl/figs/hbslice} 
+{\centering \includegraphics[width=3in]{figshbslice} 
 
 }
 
@@ -633,7 +618,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=6in]{M:/docs/manuscripts/tb_chl/figs/salnrm} 
+{\centering \includegraphics[width=6in]{figssalnrm} 
 
 }
 
@@ -645,7 +630,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=6in]{M:/docs/manuscripts/tb_chl/figs/salnrm2} 
+{\centering \includegraphics[width=6in]{figssalnrm2} 
 
 }
 
@@ -657,7 +642,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=6in]{M:/docs/manuscripts/tb_chl/figs/dyna} 
+{\centering \includegraphics[width=6in]{figsdyna} 
 
 }
 
@@ -678,7 +663,7 @@ Please see the online repository (\href{https://github.com/fawda123/wtreg\_for\_
 \begin{figure}[!ht]
 
 
-{\centering \includegraphics[width=9in]{M:/docs/manuscripts/tb_chl/figs/sup} 
+{\centering \includegraphics[width=9in]{figssup} 
 
 }
 

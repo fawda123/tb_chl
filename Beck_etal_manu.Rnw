@@ -72,12 +72,12 @@
 .libPaths('C:\\Users\\mbeck\\R\\library')
 library(knitr)
 # set global chunk options
-opts_chunk$set(fig.path='M:/docs/manuscripts/tb_chl/figs/', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
+opts_chunk$set(fig.path='figs', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
 options(replace.assign=TRUE,width=90,digits=1)
 @
 
 <<data_imp,include=F,cache=F>>=
-source('M:/r_code/EPC/epc_dat.r')
+source('R/epc_dat.r')
 
 #reorder factors for relevant data frames
 seg.levs<-c('Hillsborough Bay','Old Tampa Bay','Middle Tampa Bay','Lower Tampa Bay')
@@ -282,25 +282,6 @@ rm(list=c('est.seas','enso.est.seas','season','seas.ls','enso.seas'))
 
 @
 
-%function to format p values
-<<pform,cache=T>>=
-p_form<-function(x, tex_out=F){
-  if(x<0.005) out<-'< 0.005'
-  else{
-    if(x<0.05&x>=0.005) out<-as.character(format(round(x,3),nsmall=3))
-    else out<-'ns'
-    }
-  if(tex_out == F) out
-  else{
-    if(out=='< 0.005') '$p<$ 0.005'
-    else{
-      if(out=='ns') '$p=$ ns'
-      else paste('$p=$',out,sep=' ')
-      }
-    }
-  }
-@
-
 %%%%%%
 \begin{document}
 
@@ -475,7 +456,7 @@ We acknowledge the significant efforts of the Hillsborough County Environmental 
 \end{acknowledgements}
 
 \bibliographystyle{spmpsci} 
-\bibliography{M:/docs/ref_diss}
+\bibliography{ref_diss}
 \clearpage
 
 %%%%%%
@@ -1050,7 +1031,7 @@ latex(
 %map of TB, made in ArcMap
 \begin{figure}
 \centering
-\includegraphics[width=0.9\textwidth]{M:/docs/manuscripts/tb_chl/figs/tb_map.pdf}
+\includegraphics[width=0.9\textwidth]{figs/tb_map.pdf}
 \caption{The Tampa Bay estuary located on the west coast of central Florida. The Bay is separated into four segments defined by chemical, physical, and geopolitical boundaries \cite{Lewis85}. Monthly water quality monitoring stations are also indicated by their identification number \cite{Boler01}.}
 \label{fig:tb_map}
 \end{figure}
@@ -1126,7 +1107,7 @@ p2<-ggplot(to.plo,aes(x=month.name,y=Chla_ugl, fill=Median)) +
     axis.title.x = element_text(vjust=-0.5)
     )
 
-pdf('M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf',height=4,width=7,family='serif')
+pdf('figs/obsyrmo.pdf',height=4,width=7,family='serif')
 print(p1)
 print(p2)
 dev.off()
@@ -1135,12 +1116,12 @@ dev.off()
 \begin{figure}
 \centering
 \subfloat[By year]{
-\includegraphics[width=\textwidth,page=1]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\includegraphics[width=\textwidth,page=1]{figs/obsyrmo.pdf}
 \label{fig:obsyrmo1}
 }
 
 \subfloat[By month]{
-\includegraphics[width=\textwidth,page=2]{M:/docs/manuscripts/tb_chl/figs/obsyrmo.pdf}
+\includegraphics[width=\textwidth,page=2]{figs/obsyrmo.pdf}
 \label{fig:obsyrmo2}
 }
 
