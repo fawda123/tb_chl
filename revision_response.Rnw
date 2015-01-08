@@ -1,0 +1,171 @@
+\documentclass[letterpaper,12pt,oneside]{article}
+\usepackage[paperwidth=8.5in,paperheight=11in,top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{setspace}
+\usepackage[colorlinks=true,allcolors=Blue]{hyperref}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{lineno}
+\usepackage{array}
+\usepackage{times}
+\usepackage{cleveref}
+\usepackage{acronym}
+\usepackage[position=t]{subfig}
+\usepackage{paralist}
+\usepackage[noae]{Sweave}
+\usepackage{natbib}
+\usepackage{array}
+\usepackage{pdflscape}
+\bibpunct{(}{)}{,}{a}{}{,}
+
+%page margins and section title formatting
+\linespread{1}
+\setlength{\footskip}{0.5in}
+\titleformat*{\section}{\singlespace\Large\bf}
+\titleformat*{\subsection}{\singlespace\large\bf\em}
+\titleformat*{\subsubsection}{\singlespace\normalsize\bf}
+\titlespacing{\section}{0in}{0in}{0in}
+\titlespacing{\subsection}{0in}{0in}{0in}
+\titlespacing{\subsubsection}{0in}{0in}{0in}
+
+%cleveref options
+\crefname{table}{Table}{Tables}
+\crefname{figure}{Fig.}{Figs.}
+\renewcommand{\figurename}{Fig.}
+
+%acronyms
+\acrodef{chl}[chl-\textit{a}]{chlorophyll-\textit{a}}
+\acrodef{CV}{coefficient of variation}
+\acrodef{ENSO}{El Ni\~{n}o-Southern Oscillation}
+\acrodef{EPA}{Environmental Protection Agency}
+\acrodef{EPC}{Environmental Protection Commission}
+\acrodef{IQR}{interquartile range}
+\acrodef{ppt}{parts per thousand}
+\acrodef{RMSE}[$RMSE$]{root mean square error}
+\acrodef{SST}{Sea Surface Temperature}
+\acrodef{TN}{total nitrogen}
+\acrodef{WRTDS}{Weighted Regressions on Time, Discharge, and Season}
+
+%assorted functions
+%for multiple rows in table headers
+\newcommand{\head}[2]{\multicolumn{1}{>{\arraybackslash}p{#1}}{#2}}
+%for micrograms per litre
+\newcommand{\mugl}{$\mu$g L$^{-1}$}
+%90th and 10th percentile models
+\newcommand{\nine}{90\textsuperscript{th} percentile }
+\newcommand{\ten}{10\textsuperscript{th} percentile }
+%for supplemental figures/tables
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+     
+%knitr options
+<<setup,include=F,cache=F>>=
+.libPaths('C:\\Users\\mbeck\\R\\library')
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='M:/docs/manuscripts/tb_chl/figs/', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
+options(replace.assign=TRUE,width=90,digits=1)
+@
+
+\begin{document}
+
+\raggedbottom
+\raggedright
+\urlstyle{same}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}
+
+\textit{Response to reviewer comments, Environmental Modelling and Assessment ENMO-D-14-00158\\
+Prepared January 5\textsuperscript{th}, 2015, M. Beck, J. Hagy}
+
+Response to review comments are in italics.  All line numbers refer to the original text.
+
+COMMENTS FOR THE AUTHOR:
+
+Editor-in-chief's Comments:
+
+This manuscript has been carefully reviewed by two expert referees and checked by an Associate Editor (AE) who is an internationally recognised authority in the field.  It is clear that in its present form it is not yet suitable for publication in Environmental Modeling and Assessment.  However, the study may, potentially, have sufficient merit and interest that - after a major revision - the paper might be acceptable. If a revision is re-submitted, please address all the issues raised by the referees and the AE and supply a separate attachment itemising changes made in response to these issues.
+
+
+
+AE:
+The manuscript provides an interesting contribution to model and evaluate water quality but needs a profound revision along the valuable comments of the reviewers, especially reviewer no. 1.
+
+
+Reviewer no. 1: The models evaluated in this manuscript extend the weighted regression on time, season, and discharge (WRTDS) method developed by Bob Hirsch by using salinity fraction in place of discharge and estimating a lower (0.10) and upper (0.90) quantile as well mean changes in chlorophyll (the response y).  While I'm supportive in general of more sophisticated regression modeling of this sort of water quality data, especially by incorporating quantiles to complemented mean responses, there are several aspects of the modeling that deserve additional explanation and consideration.  One aspect relates to the implementation and interpretation of the quantile regression estimates and the other aspect relates to the extreme localized smoothing used by the WRTDS method.
+
+(1)  Quantile regression estimates applied to this sort of water quality data certainly have great potential utility for highlighting heterogeneous trends over time or space.  There are several aspects of its implementation that are not explained well here and that I could not find in any of the Hirsch 2014 publications related to WRTDS. 
+The R1 coefficients of determination suggested by Koenker and Machado (1999) for quantile regression goodness-of-fit should probably not be characterized as "pseudo R2" as they differ from the latter by fundamentally different scaling, the former based on a measure of variation based on absolute deviations and the latter on variance with squared deviations.  Thus, the R2 for the mean regressions are not directly comparable to the R1 coefficients of determination for the quantile regression, and the latter will always be smaller than the former.   They can be equated after the fact if so desired, e.g., R*1 = 1 - (1 - R2)0.5 to convert R2 to absolute deviations.  
+
+It is not clear how you calculated the R1 coefficients of determination for the quantiles in your WRTDS implementation.  I know how this should be calculated for a single model, e.g., for the non-weighted columns in Table 3.  But I don't know how you would calculate these for the WRTDS implementation where every observation has a separate model.  Average them across all n models for n observations or some other manual accumulation of residuals from the n observations into a single result?  This needs to be explained as it certainly is not standard for quantile regression.
+
+{\it A common issue with water quality data is the presence of observations that occur beyond the detection limit of the method used to measure the variable of interest.  The most recent version of \ac{WRTDS} method accounts for censored data by using a `survival analysis' technique [ref, ref], which is an adaptation of the weighted Tobit model for left-censored data [ref].  Chlorophyll data for Tampa Bay are also left censored with the most commmon lower detection limit being 2.4 \mugl for individual survey years.  A censored quantile regression approach was used based on methods described in Portnoy [ref] and Koenker [ref].  The method builds on the Kaplan-Meier approximation for a single-sample survival function by generalizing to conditional regression quantiles.  The \texttt{quantreg} package in R [ref]employs this method using recursive estimation of linear conditional quantile functions.  Censored quantile regression models were used withe adapted weighted scheme to model observed \ac{chl} in each segment.  Data were based on median values for all stations within a segment such that the lower detection limits that applied to observations at individual stations were preserved in the combined data.  A segment observation at a given time step was considered censored if it was equal to the known detection limit for a given year.  The lower detection limits were identified by parsing the station data by year to identify values that were flagged accordingly.}
+
+Presumably the adjustment for bias of back transforming estimates (lines 126-139) was only applied to the mean regression estimates and not the quantile estimates as they are equivariant to nonlinear transformations like the logarithmic used here.  This should be made clear.  Indeed, this is nice advantage of the quantile regression estimates for these sorts of models and would suggest that the median (0.50 quantile) estimate might be a useful, simpler quantity to estimate to describe the center of the distribution rather than the mean as you can avoid estimating this back-transformation bias.
+
+{\it converted to median models}
+
+The quantile regression estimates are readily extended to estimating left-censored data associated with below-detection limit responses.  See Portnoy (2003.  Censored regression quantiles. J. American Statistical Association 98(464): 1001-1012) and Koenker (2008.  Censored quantile regression redux.  J. Statistical Software 27(6): 1-25).  This feature has been refined in the implementation of quantile regression in the quantreg package for R, partly based on some of my input regarding use with water quality data. 
+
+(2) The WRTDS approach represents an extreme form of local smoothing of regression estimates that while perhaps desirable from the standpoint of maximizing fit to an observed temporal sequence of water quality measures has the undesirable features of (a) not readily providing measures of uncertainty (e.g., standard errors or confidence intervals) to characterize responses, (b) not readily nested within less complex models with less local smoothing to assess whether more or less local smoothing is adequate, and (c) can't readily incorporate other covariates (e.g., seagrass coverage) into the model.  The WRTDS approach where every observation gets its own regression model is on the extreme opposite of a continuum of smoothing where a single regression relationship across all observations (your non-weighted estimates) is the other extreme.  Your Table 3 results suggest about a 50\% gain in variation explained by going from the single non-weighted regression model to the other extreme of an n-observations locally weighted WRTDS model, which while substantial is still only providing modest improvements in absolute variation explained (e.g., increasing R1 of quantile estimates from 0.30 to 0.45).  It certainly is possible that less extreme locally weighted regression procedures that fit into conventional linear modeling approaches might provide some substantial improvements in variation explained but require far less than the n × p estimated parameters of the WRTDS approach (where p is the number of parameters estimated in each model).  It is relatively simple to make the single regression model with parameters applicable across all observations (your non-weighted model) into a model that is piecewise linear in various regions of the predictor space (e.g, by time of salinity), either by using indicator variables (e.g., Neter et al. 1996.  Applied linear statistical models: 474-478) for continuous or discontinuous pieces or with spline basis functions (e.g. b-splines).  Decisions on how many piecewise linear (or quadratic or cubic) regions and where they should occur can be based on information criterion (e.g,, AIC or BIC) or cross-validation.  For example, it might just require that the time component is broken into 3 regions such that 3 × p parameter estimates provide adequate fit.  Most importantly goodness-of-fit and information criteria can be compared with the simple no locally smoothing model to assess where substantial improvement has been obtained.  These piecewise linear models may never fit quite as well as the extreme locally weighted WRTDS method, but coupled with quantile estimates they may provide a more than adequate characterization of the changing water quality that requires a less extremely parameterized model, that has conventional statistical summary information to characterize uncertainty in estimates and goodness-of-fit, and provides a more parsimonious interpretation of relationships that has greater potential to generalize to other places and times.  It would be interesting in this manuscript if you compared one of these less extreme local smoothing approaches rather than just going to the extreme WRTDS approach.
+
+Other comments by line numbers:
+
+Lines 140-151:  This explanation of normalized predictions doesn't make it real clear what the purpose of this normalization is and why it is required.  Some elaboration is in order. 
+
+{\it The following text was added/modified: 
+
+`Normalization is used to remove the variance in the response that is attributed to a predictor variable, allowing interpretation of trends that are independent of confounding sources of variation. For example, water quality trends that are potentially related to management actions can be more precisely evaluated if changes in pollutant concentrations due to natural variation in discharge are removed.'}
+
+Lines 239-242:  Given that this residual pattern is axiomatic from the quantile regression estimation, it is not clear that it is worth mentioning. 
+
+{\it The lines were removed.}
+
+Table 6:  I think it is important to have sample sizes be meshed with these correlation values rather than just providing their range in the footnote.
+
+{\it The following text was added to the table caption:
+
+`Samples sizes for correlations were 11 for seagrass area, 156 for ENSO index by season, 156 for ENSO index by year, 275 for nitrogen load, and 303 for nitogren concentration with slight variation by segment depending on data availability.'}
+ 
+
+Reviewer no. 2: Comments on Adaptation of a weighted regression approach to evaluate water quality trends in an estuary.
+
+This is an excellent paper and it makes a great contribution to the complex problem of evaluating environmental trends in an estuary.  Finding the means to account for the variability that is due to random variations in freshwater inputs to the estuary is crucial to such analyses, but the analyses must be designed in a way that accounts for the fact that the relationships of water quality variables to inflow and season can change substantially over a period of several decades.  The authors' adaptation of the WRTDS method, designed for rivers, to a method that is appropriate to estuaries is highly creative and thoughtful.  Their inclusion of quantile regression is a useful enhancement to the WRTDS method.  Creation of new exploratory graphics such as Figure 8 is also a very worthwhile addition.  I have a few specific comments.
+
+On line 91 it states that concentrations below the detection limit were set to half the detection limit.  The paper does not mention how common such censored data are in the data set.  Doing this kind of substitution can seriously bias the results of a trend analysis if censored data are common.  The perils of such substitution methods are discussed in Helsel's "Statistics for Censored Environmental Data Using Minitab and R" (Second Edition, Wiley and Company, 2012).  From looking at the graphics in their paper I expect that such censored data were rather rare and if that is the case, then the simple approach that they took to the censored data issue should be no problem.  In my mind something less than about 3\% of the data being censored may be considered low enough to make this a non-issue.  However, I think it would be worthwhile if the readers were informed of the frequency of censored data in their data set.  It should also be noted that since the original paper on WRTDS in 2010 the method has been modified to account for censoring using survival regression.  
+
+{\it The amount of censored data (as a proportion is reported in the methods.}
+
+I had an issue with the choice of words on line 178.  The first sentence of the paragraph is: "Observed seasonality of chl-a was consistent with expected trends."  The use of the word "trends" here is confusing, since "trends" is the central topic of their paper.  I think they had a different meaning in mind for the use of this word in this sentence.  Perhaps they could say "…consistent with the behavior observed in many water bodies [or many estuaries]."  
+
+{\it Sentence modified: `Observed seasonality of \acs{chl} was consistent with the behavior observed in many estuaries.'}
+
+I had some concern with the material in section 3.3, particularly the relationship to ENSO.  They found no significant relationship between their model residuals and ENSO, but I think their statement is a bit misleading.  The WRTDS model already considers the impact of rainfall on chl-a, because salinity is driven by temporally averaged streamflow, which is, in turn driven by rainfall, and some portion of the variability in rainfall is a result of ENSO.  A better way to express their finding here is to say that although salinity may be significantly influenced by ENSO, they found no significant relationship in the unexplained variability in chl-a and ENSO.  They could also elaborate on this point a bit more and consider directly the possibility of a statistically significant relationship between salinity and ENSO, using a model that also accounts for the impact of seasonality.  I think that some clarification of this would improve the paper, although I think the topic is rather tangential to the major points of the paper.  The subsequent discussion of this topic around lines 379-383 does address this topic rather well.
+
+{\it The following text was added to line 157 in the methods to provide a better context for the results:
+
+`ENSO effects were included to evaluate the potential effects of climate variation, such that El Ni\~{n}o/La Ni\~{n}a events have been associated with extreme variation in rainfall that influences freshwater discharge into Tampa Bay [33].  Although salinity as a model predictor may account for this variation, ENSO effects were evaluated to identify potentially unexplained variation in discharge related to extreme climate events as compared to seasonal changes in freshwater inputs.'
+
+Further clarification in the discussion was also added to line 382.
+
+`Additionally, the normalized \acsu{chl} estimates in Fig. 6 differ substantially from predicted values in 1998 for all segments.  High rainfall associated with an El Ni\~{n}o event in the winter of 1997-1998 contributed to increased discharge and nutrient inputs into the Bay, as indicated by higher predicted \ac{chl} values.  Normalized values that removed the effects of freshwater inputs show \ac{chl} values independent of discharge, suggesting the model performs as expected by quantifying and removing this variation through normalization.  However, the variation in \ac{chl} response attributed to unique seasonal changes in discharge cannot be distinguished from extreme climate events using salinity as a proxy for freshwater inputs.'
+}
+
+There is an additional reference that the authors might want to consider including, which only became available around the time they completed this manuscript.  It is a more comprehensive description of the WRTDS model and thus would be of value to readers wishing to understand more about this method.  The reference is:  Hirsch, R. M., and De Cicco, Laura, 2014, User Guide to Exploration and Graphic for RivEr Trends (EGRET) and dataRetrieval: R Packages for Hydrologic Data, USGS Techniques and Methods 4-A10, 95p.  http://pubs.usgs.gov/tm/04/a10/
+
+{\it The reference for Hirsch and De Cicco 2014 was added.}
+
+I strongly encourage the journal to publish this manuscript.  It should have broad applicability to estuaries worldwide, where river inputs of freshwater are a significant driver of water quality conditions in the estuary.
+
+
+\end{document}

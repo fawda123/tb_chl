@@ -59,7 +59,8 @@ Cohn, T.A., Caulder, D.L., Gilroy, E.J., Zynjuk, L.D., Summers, R.M.: The
   (Accessed September, 2013)
 
 \bibitem{Diaz08}
-Diaz, R.J.: Spreading dead zones and consequences for marine ecosystems.
+Diaz, R.J., Rosenberg, R.: Spreading dead zones and consequences for marine
+  ecosystems.
 \newblock Science \textbf{321}, 926--929 (2008)
 
 \bibitem{Duan83}
@@ -76,10 +77,6 @@ Duarte, C.M.: Submerged aquatic vegetation in relation to different nutrient
 Dyer, K.R.: Estuaries: A Physical Introduction.
 \newblock Wiley, London, United Kingdom (1973)
 
-\bibitem{Gilbert87}
-Gilbert, R.O.: Statistical Methods for Environmental Pollution Monitoring.
-\newblock Van Nostrand Reinhold, New York, USA (1987)
-
 \bibitem{Glibert13}
 Glibert, P.M., Hinkle, D.C., Sturgis, B., Jesien, R.V.: Eutrophication of a
   {M}aryland/{V}irginia coastal lagoon: A tipping point, ecosytem changes, and
@@ -92,6 +89,14 @@ Greening, H., Janicki, A.: Toward reversal of eutrophic conditions in a
   reductions in {T}ampa {B}ay, {F}lorida, {USA}.
 \newblock Environmental Management \textbf{38}(2), 163--178 (2006)
 
+\bibitem{Hirsch14}
+Hirsch, R.M., {De Cicco}, L.: User guide to {E}xploration and {G}raphics for
+  {R}iv{E}r {T}rends ({EGRET}) and data{R}etrieval: {R} packages for hydrologic
+  data.
+\newblock Tech. Rep. Techniques and Methods book 4, ch. A10, US Geological
+  Survey, Reston, Virginia (2014).
+\newblock \url{http://pubs.usgs.gov/tm/04/a10/}
+
 \bibitem{Hirsch10}
 Hirsch, R.M., Moyer, D.L., Archfield, S.A.: Weighted regressions on time,
   discharge, and season ({WRTDS}), with an application to {C}hesapeake {B}ay
@@ -103,6 +108,14 @@ Hirsch, R.M., Moyer, D.L., Archfield, S.A.: Weighted regressions on time,
 Jassby, A.D., Cloern, J.E., Cole, B.E.: Annual primary production: Patterns and
   mechanisms of change in a nutrient-rich tidal ecosystem.
 \newblock Limnology and Oceanography \textbf{47}(3), 698--712 (2002)
+
+\bibitem{Koenker08}
+Koenker, R.: Censored quantile regression redux.
+\newblock Journal of Statistical Software \textbf{27}(6), 1--25 (2008)
+
+\bibitem{Koenker13}
+Koenker, R.: quantreg: {Q}uantile regression {R} package 5.05. (2013).
+\newblock \url{http://CRAN.R-project.org/package=quantreg}
 
 \bibitem{Koenker99}
 Koenker, R., Machado, J.A.F.: Goodness of fit and related inference processes
@@ -153,6 +166,11 @@ Poe, A., Hackett, K., Janicki, S., Pribble, R., Janicki, A.: Estimates of total
   demand loadings to {T}ampa {B}ay, {F}lorida: 1999-2003.
 \newblock Tech. Rep. \#02-05, Tampa Bay Estuary Program, St. Petersburg,
   Florida, USA (2005)
+
+\bibitem{Portnoy03}
+Portnoy, S.: Censored regression quantiles.
+\newblock Journal of the American Statistical Association \textbf{98}(464),
+  1001--1012 (2003)
 
 \bibitem{Powers05}
 Powers, S.P., Peterson, C.H., Christian, R.R., Sullivan, E., Powers, M.J.,
@@ -218,6 +236,10 @@ Terrell, J.W., Cade, B.S., Carpenter, J., Thompson, J.M.: Modeling stream fish
   stock.
 \newblock Transactions of the American Fisheries Society \textbf{125}(1),
   104--117 (1996)
+
+\bibitem{Tobin58}
+Tobin, J.: Estimation of relationships for limited dependent variables.
+\newblock Econometrica \textbf{26}(1), 24--36 (1958)
 
 \bibitem{Tomasko05}
 Tomasko, D.A., Corbett, C.A., Greening, H.S., Raulerson, G.E.: Spatial and
