@@ -155,50 +155,73 @@ sal.cor2<-ddply(
 null.dat<-ddply(
   epc.est.act,
   .(seg),
-  .fun=function(x){
+  .fun=function(seg){
     
-    ols<-lm(
-      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
-      data=x
-      ) 
-    
-    quant.hi<-rq(
-      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
-      tau=0.9,
-      data=x
+    # non-weighted model
+    nonwt.mod <- quantreg::crq(
+      Surv(Chla_ugl, not_cens, type = "left") ~ 
+        dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time), 
+      data = seg, 
+      method = "Portnoy"
       )
+
+    # fitted coefficients for each non-weighted model
+    parms <- coef(nonwt.mod, c(0.1, 0.5, 0.9))
     
-    quant.lo<-rq(
-      Chla_ugl~dec.time + sal.ref + sin(2*pi*dec.time) + cos(2*pi*dec.time),
-      tau=0.1,
-      data=x
+    # predicted values by quantile model coefficients for non-weighted
+    nonwt.fits <- sapply(1:3, function(x){
+      with(seg, 
+        parms[1, x] + parms[2, x] * dec.time + parms[3, x] * sal.ref + parms[4, x] * sin(2*pi*dec.time) + parms[5, x] * cos(2*pi*dec.time)
       )
+    })
+    nonwt.fits <- data.frame(nonwt.fits)
+    names(nonwt.fits) <- paste0('nonwt.fit.', c('lo', 'md', 'hi'))
+    nonwt.res.lo <- seg$Chla_ugl - nonwt.fits$nonwt.fit.lo
+    nonwt.res.md <- seg$Chla_ugl - nonwt.fits$nonwt.fit.md
+    nonwt.res.hi <- seg$Chla_ugl - nonwt.fits$nonwt.fit.hi
     
-    #rsq and rmse by seg and model type
+    # nonweighted, non-conditional model
+    nonwt.nl.mod <- quantreg::crq(
+      Surv(Chla_ugl, not_cens, type = "left") ~ 1, 
+      data = seg, 
+      method = "Portnoy"
+      )
+    nonwt.nl.fits<- coef(nonwt.nl.mod, c(0.1, 0.5, 0.9))
+    names(nonwt.nl.fits) <- paste0('nonwt.nl.fit.', c('lo', 'md', 'hi'))
+    nonwt.nl.res.lo <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.lo']
+    nonwt.nl.res.md <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.md']
+    nonwt.nl.res.hi <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.hi']
+    
+    # null residuals for weighted models
+#     wt.nl.res.lo <- with(seg, Chla_ugl - nl.lo)
+#     wt.nl.res.md <- with(seg, Chla_ugl - nl.md)
+#     wt.nl.res.hi <- with(seg, Chla_ugl - nl.hi) 
+#     
+    # fits by seg and model type
     data.frame(
-      nl.md=c(
-        rsq.fun(resid(ols),x$Chla_ugl),
-        sqrt(sum(resid(ols)^2)/(length(resid(ols))))
-        ),
-      wt.md=c(
-        rsq.fun(x$res.md,x$Chla_ugl),
-        sqrt(sum(x$res.md^2)/(length(x$res.md)))
-        ),
-      nl.hi=c(
-        rsq.rq.fun(resid(quant.hi),x$Chla_ugl,0.9),
-        sqrt(sum(resid(quant.hi)^2)/(length(resid(quant.hi))))
-        ),
-      wt.hi=c(
-        rsq.rq.fun(x$res.hi,x$Chla_ugl,0.9),
-        sqrt(sum(x$res.hi^2)/(length(x$res.hi)))
-        ),
-      nl.lo=c(
-        rsq.rq.fun(resid(quant.lo),x$Chla_ugl,0.1),
-        sqrt(sum(resid(quant.lo)^2)/(length(resid(quant.lo))))
+      nonwt.lo=c(
+        rsq.rq.fun(nonwt.res.lo, nonwt.nl.res.lo, 0.1),
+        sqrt(sum(nonwt.res.lo^2, na.rm = T)/(length(na.omit(nonwt.res.lo))))
         ),
       wt.lo=c(
-        rsq.rq.fun(x$res.lo,x$Chla_ugl,0.1),
-        sqrt(sum(x$res.lo^2)/(length(x$res.lo)))
+        rsq.rq.fun(seg$res.lo, nonwt.nl.res.lo, 0.1),
+        sqrt(sum(seg$res.lo^2, na.rm = T)/(length(na.omit(seg$res.lo))))
+        ),
+      nonwt.md=c(
+        rsq.rq.fun(nonwt.res.md, nonwt.nl.res.md, 0.5),
+        sqrt(sum(nonwt.res.md^2, na.rm = T)/(length(na.omit(nonwt.res.md))))
+        ),
+      wt.md=c(
+        rsq.rq.fun(seg$res.md, nonwt.nl.res.md, 0.5),
+        sqrt(sum(seg$res.md^2, na.rm = T)/(length(na.omit(seg$res.md))))
+        ),
+      nonwt.hi=c(
+        rsq.rq.fun(nonwt.res.hi, nonwt.nl.res.hi, 0.9),
+        sqrt(sum(nonwt.res.hi^2, na.rm = T)/(length(na.omit(nonwt.res.hi))))
+        ),
+      wt.hi=c(
+        rsq.rq.fun(seg$res.hi, nonwt.nl.res.hi, 0.9),
+        sqrt(sum(seg$res.hi^2, na.rm = T)/(length(na.omit(seg$res.hi))))
         )
       )
  

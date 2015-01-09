@@ -106,7 +106,7 @@ rsq.fun<-function(resid,obs){
 }
 
 ######
-#pseudo-rsquared for quantile regression
+#r1 for quantile regression
 #rho is like sums of squares for OLS
 #the 'objective function' is summed to get rho and is minimized for qt fit
 #sum of individual rho values for non-conditional response is same as rho value
@@ -115,27 +115,18 @@ rsq.fun<-function(resid,obs){
 #qt residuals are observed - predicted (not predicted - observed)
 #see Koenker and Machado 1999 (top right p. 1297 for narrative description)
 #see https://stat.ethz.ch/pipermail/r-help/2006-August/110386.html
-rsq.rq.fun<-function(resid,obs,tau){
+rsq.rq.fun<-function(resid, resid.null, tau){
   
   require(quantreg)
   
-  rho.fun<-function(u,tau.val) u*(tau.val-(u<0))
+  rho.fun <- function(u, tau.val) u * (tau.val - (u < 0))
   
-  V1<-sum(rho.fun(resid,tau)) #minimum sum of deviations,
-  V0<-rq(obs~1,tau=tau)$rho #null model
+  V1 <- sum(rho.fun(resid, tau), na.rm = T) #minimum sum of deviations,
+  V0 <- sum(rho.fun(resid.null, tau), na.rm = T) # null sum of deviations
   
   return(1-V1/V0)
   
   }
-
-######
-#function for getting variance of model residuals
-#used to correct for re-transformation bias
-#second function does back-trans following Moyer et al. 2012
-res.var.fun<-function(mod.in){
-  sum(mod.in$weights*resid(mod.in)^2)/(sum(mod.in$weights>0)-5)
-  }
-bt.fun<-function(mod.in) exp(res.var.fun(mod.in)/2)*exp(fitted(mod.in))
 
 ######
 # function for formatting p-values in tables

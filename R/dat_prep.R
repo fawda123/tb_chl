@@ -11,8 +11,6 @@ library(scales)
 library(reshape)
 library(RColorBrewer)
 
-setwd('M:/wq_models/EPC')
-
 file.names<-c('tb_lower.txt','tb_middle.txt','tb_hillsborough.txt',
   'tb_old.txt','tb_station94.txt')
 
@@ -21,7 +19,7 @@ out.shrt<-NULL
 
 for(fl.nm in file.names){
 	
-	tmp.fl<-read.table(fl.nm,header=T,sep='\t',stringsAsFactors=F)
+	tmp.fl<-read.table(paste0('M:/wq_models/EPC/', fl.nm),header=T,sep='\t',stringsAsFactors=F)
 	#out.long<-rbind(out.long,tmp)
 
   #subset parameters of interest
@@ -62,22 +60,19 @@ for(fl.nm in file.names){
 #change station 94 WBID to lower tampa Bay
 out.shrt[out.shrt$StationID=='=94','WBodyID']<-'20011'
 
-dput(out.shrt,'epc_tb_wq_shrt.txt')
-#dput(out.long,'epc_tb_wq_long.txt')
+tb.chl <- out.shrt
+save(tb.chl, file = 'data/epc_tb_chl.RData')
 
 ######
 #code for modifying tb chlorophyll data
-#manipulates 'epc_tb_wq_shrt.txt' created above
 
 rm(list = ls())
-
-setwd('M:/wq_models/EPC/')
 
 library(maptools)
 library(rgdal)
 
 #station wq data
-tb.chl<-dget('epc_tb_wq_shrt.txt')
+load('data/epc_tb_chl.RData')
 
 #station locations
 tb.crds<-unique(data.frame(tb.chl[,names(tb.chl) %in% c('Actual_Longitude','Actual_Latitude','StationID')]))
@@ -148,7 +143,7 @@ for(uni.date in 1:length(uni.dates)){
 tb.chl<-data.frame(tb.chl,sal.ref)
 
 #get load data, merge with chlorophyll data
-tb.load<-read.csv('TBEP_loads_85_07.csv',header=T)
+tb.load<-read.csv('M:/wq_models/EPC/TBEP_loads_85_07.csv',header=T)
 
 load.sel<-names(tb.load) %in% c('Year','Month','TN.Load..kg.month.','Bay.Name')
 tb.chl<-merge(tb.chl,tb.load[load.sel],
@@ -183,14 +178,16 @@ tb.chl<-tb.chl[!tb.chl$year %in% c('2013'),]
 # tb.chl$Chla_ugl[as.numeric(tb.chl$year)<2006 & tb.chl$Chla_ugl<=2.4]<-1.2
 
 #save output
-save(tb.chl,file='M:/wq_models/EPC/epc_tb_chl.RData')
+save(tb.chl,file='data/epc_tb_chl.RData')
 
 ######
 #create tb.dat from tb.chl
 #tb.dat is same as tb.chl except data are aggregated by major segment
 #tb.chl has data by stations
 
-load('M:/wq_models/EPC/epc_tb_chl.RData')
+rm(list = ls())
+
+load('data/epc_tb_chl.RData')
 
 tb.dat<-aggregate(
   cbind(Chla_ugl,Salinity_ppt,sal.ref,TN_kg_mo)~year+month.name+date.f+month.num+dec.time+seg,
@@ -201,7 +198,7 @@ tb.dat<-aggregate(
 tb.dat$Chla_ugl<-log(tb.dat$Chla_ugl)
 tb.dat$TN_kg_mo<-log(tb.dat$TN_kg_mo)
 
-save(tb.dat,file='M:/wq_models/EPC/epc_tb_dat.RData')
+save(tb.dat,file='data/epc_tb_dat.RData')
 
 ######
 #get nutrient data for TN and TP, append to tb.dat
@@ -216,18 +213,14 @@ library(scales)
 library(reshape)
 library(RColorBrewer)
 
-setwd('M:/wq_models/EPC')
-
 file.names<-c('tb_lower.txt','tb_middle.txt','tb_hillsborough.txt',
   'tb_old.txt','tb_station94.txt')
 
-#out.long<-NULL
 out.shrt<-NULL
 
 for(fl.nm in file.names){
   
-	tmp.fl<-read.table(fl.nm,header=T,sep='\t',stringsAsFactors=F)
-	#out.long<-rbind(out.long,tmp)
+	tmp.fl<-read.table(paste0('M:/wq_models/EPC/', fl.nm),header=T,sep='\t',stringsAsFactors=F)
 
   #subset parameters of interest
 	tmp<-tmp.fl[grepl('TN_ugl|TP_ugl',tmp.fl$Parameter),]
@@ -290,18 +283,18 @@ NP.dat<-aggregate(
 NP.dat$TP_ugl<-log(NP.dat$TP_ugl)
 NP.dat$TN_ugl<-log(NP.dat$TN_ugl)
 
-load('M:/wq_models/EPC/epc_tb_dat.RData')
+load('data/epc_tb_dat.RData')
 
 tb.dat<-merge(tb.dat,NP.dat,by=c('year','seg','month.name'),all.x=T)
 
-save(tb.dat,file='M:/wq_models/EPC/epc_tb_dat.RData')
+save(tb.dat,file='data/epc_tb_dat.RData')
 
 ######
 # add censoring information
 
 rm(list = ls())
 
-load('M:/wq_models/EPC/epc_tb_dat.RData')
+load('data/epc_tb_dat.RData')
 
 # data frame of censored values by year, same by segment
 cens_min <- data.frame(
@@ -316,7 +309,7 @@ tb.dat <- merge(tb.dat, cens_min, by = 'year')
 tb.dat$Chla_ugl <- with(tb.dat, pmax(Chla_ugl, lim))
 tb.dat$not_cens <- with(tb.dat, Chla_ugl > lim)
 
-save(tb.dat, file = 'M:/wq_models/EPC/epc_tb_dat.RData')
+save(tb.dat, file = 'data/epc_tb_dat.RData')
 
 ######
 # extra stuff, don't need to run for producing data

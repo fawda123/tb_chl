@@ -17,6 +17,8 @@ library(Metrics)
 library(gtable)
 library(Hmisc)
 library(plyr)
+library(doParallel)
+library(foreach)
 
 source('R/epc_funs.r')
 
