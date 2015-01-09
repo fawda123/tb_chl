@@ -53,6 +53,7 @@
 \newcommand{\mugl}{$\mu$g L$^{-1}$}
 %90th and 10th percentile models
 \newcommand{\nine}{90\textsuperscript{th} percentile }
+\newcommand{\five}{50\textsuperscript{th} percentile }
 \newcommand{\ten}{10\textsuperscript{th} percentile }
 %for supplemental figures/tables
 \newcommand{\beginsupplement}{%
@@ -188,15 +189,10 @@ null.dat<-ddply(
       )
     nonwt.nl.fits<- coef(nonwt.nl.mod, c(0.1, 0.5, 0.9))
     names(nonwt.nl.fits) <- paste0('nonwt.nl.fit.', c('lo', 'md', 'hi'))
-    nonwt.nl.res.lo <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.lo']
+    nonwt.nl.res.lo <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.lo'] 
     nonwt.nl.res.md <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.md']
     nonwt.nl.res.hi <- seg$Chla_ugl - nonwt.nl.fits['nonwt.nl.fit.hi']
-    
-    # null residuals for weighted models
-#     wt.nl.res.lo <- with(seg, Chla_ugl - nl.lo)
-#     wt.nl.res.md <- with(seg, Chla_ugl - nl.md)
-#     wt.nl.res.hi <- with(seg, Chla_ugl - nl.hi) 
-#     
+  
     # fits by seg and model type
     data.frame(
       nonwt.lo=c(
@@ -231,26 +227,26 @@ null.dat<-data.frame(stat=rep(c('rsq','rmse'),nrow(null.dat)/2),null.dat)
 #perf list, permutation of null.dat
 perf.ls<-list(
   #perf for wtd mods
-  wtq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.hi')],
   wtq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.lo')],
-  wtmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.md')],
-  wtq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.hi')],
+  wtq50.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.md')],
+  wtq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','wt.hi')],
   wtq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.lo')],
-  wtmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.md')],
-  #perf for null mods
-  nlq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.hi')],
-  nlq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.lo')],
-  nlmd.rsq=null.dat[null.dat$stat=='rsq',c('seg','nl.md')],
-  nlq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.hi')],
-  nlq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.lo')],
-  nlmd.rmse=null.dat[null.dat$stat=='rmse',c('seg','nl.md')]
+  wtq50.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.md')],
+  wtq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','wt.hi')],
+  #perf for non-weighted mods
+  nonwtq10.rsq=null.dat[null.dat$stat=='rsq',c('seg','nonwt.lo')],
+  nonwtq50.rsq=null.dat[null.dat$stat=='rsq',c('seg','nonwt.md')],
+  nonwtq90.rsq=null.dat[null.dat$stat=='rsq',c('seg','nonwt.hi')],
+  nonwtq10.rmse=null.dat[null.dat$stat=='rmse',c('seg','nonwt.lo')],
+  nonwtq50.rmse=null.dat[null.dat$stat=='rmse',c('seg','nonwt.md')],
+  nonwtq90.rmse=null.dat[null.dat$stat=='rmse',c('seg','nonwt.hi')]
   )
-nl.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.hi','nl.lo')])
+nonwt.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nonwt.hi','nonwt.lo')])
 wt.q.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.hi','wt.lo')])
-nl.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nl.md')])
+nonwt.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('nonwt.md')])
 wt.md.rsq<-as.matrix(null.dat[null.dat$stat=='rsq',c('wt.md')])
 #cv for salinity normalized predictions by model, segment, and year
-nrm.cv<-melt(sal.nrm,measure.vars=c('norm.md','norm.hi','norm.lo'))
+nrm.cv<-melt(sal.nrm,measure.vars=c('norm.lo','norm.md','norm.hi'))
 nrm.cv<-ddply(
   nrm.cv,
   .(seg,year,variable),
@@ -295,7 +291,7 @@ est.seas<-lapply(
     }
   )
 est.seas<-do.call('rbind',est.seas)
-est.seas<-melt(est.seas,measure.vars=c('res.md','res.hi','res.lo'))
+est.seas<-melt(est.seas,measure.vars=c('res.lo','res.md','res.hi'))
 est.seas<-aggregate(value~seg+year+season+variable,est.seas,mean)
 enso.seas<-enso[,c('year','season','cat.seas','enso.seas')]
 enso.est.seas<-merge(est.seas,enso.seas,by=c('year','season'))
@@ -303,6 +299,8 @@ enso.est.seas<-subset(enso.est.seas,subset=seg=='LTB' & variable=='res.lo' & sea
 enso.mod<-summary(lm(value~enso.seas,enso.est.seas)) #this is used
 rm(list=c('est.seas','enso.est.seas','season','seas.ls','enso.seas'))
 
+# proportion of observations that are censored in the aggregated segment data
+cens <- plyr::ddply(tb.dat, .variable = 'seg', .fun = function(x) 100 * sum(!x$not_cens)/nrow(x))
 @
 
 %%%%%%
@@ -376,7 +374,7 @@ Sal_{ff} = 1 - \frac{Sal_{mea}}{Sal_{ref}}
 \begin{equation}\label{eqn:funform}
 \ln\left(Chl\right) = \beta_0 + \beta_1 t + \beta_2 Sal_{ff} + \beta_3 \sin\left(2\pi t\right) + \beta_4 \cos\left(2\pi t\right) + \epsilon
 \end{equation}
-\noindent where the natural log of \ac{chl} is related to decimal time $t$, salinity $Sal_{ff}$, and unexplained variation $\epsilon$.  Salinity and time are linearly related to \ac{chl} on a sinuisoidal annual time scale (i.e., cylical variation by year). The parameters $\beta_0,\ldots,\beta_4$ are estimated for each observed salinity at time $t$ such that multiple sets of parameters are used to characterize the period of observation.  Decimal time was calculated as the year and month of each observation as an equivalent decimal (e.g., July 1974 as 1974.5).  Although data were typically not collected on the first of each month, we considered the decimal time coincident with the period of observation.  Quantile regression models \cite{Cade03} were used to characterize trends at both the median and extreme conditional distributions of the data.  Specifically, we adapted the weighted regression approach to model the conditional response at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantiles ($\tau=0.1$, $0.5$, and $0.9$, respectively) of the chlorophyll distribution. Quantile regression is analogous to least-squares regression such that a set of $\beta$ parameters that minimizes the error term is estimated.  However, the minimization function is the sum of the weighted absolute deviations of the fitted values from the observed quantile rather than the conditional mean response as in ordinary regression.  A general interpretation of the fitted values is the distribution of \ac{chl} conditional upon time and salinity for low ($\tau=0.1$) or high ($\tau=0.9$) biomass events.  The median values can be considered a model estimation of the central tendency of \ac{chl} over time, although this is an approach that is quantitatively distinct from mean models that characterize average \ac{chl}.  Additionally, quantile models do not impose back-transformation bias of predicted values because estimates are equivariant to non-linear, monotonic transformations \cite{Koenker08}. 
+\noindent where the natural log of \ac{chl} is related to decimal time $t$, salinity $Sal_{ff}$, and unexplained variation $\epsilon$.  Salinity and time are linearly related to \ac{chl} on a sinuisoidal annual time scale (i.e., cylical variation by year). The parameters $\beta_0,\ldots,\beta_4$ are estimated for each observed salinity at time $t$ such that multiple sets of parameters are used to characterize the period of observation.  Decimal time was calculated as the year and month of each observation as an equivalent decimal (e.g., July 1974 as 1974.5).  Although data were typically not collected on the first of each month, we considered the decimal time coincident with the period of observation.  Quantile regression models \cite{Cade03} were used to characterize trends at both the median and extreme conditional distributions of the data.  Specifically, we adapted the weighted regression approach to model the conditional response at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantiles ($\tau=0.1$, $0.5$, and $0.9$, respectively) of the chlorophyll distribution. Quantile regression is analogous to least-squares regression such that a set of $\beta$ parameters that minimizes the error term is estimated.  However, the minimization function is the sum of the weighted absolute deviations of the fitted values from the observed quantile rather than the conditional mean response as in ordinary regression.  A general interpretation of the fitted values is the distribution of \ac{chl} conditional upon time and salinity for low ($\tau=0.1$) or high ($\tau=0.9$) biomass events.  The median values can be considered a model estimation of the central tendency of \ac{chl} over time, although this is quantitatively distinct from mean models that characterize average \ac{chl}.  Additionally, back-transformation bias of predicted values does not occur with quantile models because estimates are equivariant to non-linear, monotonic transformations \cite{Koenker08}. 
 
 The \ac{WRTDS} approach obtains fitted values of the response variable by estimating regression parameters for each unique observation.  Specifically, a quantile regression model was estimated for each point in the period of observation for each Bay segment \cite{Hirsch10,Hirsch14}. Each regression model was weighted by month, year, and salinity such that a unique set of regression parameters for each observation in the time series was obtained. For example, a weighted regression for October 2003 weights other observations in the same year, month, and similar salinity with higher values, whereas observations for different months, years, or salinities receive lower weights (\cref{fig:wtex}).  This weighting approach allows estimation of regression parameters that vary in relation to observed conditions.  Hirsch et al. \cite{Hirsch10} used a tri-cube weighting function:
 \begin{equation}
@@ -388,16 +386,19 @@ w= \left\{
 \end{equation}
 \noindent where the weight $w$ for each observation is defined by the distance $d$ from the current observation within a window $h$. The weights are diminishing in relation to the current observation until the maximum window width is exceeded and a weight of zero is used.  The weight for each observation is the product of all three weights assigned to month, year, and salinity.  Window widths of six months, 10 years, and half the range of $Sal_{ff}$ for each Bay segment were used (\cref{fig:wtex}).  Window widths were increased by 10\% increments during model estimation until a minimum of 100 observations with non-zero weights was obtained \cite{Hirsch10}.
 
-The adapted \ac{WRTDS} approach was used to model and interpret \ac{chl} trends from 1974--2012 for each of the 4 Bay segments.  In contrast with Hirsch et al. \cite{Hirsch10}, estimates were made using monthly rather than daily observations given the available data for Tampa Bay.  Particular attention was given to trends that have not been previously described.  Following Hirsch et al. \cite{Hirsch10}, predicted values were based on interpolation matrices for each model type (median, \nine, and \ten) to reduce computation time.  Specifically, a sequence of 20 salinity values based on the minimum and maximum values for each segment were used to predict \ac{chl} using the observed month and year.  Model predictions were then taken from the grid using the salinity value closest to the actual for each date.  Hirsch et al. \cite{Hirsch10} notes that the introduction of bias associated with using imprecise values from a grid in place of actual observations to estimate predictions was minimal.  
+The adapted \ac{WRTDS} approach was used to model and interpret \ac{chl} trends from 1974--2012 for each of the 4 Bay segments.  In contrast with Hirsch et al. \cite{Hirsch10}, estimates were made using monthly rather than daily observations given the available data for Tampa Bay.  Particular attention was given to trends that have not been previously described.  Following Hirsch et al. \cite{Hirsch10}, predicted values were based on interpolation matrices for each model type (\ten, \five, and \nine) to reduce computation time.  Specifically, a sequence of 20 salinity values based on the minimum and maximum values for each segment were used to predict \ac{chl} using the observed month and year.  Model predictions were then taken from the grid using the salinity value closest to the actual for each date.  Hirsch et al. \cite{Hirsch10} notes that the introduction of bias associated with using imprecise values from a grid in place of actual observations to estimate predictions was minimal.  
 
-A common issue with water quality data is the presence of observations that occur beyond the detection limit of the method used to measure the variable of interest.  The most recent version of \ac{WRTDS} method accounts for censored data by using a `survival analysis' technique \cite{Moyer12,Hirsch14}, which is an adaptation of the weighted Tobit model for left-censored data \cite{Tobin58}.  Chlorophyll data for Tampa Bay are also left censored with the most commmon lower detection limit being 2.4 \mugl for individual survey years.  A censored quantile regression approach was used based on methods described in Portnoy \cite{Portnoy03} and Koenker \cite{Koenker08}.  The method builds on the Kaplan-Meier approximation for a single-sample survival function by generalizing to conditional regression quantiles.  The \texttt{quantreg} package in R \cite{Koenker13} employs this method using recursive estimation of linear conditional quantile functions.  Censored quantile regression models were used withe adapted weighted scheme to model observed \ac{chl} in each segment.  Data were based on median values for all stations within a segment such that the lower detection limits that applied to observations at individual stations were preserved in the combined data.  A segment observation at a given time step was considered censored if it was equal to the known detection limit for a given year.  The lower detection limits were identified by parsing the station data by year to identify values that were flagged accordingly.
+A common issue with water quality data is the presence of observations that occur beyond the detection limit of the method used to measure the variable of interest.  The most recent version of \ac{WRTDS} method accounts for censored data by using a `survival analysis' technique \cite{Moyer12,Hirsch14}, which is an adaptation of the weighted Tobit model for left-censored data \cite{Tobin58}.  Chlorophyll data for Tampa Bay are also left censored with the most commmon lower detection limit being 2.4 \mugl for individual survey years.  A censored quantile regression approach was used based on methods described in Portnoy \cite{Portnoy03} and Koenker \cite{Koenker08}.  The method builds on the Kaplan-Meier approximation for a single-sample survival function by generalizing to conditional regression quantiles.  The \texttt{quantreg} package in R \cite{Koenker13} employs this method using recursive estimation of linear conditional quantile functions.  Censored quantile regression models were used with the adapted weighted scheme to model observed \ac{chl} in each segment.  Data were based on median values for all stations within a segment such that the lower detection limits that applied to observations at individual stations were preserved in the combined data.  A segment observation at a given time step was considered censored if it was equal to the known detection limit for a given year.  The lower detection limits were identified by parsing the station data by year to identify values that were flagged accordingly in the original data \cite{TBEP11}.  The percentage of observations that were censored by segment was \Sexpr{cens[cens$seg == 'HB', 'V1']} for Hillsborough Bay, \Sexpr{cens[cens$seg == 'OTB', 'V1']} for Old Tampa Bay, \Sexpr{cens[cens$seg == 'MTB', 'V1']} for Middle Tampa Bay, and \Sexpr{cens[cens$seg == 'LTB', 'V1']} for Lower Tampa Bay.
 
-Model performance was based on coefficients of determination ($R^2$) for the mean regression models and pseudo-$R^2$ values that are specific to given quantiles \cite{Koenker99}.  Additionally, \ac{RMSE} was calculated as an alternative measure of performance such that:
+Model fit was evaluated using the quantile regression goodness of fit described in Koenker and Machado \cite{Koenker99}.  This measure has a similar interpretation as the standard $R^2$ for mean regression models, although it differs fundamentally by describing the relative success of the model at a specific quantile using the weighted sum of absolute residuals. Using notation in Koenker and Machado \cite{Koenker99}:
+\begin{equation}
+R^1\left(\tau\right) = 1 - \hat{V}\left(\tau\right)/\tilde{V}\left(\tau\right)
+\end{equation}
+\noindent where $R^1\left(\tau\right)$ is the proportion of explained variance of the model at quantile $\tau$.  Values for $\hat{V}\left(\tau\right)$ and $\tilde{V}\left(\tau\right)$ describe the sum of residual variance of the fully parameterized model and a null model (i.e., the non-conditional quantile of the response).  The residual variance for each \ac{WRTDS} model was based on an accumulation of residuals for each regression model specific to each observation.  Additionally, \ac{RMSE} was calculated as an alternative measure of performance such that:
 \begin{equation}
 RMSE = \sqrt {{\frac{{\sum\limits_{{i = 1}}^n {{{\left( {{y_i} - {{\hat{y}}_i}} \right)}^2}} }}{{n}}}}
 \end{equation}
-\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to conventional (i.e., non-weighted) additive linear models to show improvements using the \ac{WRTDS} approach.
-% note here that this is only one performance metric, 
+\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to non-weighted quantile models that fit a single parameter set to the entire time series for each segment.
 
 The \ac{WRTDS} approach was also used to normalize predicted values for a given explanatory variable.  Normalization is used to remove the variance in the response that is attributed to a predictor variable, allowing interpretation of trends that are independent of confounding sources of variation.  For example, water quality trends that are potentially related to management actions can be more precisely evaluated if changes in pollutant concentrations due to natural variation in discharge are removed.  Hirsch et al. \cite{Hirsch10} used the approach to normalize trends by flow, whereas our adapted approach was used to normalize by the fraction of freshwater as a measure of salinity, $Sal_{ff}$, which integrates freshwater inputs and tidal exchange.  Normalized predictions were obtained for each observation date by assuming that $Sal_{ff}$ values for the same month in each year were equally likely to occur across the time series.  That is, $Sal_{ff}$ is assumed to be uniformly distributed within the range of observed values for the same month between years.  For example, normalization for January 1\textsuperscript{st} 1974 considers all salinity values occuring on January 1\textsuperscript{st} for each year in the time series as equally likely to occur on the observed data.  A normalized value for January 1\textsuperscript{st} 1974 is the average of the predicted values using each of the $Sal_{ff}$ values as input, while holding month and year constant.  Normalization across the time series is repeated for each observation to obtain salinity-normalized predictions.    
 
@@ -417,7 +418,7 @@ Observed seasonality of \ac{chl} was consistent with the behavior observed in ma
 
 \subsection{Modeled trends in \acl{chl}}
 
-Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were more precise than non-weighted additive linear regressions for all model types (\cref{tab:modperf}).   Mean explained variance using $R^2$ for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtmd.rsq[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nlq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nlq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nlmd.rsq[,2]),digits=2)} for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtmd.rmse[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nlq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nlq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nlmd.rmse[,2]),digits=2)} for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the quantile models compared to the mean models (\cref{tab:modperf}).    
+Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were more precise than non-weighted additive linear regressions for all model types (\cref{tab:modperf}).   Mean explained variance using $R^2$ for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtq50.rsq[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq50.rsq[,2]),digits=2)} for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtq50.rmse[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq50.rmse[,2]),digits=2)} for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the quantile models compared to the mean models (\cref{tab:modperf}).    
 
 Substantial variation in \ac{chl} response from the mean predicted values was observed despite high explained variance (\cref{fig:predobs}).  Observed values close to the mean response were fit well by the mean model, whereas extreme observations at low or high ends of the distribution (i.e., low or high biomass ``events'') were better predicted by the quantile models. For example, \cref{fig:hbslice} shows the predicted and observed values for a two year period in Hillsborough Bay such that model fit varies depending on the month of observation.  Model fit for peak observed \ac{chl} in September and October of 1994 is best fit by the \nine models, whereas a low seasonal peak observed in the winter of 1994 was best fit by the \ten model.  Larger differences between the predicted values for the 90\textsuperscript{th} and 10\textsuperscript{th} models were also observed early in the time series, such that the period from 1974-1980 had larger variation in predicted \ac{chl}, in addition to higher mean values (\cref{fig:predobs}).  
 
@@ -588,10 +589,10 @@ get_yrsum <- function(yrs_in, month_sub = 'July'){
   to.tab$sal.lev <- rep(c('Low', 'Moderate', 'High'), nrow(to.tab)/3)
   
   # select relevant columns
-  col_sel <- c('seg', 'year', 'sal.lev', 'bt.md', 'bt.hi', 'bt.lo')
+  col_sel <- c('seg', 'year', 'sal.lev', 'bt.lo', 'bt.md', 'bt.hi')
   to.tab <- to.tab[, col_sel]
   
-  to.tab <- melt(to.tab, measure.var = c('bt.md', 'bt.hi', 'bt.lo'))
+  to.tab <- melt(to.tab, measure.var = c('bt.lo', 'bt.md', 'bt.hi'))
   
   # summarize
   to.tab <- ddply(to.tab,
@@ -619,7 +620,9 @@ res1 <- get_yrsum(c(1974, 2012))
 res2 <- get_yrsum(c(2005, 2012))
 
 mods<-factor(res1$variable,
-  labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
+  levels = c('bt.lo', 'bt.md', 'bt.hi'), 
+  labels=c('0.1 $\\tau', '0.5 $\\tau$', '0.9 $\\tau$')
+  )
 
 segs <- as.character(unique(res1$seg))
 segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
@@ -647,10 +650,10 @@ latex(
   )
 @
 
-%model performance vs OLS
+%model performance
 <<modperf>>=
 ######
-#model fits for wtd and non-wtd regresssion, through mean and quantiles
+#model fits for wtd and non-wtd regresssion
 #uses 'null.dat' object created in data import chunk
 
 #row labels
@@ -661,7 +664,7 @@ stat<-factor(stat,levels=c('rsq','rmse'),labels=c('$R^2$','$RMSE$'))
 #retain only data
 null.dat<-subset(null.dat,select=-c(seg,stat))
 
-cap.val<-'Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using $R^2$ for mean models, pseudo-$R^2$ for 90\\textsuperscript{th} and \\ten ($\\tau$) models, and \\ac{RMSE} for all models (statistics by Bay segment).'
+cap.val<-'Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using a quantile regression goodness of fit described in Koenker and Mochado \\cite{Koenker99} and \\ac{RMSE}.  Goodness of fit for the \\ten models in Lower Tampa Bay is not shown because the null quantiles were inestimable with censored regression.'
 
 foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
@@ -671,7 +674,7 @@ latex(
   caption.loc='top',
   caption=cap.val,
   insert.bottom=foot.val,
-  cgroup=c('mean','0.9 $\\tau$','0.1 $\\tau$'),
+  cgroup=c('0.1 $\\tau$','0.5 $\\tau$','0.9 $\\tau$'),
   n.cgroup=c(2,2,2),
   colheads=rep(c('Non-wtd','Wtd'),3),
   rowlabel='Statistic',
@@ -1057,7 +1060,7 @@ latex(
 \end{figure}
 
 %obs chlorophyll by year/month, uses station data
-<<obsyrmo,cache=T,include=F>>=
+<<obsyrmo,cache=F,include=F>>=
 
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
@@ -1284,13 +1287,14 @@ print(p1)
 
 @
 
-<<hbslice,cache=T,fig.height=2.5,fig.width=4.25,out.width= "3in",fig.cap='Predicted and observed \\ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'>>=
+<<hbslice,cache=T,fig.height=2.5,fig.width=4.25,out.width= "3in",fig.cap='Predicted and observed \\ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'>>=
 
 #y axis label for plots
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
-quants1<-expression(paste(italic('\u03c4'),' ',0.9))
-quants2<-expression(paste(italic('\u03c4'),' ',0.1))
+quantshi<-expression(paste(italic('\u03c4'),' ',0.9))
+quantsmd<-expression(paste(italic('\u03c4'),' ',0.5))
+quantslo<-expression(paste(italic('\u03c4'),' ',0.1))
 
 # colors
 cols <- brewer.pal(11, 'Spectral')[c(9,10,11)]
@@ -1298,9 +1302,9 @@ cols <- brewer.pal(11, 'Spectral')[c(9,10,11)]
 sel.vec<-epc.est$seg=='HB' & epc.est$year>=1993 & epc.est$year<1995
 ggplot(epc.est[sel.vec,],aes(x=date.f)) + 
   geom_point(aes(y=exp(Chla_ugl),shape='Obs'),alpha=0.9,colour=cols[3]) +
-  geom_line(aes(y=bt.md,linetype='Mean',colour='Mean'),alpha=0.9) +
-  geom_line(aes(y=bt.lo,linetype='q2',colour='q2'),alpha=0.9) +
   geom_line(aes(y=bt.hi,linetype='q1',colour='q1'),alpha=0.9) +
+  geom_line(aes(y=bt.md,linetype='q2',colour='q2'),alpha=0.9) +
+  geom_line(aes(y=bt.lo,linetype='q3',colour='q3'),alpha=0.9) +
   scale_y_continuous(ylabs) +
   theme_bw() +
   scale_x_date(name='Date') +
@@ -1318,33 +1322,34 @@ ggplot(epc.est[sel.vec,],aes(x=date.f)) +
   scale_linetype_manual(  
     name='test',
     labels=c(
-      'Mean'='Mean',
-      'q2'=quants2,
-      'q1'=quants1
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
       ),
     values=c(1,1,1)
     ) +
    scale_colour_manual(
     name='test',
     labels=c(
-      'Mean'='Mean',
-      'q2'=quants2,
-      'q1'=quants1
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
       ),
     values=c(
-      'Mean'=cols[3],
-      'q2'=cols[2],
-      'q1'=cols[2]
+      'q1'=cols[2],
+      'q2'=cols[3],
+      'q3'=cols[2]
       )
     )
 @    
 
-<<salnrm,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Weighted regression predictions and salinity-normalized results aggregated by year for the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} quantile ($\\tau$) distributions.'>>=
+<<salnrm,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Weighted regression predictions and salinity-normalized results aggregated by year for  the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions.'>>=
 #plot of predicted and salinity normalized data, aggregated by year
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
-quants1<-expression(paste(italic('\u03c4'),' ',0.9))
-quants2<-expression(paste(italic('\u03c4'),' ',0.1))
+quantshi<-expression(paste(italic('\u03c4'),' ',0.9))
+quantsmd<-expression(paste(italic('\u03c4'),' ',0.5))
+quantslo<-expression(paste(italic('\u03c4'),' ',0.1))
 
 est<-epc.est
 est<-aggregate(cbind(bt.md,bt.hi,bt.lo,Chla_ugl)~seg+year,est,mean)
@@ -1365,15 +1370,15 @@ cols <- brewer.pal(11, 'Spectral')[c(10,11)]
 
 ##
 ggplot(to.plo,aes(x=as.numeric(year))) + 
-  geom_point(data=est,aes(y=bt.md, colour = 'a', shape = 'a'),
+  geom_point(data=est,aes(y=bt.hi,colour='q1',shape='q1'),
     alpha=0.9) +
-  geom_line(aes(y=norm.md,linetype='a'),colour = cols[2],alpha=0.9) +
-  geom_point(data=est,aes(y=bt.hi,colour='b',shape='b'),
+  geom_line(aes(y=norm.hi,linetype='q1'),colour=cols[1],alpha=0.9) +
+  geom_point(data=est,aes(y=bt.md, colour = 'q2', shape = 'q2'),
     alpha=0.9) +
-  geom_line(aes(y=norm.hi,linetype='b'),colour=cols[1],alpha=0.9) +
-  geom_point(data=est,aes(y=bt.lo,colour='c',shape='c'),
+  geom_line(aes(y=norm.md,linetype='q2'),colour = cols[2],alpha=0.9) +
+  geom_point(data=est,aes(y=bt.lo,colour='q3',shape='q3'),
     alpha=0.9) +
-  geom_line(aes(y=norm.lo,linetype='c'),colour=cols[1],alpha=0.9) +
+  geom_line(aes(y=norm.lo,linetype='q3'),colour=cols[1],alpha=0.9) +
   scale_y_continuous(ylabs) +
   theme_bw() +
   facet_wrap(~seg,scales='free_y') +
@@ -1382,45 +1387,46 @@ ggplot(to.plo,aes(x=as.numeric(year))) +
     name='Date'
     ) +
   guides(linetype=guide_legend(
-    override.aes=list(colour=c(cols[2], cols[1],cols[1]))
+    override.aes=list(colour=c(cols[1], cols[2],cols[1]))
     )) +
   scale_shape_manual(
     name='Predicted',
     labels=c(
-      'a'='Mean',
-      'b'=quants1,
-      'c'=quants2
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
       ),
-    values=c(16,1,1)
+    values=c(1,16,1)
     ) +
   scale_linetype_manual(
     name='Normalized',
     labels=c(
-      'a'='Mean',
-      'b'=quants1,
-      'c'=quants2
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
       ),
     values=c(1,1,1)
     ) +
   scale_colour_manual(name = 'Predicted',
     labels=c(
-      'a'='Mean',
-      'b'=quants1,
-      'c'=quants2
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
       ),
-    values = c(cols[2], cols[1], cols[1])
+    values = c(cols[1], cols[2], cols[1])
     ) 
 
 @
 
-<<salnrm2,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Salinity-normalized results for the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} quantile ($\\tau$) distributions. Note changes in intra-annual variability by Bay segment.'>>=
+<<salnrm2,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Salinity-normalized results for the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions. Note changes in intra-annual variability by Bay segment.'>>=
 est<-sal.nrm
 
 #y axis label for plots
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
-quants1<-expression(paste(italic('\u03c4'),' ',0.9))
-quants2<-expression(paste(italic('\u03c4'),' ',0.1))
+quantshi<-expression(paste(italic('\u03c4'),' ',0.9))
+quantsmd<-expression(paste(italic('\u03c4'),' ',0.5))
+quantslo<-expression(paste(italic('\u03c4'),' ',0.1))
 
 to.plo <- est
 
@@ -1433,9 +1439,9 @@ to.plo$seg <- factor(to.plo$seg, levels = seg.names, labels = seg.levs)
 cols <- brewer.pal(11, 'Spectral')[c(9,10,11)]
 
 ggplot(to.plo,aes(x=as.numeric(dec.time),group=seg)) + 
-  geom_line(aes(y=norm.lo,linetype='q2',colour='q2'),alpha=0.9) +
-  geom_line(aes(y=norm.hi,linetype='q1',colour='q1'),alpha=0.9) +
-  geom_line(aes(y=norm.md,linetype='Mean',colour='Mean'),alpha=0.9) +
+  geom_line(aes(y=norm.lo,linetype='q1',colour='q1'),alpha=0.9) +
+  geom_line(aes(y=norm.md,linetype='q2',colour='q2'),alpha=0.9) +
+  geom_line(aes(y=norm.hi,linetype='q3',colour='q3'),alpha=0.9) +
   scale_y_continuous(ylabs) +
   theme_bw() +
   facet_wrap(~seg,scales='free_y') +
@@ -1446,17 +1452,25 @@ ggplot(to.plo,aes(x=as.numeric(dec.time),group=seg)) +
   theme(legend.title=element_blank()) +
   scale_linetype_manual(  
     name='test',
-    labels=c('Mean'='Mean','q2'=quants2,'q1'=quants1),
+    labels=c(
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
+      ),
     values=c(1,1,1)
     ) +
-   scale_colour_manual(
+  scale_colour_manual(
     name='test',
-    labels=c('Mean'='Mean','q2'=quants2,'q1'=quants1),
-    values=c('Mean'=cols[3],'q2'=cols[2],'q1'=cols[2])
+    labels=c(
+      'q1'=quantshi,
+      'q2'=quantsmd,
+      'q3'=quantslo
+      ),
+    values=c('q1'=cols[2],'q2'=cols[3],'q3'=cols[2])
     ) 
 @
 
-<<dyna, cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Variation in the relationship between \\ac{chl} and salinity as fraction of freshwater ($Sal_{ff}$) across time series for Tampa Bay. Data are for July months to reduce seasonal variation. Only the mean response models are shown.'>>=
+<<dyna, cache=F,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Variation in the relationship between \\ac{chl} and salinity as fraction of freshwater ($Sal_{ff}$) across time series for Tampa Bay. Data are for July months to reduce seasonal variation. Only the mean response models are shown.'>>=
 to.plo <- sal.grd
 labs <- c('January', 'February', 'March', 'April', 'May', 'June', 'July', 
   'August', 'September', 'October', 'November', 'December')
@@ -1522,7 +1536,7 @@ Please see the online repository (\href{https://github.com/fawda123/wtreg\_for\_
 %predictions from model, all data
 \begin{landscape}
 \centering\vspace*{\fill}
-<<sup,cache=T,fig.height=4.5,fig.width=11.5,fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the mean response.', out.width = '9in'>>=
+<<sup,cache=T,fig.height=4.5,fig.width=11.5,fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the median response.', out.width = '9in'>>=
 
 to.plo <- epc.est
 
@@ -1549,7 +1563,6 @@ p1 <- ggplot(to.plo,aes(x=dec.time, colour = month.name)) +
     breaks=seq(1980,2010,by=15),
     name='Date'
     ) +
-#   scale_colour_grey() +
   theme(
     legend.title=element_blank(),
     axis.text = element_text(size = 7),

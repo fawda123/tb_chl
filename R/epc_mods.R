@@ -79,13 +79,13 @@ source('R/epc_dat.r')
 
 segs<-unique(tb.dat$seg)
 
-mods.out<-matrix(ncol=12,nrow=nrow(tb.dat))
+mods.out<-matrix(ncol=9,nrow=nrow(tb.dat))
 
 for(seg in segs){
 
   dat.in<-tb.dat[tb.dat$seg==seg,]
   
-  vecs<-c('fit.lo','fit.md','fit.hi','nl.lo','nl.md','nl.hi','res.lo','res.md','res.hi','bt.lo','bt.md','bt.hi')
+  vecs<-c('fit.lo','fit.md','fit.hi','res.lo','res.md','res.hi','bt.lo','bt.md','bt.hi')
   sapply(vecs,function(x) assign(x,numeric(nrow(dat.in)),envir=.GlobalEnv))
 
   strt<-Sys.time()
@@ -121,9 +121,6 @@ for(seg in segs){
       fit.lo[row] <- NA
       fit.md[row] <- NA
       fit.hi[row] <- NA
-      nl.lo[row] <- NA
-      nl.md[row] <- NA
-      nl.hi[row] <- NA
       res.lo[row] <- NA
       res.md[row] <- NA
       res.hi[row] <- NA
@@ -132,10 +129,6 @@ for(seg in segs){
       bt.hi[row] <- NA
       next
     }
-      
-    # estimate from null model, it is the coefficient which is just the intercept
-    nl <- coef(nl.mod, c(0.1, 0.5, 0.9))
-    names(nl) <- paste0('nl.', c('lo', 'md', 'hi'))
     
     # fitted coefficients for each model
     parms <- coef(mod, c(0.1, 0.5, 0.9))
@@ -159,9 +152,6 @@ for(seg in segs){
     fit.lo[row] <- fits['fit.lo']
     fit.md[row] <- fits['fit.md']
     fit.hi[row] <- fits['fit.hi']
-    nl.lo[row] <- nl['nl.lo']
-    nl.md[row] <- nl['nl.md']
-    nl.hi[row] <- nl['nl.hi']
     res.lo[row] <- res['res.lo']
     res.md[row] <- res['res.md']
     res.hi[row] <- res['res.hi']

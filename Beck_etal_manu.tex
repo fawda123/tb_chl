@@ -102,6 +102,7 @@
 \newcommand{\mugl}{$\mu$g L$^{-1}$}
 %90th and 10th percentile models
 \newcommand{\nine}{90\textsuperscript{th} percentile }
+\newcommand{\five}{50\textsuperscript{th} percentile }
 \newcommand{\ten}{10\textsuperscript{th} percentile }
 %for supplemental figures/tables
 \newcommand{\beginsupplement}{%
@@ -193,7 +194,7 @@ Sal_{ff} = 1 - \frac{Sal_{mea}}{Sal_{ref}}
 \begin{equation}\label{eqn:funform}
 \ln\left(Chl\right) = \beta_0 + \beta_1 t + \beta_2 Sal_{ff} + \beta_3 \sin\left(2\pi t\right) + \beta_4 \cos\left(2\pi t\right) + \epsilon
 \end{equation}
-\noindent where the natural log of \ac{chl} is related to decimal time $t$, salinity $Sal_{ff}$, and unexplained variation $\epsilon$.  Salinity and time are linearly related to \ac{chl} on a sinuisoidal annual time scale (i.e., cylical variation by year). The parameters $\beta_0,\ldots,\beta_4$ are estimated for each observed salinity at time $t$ such that multiple sets of parameters are used to characterize the period of observation.  Decimal time was calculated as the year and month of each observation as an equivalent decimal (e.g., July 1974 as 1974.5).  Although data were typically not collected on the first of each month, we considered the decimal time coincident with the period of observation.  Quantile regression models \cite{Cade03} were used to characterize trends at both the median and extreme conditional distributions of the data.  Specifically, we adapted the weighted regression approach to model the conditional response at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantiles ($\tau=0.1$, $\tau=0.5$, and $0.9$, respectively) of the chlorophyll distribution. Quantile regression is analogous to least-squares regression such that a set of $\beta$ parameters that minimizes the error term is estimated.  However, the minimization function is the sum of the weighted absolute deviations of the fitted values from the observed quantile rather than the conditional mean response as in ordinary regression.  A general interpretation of the fitted values is the distribution of \ac{chl} conditional upon time and salinity for low ($\tau=0.1$) or high ($\tau=0.9$) biomass events.  The median values can be considered a model estimation of the central tendency of \ac{chl} over time, although this is an approach that is quantitatively distinct from mean models that characterize average \ac{chl}.  Additionally, quantile models do not impose back-transformation bias of predicted values as estimates are equivarianet to non-linear transformations \cite{Koenker08}. 
+\noindent where the natural log of \ac{chl} is related to decimal time $t$, salinity $Sal_{ff}$, and unexplained variation $\epsilon$.  Salinity and time are linearly related to \ac{chl} on a sinuisoidal annual time scale (i.e., cylical variation by year). The parameters $\beta_0,\ldots,\beta_4$ are estimated for each observed salinity at time $t$ such that multiple sets of parameters are used to characterize the period of observation.  Decimal time was calculated as the year and month of each observation as an equivalent decimal (e.g., July 1974 as 1974.5).  Although data were typically not collected on the first of each month, we considered the decimal time coincident with the period of observation.  Quantile regression models \cite{Cade03} were used to characterize trends at both the median and extreme conditional distributions of the data.  Specifically, we adapted the weighted regression approach to model the conditional response at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantiles ($\tau=0.1$, $0.5$, and $0.9$, respectively) of the chlorophyll distribution. Quantile regression is analogous to least-squares regression such that a set of $\beta$ parameters that minimizes the error term is estimated.  However, the minimization function is the sum of the weighted absolute deviations of the fitted values from the observed quantile rather than the conditional mean response as in ordinary regression.  A general interpretation of the fitted values is the distribution of \ac{chl} conditional upon time and salinity for low ($\tau=0.1$) or high ($\tau=0.9$) biomass events.  The median values can be considered a model estimation of the central tendency of \ac{chl} over time, although this is quantitatively distinct from mean models that characterize average \ac{chl}.  Additionally, back-transformation bias of predicted values does not occur with quantile models because estimates are equivariant to non-linear, monotonic transformations \cite{Koenker08}. 
 
 The \ac{WRTDS} approach obtains fitted values of the response variable by estimating regression parameters for each unique observation.  Specifically, a quantile regression model was estimated for each point in the period of observation for each Bay segment \cite{Hirsch10,Hirsch14}. Each regression model was weighted by month, year, and salinity such that a unique set of regression parameters for each observation in the time series was obtained. For example, a weighted regression for October 2003 weights other observations in the same year, month, and similar salinity with higher values, whereas observations for different months, years, or salinities receive lower weights (\cref{fig:wtex}).  This weighting approach allows estimation of regression parameters that vary in relation to observed conditions.  Hirsch et al. \cite{Hirsch10} used a tri-cube weighting function:
 \begin{equation}
@@ -205,35 +206,25 @@ w= \left\{
 \end{equation}
 \noindent where the weight $w$ for each observation is defined by the distance $d$ from the current observation within a window $h$. The weights are diminishing in relation to the current observation until the maximum window width is exceeded and a weight of zero is used.  The weight for each observation is the product of all three weights assigned to month, year, and salinity.  Window widths of six months, 10 years, and half the range of $Sal_{ff}$ for each Bay segment were used (\cref{fig:wtex}).  Window widths were increased by 10\% increments during model estimation until a minimum of 100 observations with non-zero weights was obtained \cite{Hirsch10}.
 
-The adapted \ac{WRTDS} approach was used to model and interpret \ac{chl} trends from 1974--2012 for each of the 4 Bay segments.  In contrast with Hirsch et al. \cite{Hirsch10}, estimates were made using monthly rather than daily observations given the available data for Tampa Bay.  Particular attention was given to trends that have not been previously described.  Following Hirsch et al. \cite{Hirsch10}, predicted values were based on interpolation matrices for each model type (mean, \nine, and \ten) to reduce computation time.  Specifically, a sequence of 20 salinity values based on the minimum and maximum values for each segment were used to predict \ac{chl} using the observed month and year.  Model predictions were then taken from the grid using the salinity value closest to the actual for each date.  Hirsch et al. \cite{Hirsch10} notes that the introduction of bias associated with using imprecise values in place of actual observations to estimate predictions was minimal.  
+The adapted \ac{WRTDS} approach was used to model and interpret \ac{chl} trends from 1974--2012 for each of the 4 Bay segments.  In contrast with Hirsch et al. \cite{Hirsch10}, estimates were made using monthly rather than daily observations given the available data for Tampa Bay.  Particular attention was given to trends that have not been previously described.  Following Hirsch et al. \cite{Hirsch10}, predicted values were based on interpolation matrices for each model type (\ten, \five, and \nine) to reduce computation time.  Specifically, a sequence of 20 salinity values based on the minimum and maximum values for each segment were used to predict \ac{chl} using the observed month and year.  Model predictions were then taken from the grid using the salinity value closest to the actual for each date.  Hirsch et al. \cite{Hirsch10} notes that the introduction of bias associated with using imprecise values from a grid in place of actual observations to estimate predictions was minimal.  
 
-A common issue with water quality data is the presence of observations that occur beyond the detection limit of the method used to measure the variable of interest.  The most recent version of \ac{WRTDS} method accounts for censored data by using a `survival analysis' technique \cite{Moyer12,Hirsch14}, which is an adaptation of the weighted Tobit model for left-censored data \cite{Tobin58}.  Chlorophyll data for Tampa Bay prior to are also left censored with the most commmon lower detection limit being 2.4 \mugl for individual survey years.  A censored quantile regression approach was used based on methods described in Portnoy \cite{Portnoy03} and Koenker \cite{Koenker08}.  The method builds on the Kaplan-Meier approximation for a single-sample survival function by generalizing to conditional regression quantiles.  The \texttt{quantreg} package in R \cite{Koenker13} employs this method using recursive estimation of linear conditional quantile functions.  
+A common issue with water quality data is the presence of observations that occur beyond the detection limit of the method used to measure the variable of interest.  The most recent version of \ac{WRTDS} method accounts for censored data by using a `survival analysis' technique \cite{Moyer12,Hirsch14}, which is an adaptation of the weighted Tobit model for left-censored data \cite{Tobin58}.  Chlorophyll data for Tampa Bay are also left censored with the most commmon lower detection limit being 2.4 \mugl for individual survey years.  A censored quantile regression approach was used based on methods described in Portnoy \cite{Portnoy03} and Koenker \cite{Koenker08}.  The method builds on the Kaplan-Meier approximation for a single-sample survival function by generalizing to conditional regression quantiles.  The \texttt{quantreg} package in R \cite{Koenker13} employs this method using recursive estimation of linear conditional quantile functions.  Censored quantile regression models were used with the adapted weighted scheme to model observed \ac{chl} in each segment.  Data were based on median values for all stations within a segment such that the lower detection limits that applied to observations at individual stations were preserved in the combined data.  A segment observation at a given time step was considered censored if it was equal to the known detection limit for a given year.  The lower detection limits were identified by parsing the station data by year to identify values that were flagged accordingly in the original data \cite{TBEP11}.  The percentage of observations that were censored by segment was 1.8 for Hillsborough Bay, 3.6 for Old Tampa Bay, 4.3 for Middle Tampa Bay, and 24.8 for Lower Tampa Bay.
 
-Model performance was based on coefficients of determination ($R^2$) for the mean regression models and pseudo-$R^2$ values that are specific to given quantiles \cite{Koenker99}.  Additionally, \ac{RMSE} was calculated as an alternative measure of performance such that:
+Model fit was evaluated using the quantile regression goodness of fit described in Koenker and Machado \cite{Koenker99}.  This measure has a similar interpretation as the standard $R^2$ for mean regression models, although it differs fundamentally by describing the relative success of the model at a specific quantile using the weighted sum of absolute residuals. Using notation in Koenker and Machado \cite{Koenker99}:
+\begin{equation}
+R^1\left(\tau\right) = 1 - \hat{V}\left(\tau\right)/\tilde{V}\left(\tau\right)
+\end{equation}
+\noindent where $R^1\left(\tau\right)$ is the proportion of explained variance of the model at quantile $\tau$.  Values for $\hat{V}\left(\tau\right)$ and $\tilde{V}\left(\tau\right)$ describe the sum of residual variance of the fully parameterized model and a null model (i.e., the non-conditional quantile of the response).  The residual variance for each \ac{WRTDS} model was based on an accumulation of residuals for each regression model specific to each observation.  Additionally, \ac{RMSE} was calculated as an alternative measure of performance such that:
 \begin{equation}
 RMSE = \sqrt {{\frac{{\sum\limits_{{i = 1}}^n {{{\left( {{y_i} - {{\hat{y}}_i}} \right)}^2}} }}{{n}}}}
 \end{equation}
-\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to conventional (i.e., non-weighted) additive linear models to show improvements using the \ac{WRTDS} approach.
-% note here that this is only one performance metric, 
-
-A potential issue for predictions with regression models in $\ln$-transformed space is bias associated with back-transformation \cite{Duan83}.  Specifically, predicted values that are back-transformed by exponentiation may be biased due to variation in the concentration-salinity (or concentration-discharge) relationship through changes in residual variation across the data domain.  We followed the approach of Moyer et al. \cite{Moyer12} to correct for back-transformation bias using a scale parameter that is independently estimated for all regression models in the time series.  The scale parameter describes the variance of the residuals such that: 
-\begin{equation}\label{eqn:resvar}
-\hat{\sigma}_\epsilon^2 =\frac{\sum\limits_{{i = 1}}^n w_i \left(y_i - \hat{y}_i \right)^2}{\sum\limits_{{i = 1}}^n w_i }
-\end{equation}
-\noindent where residual variance $\hat{\sigma}_\epsilon^2$ (scale parameter) is the weighted sum of squared errors for chlorophyll for observations $1,\ldots,n$.  Scale parameters were obtained for each unique regression across the time series and used to determine the correction bias in the back-transformation such that:
-\begin{equation}\label{eqn:biascorr}
-\alpha = \exp\left(\frac{\hat{\sigma}_\epsilon^2}{2}\right)
-\end{equation}
-\begin{equation}\label{eqn:backtrans}
-\hat{Chl} = \alpha \exp\left(\beta_0 + \beta_1 t + \beta_2 Sal_{ff} + \beta_3 \sin\left(2\pi t\right) + \beta_4 \cos\left(2\pi t\right)\right)
-\end{equation}
-\noindent where the back-transformed chlorophyll concentration $\hat{Chl}$ is the exponentiated model prediction multiplied by the correction factor $\alpha$ \cite{Moyer12}.  Unique scale and correction bias parameters were obtained for each back-transformed observation.  Although differences between results from bias-corrected predictions and simple exponentiation were minimal, \cref{eqn:resvar,eqn:biascorr,eqn:backtrans} were used to provide the best possible estimates using the latest methods \cite{Hirsch10,Moyer12}. 
+\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to non-weighted quantile models that fit a single parameter set to the entire time series for each segment.
 
 The \ac{WRTDS} approach was also used to normalize predicted values for a given explanatory variable.  Normalization is used to remove the variance in the response that is attributed to a predictor variable, allowing interpretation of trends that are independent of confounding sources of variation.  For example, water quality trends that are potentially related to management actions can be more precisely evaluated if changes in pollutant concentrations due to natural variation in discharge are removed.  Hirsch et al. \cite{Hirsch10} used the approach to normalize trends by flow, whereas our adapted approach was used to normalize by the fraction of freshwater as a measure of salinity, $Sal_{ff}$, which integrates freshwater inputs and tidal exchange.  Normalized predictions were obtained for each observation date by assuming that $Sal_{ff}$ values for the same month in each year were equally likely to occur across the time series.  That is, $Sal_{ff}$ is assumed to be uniformly distributed within the range of observed values for the same month between years.  For example, normalization for January 1\textsuperscript{st} 1974 considers all salinity values occuring on January 1\textsuperscript{st} for each year in the time series as equally likely to occur on the observed data.  A normalized value for January 1\textsuperscript{st} 1974 is the average of the predicted values using each of the $Sal_{ff}$ values as input, while holding month and year constant.  Normalization across the time series is repeated for each observation to obtain salinity-normalized predictions.    
 
 \subsection{Evaluation of model residuals}
 
-Additional factors that were not explicitly included in the weighted regression were evaluated for their ability to describe unexplained variation in the response ($\epsilon$, \cref{eqn:funform}). Specifically, residuals for the mean and quantile models in each Bay segment were related to seagrass coverage, \ac{ENSO} climate effects by season and year, and nitrogen load and concentrations, all variables of considerable management interest.  \ac{ENSO} effects were included to evaluate the potential effects of climate variation, such that El Ni\~{n}o/La Ni\~{n}a events have been associated with extreme variation in rainfall that influences freshwater discharge into Tampa Bay \cite{Schmidt02}.  Although salinity as a model predictor may account for this variation, \ac{ENSO} effects were compared to model residuals to identify potentially unexplained variation in discharge related to extreme climate events as compared to seasonal changes in freshwater inputs. Conventional statistics, such as correlation coefficients and linear regression, were used to describe these relationships.
+Additional factors that were not explicitly included in the weighted regression were evaluated for their ability to describe unexplained variation in the response ($\epsilon$, \cref{eqn:funform}). Specifically, residuals for each model in each Bay segment were related to seagrass coverage, \ac{ENSO} climate effects by season and year, and nitrogen load and concentrations, all variables of considerable management interest.  \ac{ENSO} effects were included to evaluate the potential effects of climate variation, such that El Ni\~{n}o/La Ni\~{n}a events have been associated with extreme variation in rainfall that influences freshwater discharge into Tampa Bay \cite{Schmidt02}.  Although salinity as a model predictor may account for this variation, \ac{ENSO} effects were evaluated to identify potentially unexplained variation in discharge related to extreme climate events as compared to seasonal changes in freshwater inputs. Conventional statistics, such as correlation coefficients and linear regression, were used to describe these relationships.
 
 Seagrass coverage in Tampa Bay has been estimated biennially since 1988 \cite{Tomasko05}.  Coverage data are based on interpretation of aerial photos to produce vector coverages with polygons coded as continuous ($>$75\%) or patchy (25\%--75\%) coverage \cite{SFWMD13}.  Areal coverage of seagrass for years with available data ($n=$ 12) was estimated by considering seagrass as present (continous or patchy) or absent within each Bay segment.  \ac{ENSO} data obtained from the Climate Prediction Center \cite{CPC13} were based on a three year running-average of \ac{SST} anamolies in the Ni\~{n}o 3.4 region of the Pacific Ocean (5$^{\circ}$N--5$^{\circ}$S, 120$^{\circ}$--170$^{\circ}$W).  \ac{SST} index values greater (less) than 0.4 (-0.4) were considered El Ni\~{n}o (La Ni\~{n}a) conditions, neutral otherwise.  \ac{SST} index values were categorically and quantitatively summarized by year and season using designations in Lipp et al. \cite{Lipp01}: winter - January, February, March; spring - April, May, June; summer - July, August, September; fall - October, November, December.  Finally, monthly loads for \aclu{TN} (\acs{TN}, kg/mo) from 1985--2007 were obtained \cite{Zarbock94,Pribble01,Poe05}, in addition to \ac{TN} concentration from monitoring data \cite{TBEP11}.  Nitrogen loads are based on estimated and measured contributions from nonpoint sources, point sources, atmospheric deposition, groundwater, and losses of fertilizer from industrial operations.
 
@@ -241,25 +232,25 @@ Seagrass coverage in Tampa Bay has been estimated biennially since 1988 \cite{To
 
 \subsection{Observed trends in \acl{chl}}
 
-Observed \ac{chl} for all dates indicated mean values decreasing from Hillsborough (13.1 \mugl), to Old (8.9), to Middle (7.4), and to Lower Tampa Bay (4.2).  Observed trends from 1974 to 2012 indicated a consistent decrease from 1974 to present as previously documented, with the most dramatic declines observed in the 1980s (\cref{fig:obsyrmo1}).  Annual peaks in \ac{chl} have also been observed associated with El Ni\~{n}o effects \cite{Greening06} in the mid-1990s.  For example, 29.6 \mugl of \ac{chl} was observed for Old Tampa Bay in October 1995.  More extreme observations have been observed for individual stations during El Ni\~{n}o events. 
+Observed \ac{chl} for all dates indicated mean values decreasing from Hillsborough (12 \mugl), to Old (7.9), to Middle (6.6), and to Lower Tampa Bay (3.9).  Observed trends from 1974 to 2012 indicated a consistent decrease from 1974 to present as previously documented, with the most dramatic declines observed in the 1980s (\cref{fig:obsyrmo1}).  Annual peaks in \ac{chl} have also been observed associated with El Ni\~{n}o effects \cite{Greening06} in the mid-1990s.  For example, 28.3 \mugl of \ac{chl} was observed for Old Tampa Bay in October 1995.  More extreme observations have been observed for individual stations during El Ni\~{n}o events. 
 
-Observed seasonality of \ac{chl} was consistent with the behavior observed in many estuaries.  Maximum concentrations were generally observed in late summer, whereas minimum concentrations were observed in mid winter (\cref{fig:obsyrmo2}).  Mean concentrations for the entire Bay were highest (12.9 \mugl) in September and lowest (4.9 \mugl) in February.  Seasonality was similar among Bay segments except that the amplitude of seasonal peaks diminished with proximity to the Gulf.  For example, mean September and February concentrations for Lower Tampa Bay were 6.7 and 2.9 \mugl, whereas concentrations in the same months for Hillsborough Bay were 21.9 and 8.6 \mugl.  Relationships between \ac{chl} and salinity (as $Sal_{ff}$) across all segments had a higher proportion of freshwater associated with higher \ac{chl} (Pearson $\rho=$ 0.6, $p<$ 0.005, all observations).  Correlations between \ac{chl} and salinity by Bay segment were similar (Pearson $\rho \approx$ 0.4, $p<0.005$ for all), with a slightly lower correlation for Old Tampa Bay ($\rho=$ 0.32).
+Observed seasonality of \ac{chl} was consistent with the behavior observed in many estuaries.  Maximum concentrations were generally observed in late summer, whereas minimum concentrations were observed in mid winter (\cref{fig:obsyrmo2}).  Mean concentrations for the entire Bay were highest (11.5 \mugl) in September and lowest (4.5 \mugl) in February.  Seasonality was similar among Bay segments except that the amplitude of seasonal peaks diminished with proximity to the Gulf.  For example, mean September and February concentrations for Lower Tampa Bay were 6.2 and 2.9 \mugl, whereas concentrations in the same months for Hillsborough Bay were 19.7 and 8.2 \mugl.  Relationships between \ac{chl} and salinity (as $Sal_{ff}$) across all segments had a higher proportion of freshwater associated with higher \ac{chl} (Pearson $\rho=$ 0.6, $p<$ 0.005, all observations).  Correlations between \ac{chl} and salinity by Bay segment were similar (Pearson $\rho \approx$ 0.4, $p<0.005$ for all), with a slightly lower correlation for Old Tampa Bay ($\rho=$ 0.32).
 
 \subsection{Modeled trends in \acl{chl}}
 
-Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were more precise than non-weighted additive linear regressions for all model types (\cref{tab:modperf}).   Mean explained variance using $R^2$ for all Bay segments was 0.45, 0.44, and 0.64 for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to 0.3, 0.3, and 0.52 for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was 0.61, 0.62, and 0.37 for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to 0.69, 0.7, and 0.43 for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the quantile models compared to the mean models (\cref{tab:modperf}).    
+Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were more precise than non-weighted additive linear regressions for all model types (\cref{tab:modperf}).   Mean explained variance using $R^2$ for all Bay segments was 0.42, NA, and 0.42 for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to 0.3, NA, and 0.33 for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was 0.58, 0.66, and 0.36 for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to 0.66, 0.71, and 0.4 for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the quantile models compared to the mean models (\cref{tab:modperf}).    
 
 Substantial variation in \ac{chl} response from the mean predicted values was observed despite high explained variance (\cref{fig:predobs}).  Observed values close to the mean response were fit well by the mean model, whereas extreme observations at low or high ends of the distribution (i.e., low or high biomass ``events'') were better predicted by the quantile models. For example, \cref{fig:hbslice} shows the predicted and observed values for a two year period in Hillsborough Bay such that model fit varies depending on the month of observation.  Model fit for peak observed \ac{chl} in September and October of 1994 is best fit by the \nine models, whereas a low seasonal peak observed in the winter of 1994 was best fit by the \ten model.  Larger differences between the predicted values for the 90\textsuperscript{th} and 10\textsuperscript{th} models were also observed early in the time series, such that the period from 1974-1980 had larger variation in predicted \ac{chl}, in addition to higher mean values (\cref{fig:predobs}).  
 
 Aggregation of model results by year allowed an evaluation of annual trends for predicted and salinity-normalized concentrations (\cref{fig:salnrm}).  Predicted values illustrated response of chlorophyll by model type, whereas salinity-normalized estimates indicated annual trends by model segment, independent of variation due to freshwater influence.  In general, trends were similar for the mean, \nine, and \ten predictions.  An exception is the \nine distribution, which showed that early in the time series high \ac{chl} events were more common.  A decrease in the variability of \ac{chl} in Lower Tampa Bay in recent years is also apparent such that the \nine model decreased, the \ten model increased, and the mean model was not changing.  Additionally, recent trends for Middle and Lower Tampa Bay for the \ten models suggest that \ac{chl} during low biomass is not as low as previously.  An annual peak in predicted \ac{chl} in 1998 was previously reported in \cref{fig:predobs} for all Bay segments, but was absent from the salinity-normalized predictions, suggesting this peak is tied to above normal freshwater inputs. Further aggregation of the salinity-normalized results in \cref{tab:trendsal} illustrated trends on decadal and seasonal time scales.  In particular, trends prior to reductions in point source pollution during 1974--1980 indicated high or increasing \ac{chl} for all segments and model types, excluding the \ten predictions for Hillsborough Bay, which declined in that period (\cref{fig:salnrm}).  In contrast, the most dramatic declines in \ac{chl} were estimated from 1980 to 1990 for all Bay segments.  Accordingly, mean \ac{chl} concentrations from 1980--1990 were less than during the previous time period.  A slight positive increase for the \ten for Lower Tampa Bay in recent years is also evident on a decadal time scale.  Seasonal trends in salinity-normalized estimates indicated higher \ac{chl} concentrations in warmer months and generally decreasing concentrations throughout the time series in both summer and winter (\cref{fig:predobs}).
 
-Changes from year to year in salinity-normalized estimates indicates change not associated with discharge variation.  Specifically, intra-annual variation in \ac{chl} estimates for each model indicated that the annual range has not been constant throughout the time series (\cref{tab:nrmcv,fig:salnrm2}).  Maximum within-year variability (as annual standard deviation divided by the mean) for all models was generally observed in recent years, with exceptions for models in Lower Tampa Bay where maximum within-year variability was observed in 1993 (40.9\%) for the mean model, 1975 (40.8\%) for the \nine model, and 1988 (38.7\%) for the \ten model.  Increasing intra-year variability throughout the time series was particularly pronounced for the \nine model for Old Tampa Bay with annual variation ranging from 25.4\% in 1977  to 63.4\% in 2012.  Between-year variability by seasons in salinity-normalized \ac{chl} estimates were comparable, although variability was lower in summer (\cref{tab:nrmcv}).  Additionally, high variability was observed for Hillsborough Bay in winter and for Lower Tampa Bay in fall.
+Changes from year to year in salinity-normalized estimates indicates change not associated with discharge variation.  Specifically, intra-annual variation in \ac{chl} estimates for each model indicated that the annual range has not been constant throughout the time series (\cref{tab:nrmcv,fig:salnrm2}).  Maximum within-year variability (as annual standard deviation divided by the mean) for all models was generally observed in recent years, with exceptions for models in Lower Tampa Bay where maximum within-year variability was observed in 1993 (41.8\%) for the mean model, 1975 (41.7\%) for the \nine model, and 1989 (41.9\%) for the \ten model.  Increasing intra-year variability throughout the time series was particularly pronounced for the \nine model for Old Tampa Bay with annual variation ranging from 25.2\% in 1977  to 63.4\% in 2012.  Between-year variability by seasons in salinity-normalized \ac{chl} estimates were comparable, although variability was lower in summer (\cref{tab:nrmcv}).  Additionally, high variability was observed for Hillsborough Bay in winter and for Lower Tampa Bay in fall.
 
 Changes in the response of \ac{chl} across salinity gradients for each Bay segment can be interpreted by plotting \ac{chl} against $Sal_{ff}$ for different dates (\cref{fig:dyna}) using results from the weighted regressions.  This showed that the response of \ac{chl} in Hillsborough Bay with increasing freshwater input for early years was minimal, whereas a strong positive relationship is observed in later years.  Higher freshwater inputs in some recent years caused a saturation effect such that \ac{chl} concentrations did not increase beyond a given value (e.g., 0.40 $Sal_{ff}$).  Other Bay segments also show changes in the relationship between \ac{chl} and freshwater inputs.  For example, Lower Tampa Bay shows a stronger relationship between \ac{chl} and $Sal_{ff}$ for recent years. 
 
 \subsection{Evaluation of model residuals}
 
-Correlations of residuals to additional explanatory variables indicated that chloropyhll response could be attributed to factors other than time and salinity (\cref{tab:cormat}). Significant correlations were observed with \ac{TN} for all segments and models; correlations were observed for \ac{TN} concentration rather than load, most likely because the model already accounted for variation due to discharge.  Residuals from eight of the 12 models had positive correlations with \ac{TN} concentration, the exceptions being the \nine model for Hillsborough, Old, and Lower Tampa Bay and the mean model for Middle Tampa Bay.  Only the \nine model for Old Tampa Bay was positively correlated with \ac{TN} load.  Correlations with seagrass coverage and \ac{ENSO} index values binned by year and season were not significant (\cref{tab:cormat}).  Regression models relating residuals to \ac{ENSO} categories by year and season (e.g., El Ni\~{n}o fall) were not signficant.  Regression models using continuous seasonal index values were also unable to resolve variance in the residuals, with the exception of the \ten model for Lower Tampa Bay such that a significant and positive relationship was observed between residuals and \ac{ENSO} index values for spring dates ($F=$ 5.2, $R^2 =$ 0.12, $p=$ 0.028).  
+Correlations of residuals to additional explanatory variables indicated that chloropyhll response could be attributed to factors other than time and salinity (\cref{tab:cormat}). Significant correlations were observed with \ac{TN} for all segments and models; correlations were observed for \ac{TN} concentration rather than load, most likely because the model already accounted for variation due to discharge.  Residuals from eight of the 12 models had positive correlations with \ac{TN} concentration, the exceptions being the \nine model for Hillsborough, Old, and Lower Tampa Bay and the mean model for Middle Tampa Bay.  Only the \nine model for Old Tampa Bay was positively correlated with \ac{TN} load.  Correlations with seagrass coverage and \ac{ENSO} index values binned by year and season were not significant (\cref{tab:cormat}).  Regression models relating residuals to \ac{ENSO} categories by year and season (e.g., El Ni\~{n}o fall) were not signficant.  Regression models using continuous seasonal index values were also unable to resolve variance in the residuals, with the exception of the \ten model for Lower Tampa Bay such that a significant and positive relationship was observed between residuals and \ac{ENSO} index values for spring dates ($F=$ 0.8, $R^2 =$ 0.021, $p=$ ns).  
 
 \section{Discussion}
 
@@ -316,10 +307,10 @@ We acknowledge the significant efforts of the Hillsborough County Environmental 
 \hline\hline
 Segment&\head{2cm}{Area (km$^2$)}&\head{2cm}{Shoreline length (km)}&\head{2cm}{Mean depth (m)}&\head{2cm}{Watershed area (km$^2$)}&\head{2cm}{Chlorophyll-\textit{a} (\mugl)}&\head{2cm}{Salinity}\tabularnewline
 \hline
-HB\textsuperscript{\textit{a}}&$105.3$&$128.6$&$3.2$&$3319.9$&$9.9$&$24.4$\tabularnewline
-OTB&$200.7$&$339.8$&$2.8$&$ 874.4$&$7.6$&$23.5$\tabularnewline
-MTB&$309.9$&$262.8$&$4.1$&$1062.7$&$6.1$&$27.1$\tabularnewline
-LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
+HB\textsuperscript{\textit{a}}&$105.3$&$128.6$&$3.2$&$3319.9$&$9.1$&$24.5$\tabularnewline
+OTB&$200.7$&$339.8$&$2.8$&$ 874.4$&$6.7$&$23.5$\tabularnewline
+MTB&$309.9$&$262.8$&$4.1$&$1062.7$&$5.4$&$27.1$\tabularnewline
+LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$3.9$&$32.2$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -339,56 +330,56 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Low}&\multicolumn{1}{c}{Moderate}&\multicolumn{1}{c}{High}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Low}&\multicolumn{1}{c}{Moderate}&\multicolumn{1}{c}{High}\tabularnewline
 \hline
 {\bfseries HB\textsuperscript{\textit{a}}}&&&&&&&\tabularnewline
-~~mean&-16.7 {\footnotesize (-60.6)}&-10.8 {\footnotesize (-39.2)}&-2.8 {\footnotesize ( -9.8)}&&-1.6 {\footnotesize (-12.9)}&-0.5 {\footnotesize (-2.8)}&6.0 {\footnotesize (30.7)}\tabularnewline
+~~0.1 $\tau&-9.4 {\footnotesize (-46.9)}&-6.4 {\footnotesize (-32.2)}&0.4 {\footnotesize (2.3)}&&1.7 {\footnotesize (19.7)}&0.9 {\footnotesize (6.9)}& 9.8 {\footnotesize (94.7)}\tabularnewline
+~~0.5 $\tau$&-16.7 {\footnotesize (-60.6)}&-10.8 {\footnotesize (-39.2)}&-2.8 {\footnotesize ( -9.8)}&&-1.6 {\footnotesize (-12.9)}&-0.5 {\footnotesize (-2.8)}&6.0 {\footnotesize (30.7)}\tabularnewline
 ~~0.9 $\tau$&-29.0 {\footnotesize (-74.4)}&-24.7 {\footnotesize (-57.2)}&-13.4 {\footnotesize (-32.8)}&&-10.2 {\footnotesize (-50.5)}&-9.5 {\footnotesize (-33.8)}&-7.6 {\footnotesize (-21.8)}\tabularnewline
-~~0.1 $\tau$&-9.4 {\footnotesize (-46.9)}&-6.4 {\footnotesize (-32.2)}&0.4 {\footnotesize (2.3)}&&1.7 {\footnotesize (19.7)}&0.9 {\footnotesize (6.9)}& 9.8 {\footnotesize (94.7)}\tabularnewline
 \hline
 {\bfseries OTB}&&&&&&&\tabularnewline
-~~mean&0.2 {\footnotesize (1.1)}&0.4 {\footnotesize (2.4)}&2.0 {\footnotesize (13.3)}&&4.6 {\footnotesize (40.3)}&2.7 {\footnotesize (21.2)}&1.9 {\footnotesize (12.8)}\tabularnewline
+~~0.1 $\tau&-0.5 {\footnotesize (-6.0)}&1.5 {\footnotesize (18.7)}&6.8 {\footnotesize (100.8)}&&0.9 {\footnotesize (11.9)}&0.7 {\footnotesize (7.4)}&3.5 {\footnotesize (34.7)}\tabularnewline
+~~0.5 $\tau$&0.2 {\footnotesize (1.1)}&0.4 {\footnotesize (2.4)}&2.0 {\footnotesize (13.3)}&&4.6 {\footnotesize (40.3)}&2.7 {\footnotesize (21.2)}&1.9 {\footnotesize (12.8)}\tabularnewline
 ~~0.9 $\tau$&11.5 {\footnotesize (50.2)}&6.2 {\footnotesize (26.4)}& 9.6 {\footnotesize (42.1)}&&12.4 {\footnotesize (56.4)}&3.8 {\footnotesize (14.8)}&-0.2 {\footnotesize (-0.7)}\tabularnewline
-~~0.1 $\tau$&-0.5 {\footnotesize (-6.0)}&1.5 {\footnotesize (18.7)}&6.8 {\footnotesize (100.8)}&&0.9 {\footnotesize (11.9)}&0.7 {\footnotesize (7.4)}&3.5 {\footnotesize (34.7)}\tabularnewline
 \hline
 {\bfseries MTB}&&&&&&&\tabularnewline
-~~mean&-3.6 {\footnotesize (-36.2)}&-1.5 {\footnotesize (-14.4)}&-0.4 {\footnotesize (-2.9)}&&-0.6 {\footnotesize (-8.8)}&0.6 {\footnotesize (6.8)}&2.2 {\footnotesize (22.2)}\tabularnewline
+~~0.1 $\tau&-2.0 {\footnotesize (-31.7)}&0.9 {\footnotesize (14.2)}&0.2 {\footnotesize (2.1)}&&-0.1 {\footnotesize (-2.7)}&1.5 {\footnotesize (27.0)}&3.1 {\footnotesize (43.8)}\tabularnewline
+~~0.5 $\tau$&-3.6 {\footnotesize (-36.2)}&-1.5 {\footnotesize (-14.4)}&-0.4 {\footnotesize (-2.9)}&&-0.6 {\footnotesize (-8.8)}&0.6 {\footnotesize (6.8)}&2.2 {\footnotesize (22.2)}\tabularnewline
 ~~0.9 $\tau$&-6.3 {\footnotesize (-43.1)}&-3.5 {\footnotesize (-23.4)}&0.2 {\footnotesize (1.1)}&&-1.5 {\footnotesize (-14.9)}&-0.4 {\footnotesize (-3.3)}&1.0 {\footnotesize (6.7)}\tabularnewline
-~~0.1 $\tau$&-2.0 {\footnotesize (-31.7)}&0.9 {\footnotesize (14.2)}&0.2 {\footnotesize (2.1)}&&-0.1 {\footnotesize (-2.7)}&1.5 {\footnotesize (27.0)}&3.1 {\footnotesize (43.8)}\tabularnewline
 \hline
 {\bfseries LTB}&&&&&&&\tabularnewline
-~~mean&0.6 {\footnotesize (15.4)}&1.7 {\footnotesize (38.7)}&3.3 {\footnotesize (67.8)}&&-0.03 {\footnotesize (-0.7)}&0.5 {\footnotesize (9.2)}&1.1 {\footnotesize (15.3)}\tabularnewline
-~~0.9 $\tau$&0.05 {\footnotesize (0.9)}&0.7 {\footnotesize (9.1)}&2.1 {\footnotesize (24.0)}&&-1.0 {\footnotesize (-14.4)}&-1.9 {\footnotesize (-18.6)}&-3.2 {\footnotesize (-22.7)}\tabularnewline
-~~0.1 $\tau$&1.8 {\footnotesize (78.6)}&2.0 {\footnotesize (72.8)}&3.0 {\footnotesize ( 99.7)}&&0.8 {\footnotesize (22.8)}&1.2 {\footnotesize (34.1)}&2.1 {\footnotesize (54.4)}\tabularnewline
+~~0.1 $\tau&1.8 {\footnotesize (78.6)}&2.3 {\footnotesize (82.6)}&4.5 {\footnotesize (157.4)}&&0.8 {\footnotesize (22.8)}&1.5 {\footnotesize (41.2)}&2.5 {\footnotesize (52.0)}\tabularnewline
+~~0.5 $\tau$&0.6 {\footnotesize (15.4)}&2.2 {\footnotesize (47.1)}&5.0 {\footnotesize (108.5)}&&-0.03 {\footnotesize (-0.7)}&0.7 {\footnotesize (11.6)}&1.5 {\footnotesize (19.0)}\tabularnewline
+~~0.9 $\tau$&0.05 {\footnotesize (0.9)}&1.1 {\footnotesize (13.5)}&3.7 {\footnotesize (40.5)}&&-1.0 {\footnotesize (-14.4)}&-2.2 {\footnotesize (-19.5)}&-5.3 {\footnotesize (-29.0)}\tabularnewline
 \hline
 \end{tabular}\end{center}
 
 \footnotesize \textsuperscript{\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\end{table}
 
 
-%model performance vs OLS
-%latex.default(null.dat, file = "", caption.loc = "top", caption = cap.val,     insert.bottom = foot.val, cgroup = c("mean", "0.9 $\\tau$",         "0.1 $\\tau$"), n.cgroup = c(2, 2, 2), colheads = rep(c("Non-wtd",         "Wtd"), 3), rowlabel = "Statistic", rowname = stat, n.rgroup = rep(2,         4), rgroup = segs, label = "tab:modperf", digits = 2,     col.just = rep("l", ncol(null.dat)))%
+%model performance
+%latex.default(null.dat, file = "", caption.loc = "top", caption = cap.val,     insert.bottom = foot.val, cgroup = c("0.1 $\\tau$", "0.5 $\\tau$",         "0.9 $\\tau$"), n.cgroup = c(2, 2, 2), colheads = rep(c("Non-wtd",         "Wtd"), 3), rowlabel = "Statistic", rowname = stat, n.rgroup = rep(2,         4), rgroup = segs, label = "tab:modperf", digits = 2,     col.just = rep("l", ncol(null.dat)))%
 \begin{table}[!tbp]
-\caption{Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using $R^2$ for mean models, pseudo-$R^2$ for 90\textsuperscript{th} and \ten ($\tau$) models, and \ac{RMSE} for all models (statistics by Bay segment).\label{tab:modperf}} 
+\caption{Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using a quantile regression goodness of fit described in Koenker and Mochado \cite{Koenker99} and \ac{RMSE}.  Goodness of fit for the \ten models in Lower Tampa Bay is not shown because the null quantiles were inestimable with censored regression.\label{tab:modperf}} 
 \begin{center}
 \begin{tabular}{lllcllcll}
 \hline\hline
-\multicolumn{1}{l}{\bfseries Statistic}&\multicolumn{2}{c}{\bfseries mean}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries 0.9 $\tau$}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries 0.1 $\tau$}\tabularnewline
+\multicolumn{1}{l}{\bfseries Statistic}&\multicolumn{2}{c}{\bfseries 0.1 $\tau$}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries 0.5 $\tau$}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries 0.9 $\tau$}\tabularnewline
 \cline{2-3} \cline{5-6} \cline{8-9}
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Non-wtd}&\multicolumn{1}{c}{Wtd}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Non-wtd}&\multicolumn{1}{c}{Wtd}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Non-wtd}&\multicolumn{1}{c}{Wtd}\tabularnewline
 \hline
 {\bfseries HB\textsuperscript{\textit{a}}}&&&&&&&&\tabularnewline
-~~$R^2$&$0.54$&$0.66$&&$0.32$&$0.47$&&$0.31$&$0.45$\tabularnewline
-~~$RMSE$&$0.48$&$0.41$&&$0.78$&$0.66$&&$0.74$&$0.67$\tabularnewline
+~~$R^2$&$0.31$&$0.43$&&$0.34$&$0.43$&&$0.32$&$0.46$\tabularnewline
+~~$RMSE$&$0.76$&$0.72$&&$0.46$&$0.41$&&$0.77$&$0.65$\tabularnewline
 \hline
 {\bfseries OTB}&&&&&&&&\tabularnewline
-~~$R^2$&$0.54$&$0.65$&&$0.29$&$0.45$&&$0.34$&$0.47$\tabularnewline
-~~$RMSE$&$0.41$&$0.36$&&$0.65$&$0.61$&&$0.67$&$0.59$\tabularnewline
+~~$R^2$&$0.33$&$0.45$&&$0.36$&$0.45$&&$0.29$&$0.43$\tabularnewline
+~~$RMSE$&$0.71$&$0.64$&&$0.40$&$0.35$&&$0.65$&$0.61$\tabularnewline
 \hline
 {\bfseries MTB}&&&&&&&&\tabularnewline
-~~$R^2$&$0.60$&$0.71$&&$0.34$&$0.51$&&$0.38$&$0.51$\tabularnewline
-~~$RMSE$&$0.37$&$0.31$&&$0.60$&$0.52$&&$0.61$&$0.52$\tabularnewline
+~~$R^2$&$0.32$&$0.44$&&$0.38$&$0.47$&&$0.31$&$0.51$\tabularnewline
+~~$RMSE$&$0.61$&$0.56$&&$0.38$&$0.33$&&$0.64$&$0.52$\tabularnewline
 \hline
 {\bfseries LTB}&&&&&&&&\tabularnewline
-~~$R^2$&$0.40$&$0.51$&&$0.26$&$0.37$&&$0.18$&$0.34$\tabularnewline
-~~$RMSE$&$0.45$&$0.40$&&$0.72$&$0.65$&&$0.77$&$0.68$\tabularnewline
+~~$R^2$&$$&$$&&$0.26$&$0.31$&&$0.28$&$0.27$\tabularnewline
+~~$RMSE$&$0.74$&$0.71$&&$0.37$&$0.35$&&$0.58$&$0.54$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -408,48 +399,48 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}\tabularnewline
 \hline
 {\bfseries HB\textsuperscript{\textit{a}}}&&&&&&&&&&&\tabularnewline
-~~mean&24.91& 0.06 &&18.30&-0.86***&&13.00&-0.11 &&11.30& 0.02 \tabularnewline
-~~0.9 $\tau$&43.51& 1.56*&&33.33&-2.00***&&22.54&-0.10 &&19.23&-0.15 \tabularnewline
-~~0.1 $\tau$&16.41&-0.55**&&10.88&-0.45***&& 8.10&-0.02 && 7.37& 0.08 \tabularnewline
+~~mean&24.92& 0.06 &&18.27&-0.86***&&12.94&-0.11 &&11.27& 0.02 \tabularnewline
+~~0.9 $\tau$&43.59& 1.55*&&33.28&-2.00***&&22.38&-0.11 &&19.15&-0.15 \tabularnewline
+~~0.1 $\tau$&16.39&-0.55**&&10.87&-0.46***&& 8.10&-0.01 && 7.38& 0.08 \tabularnewline
 \hline
 {\bfseries OTB}&&&&&&&&&&&\tabularnewline
-~~mean&12.45& 0.55 &&10.94&-0.31*&& 8.84& 0.06 && 9.10& 0.12 \tabularnewline
-~~0.9 $\tau$&19.26& 0.72 &&17.26&-0.36*&&14.91& 0.12 &&16.30& 0.16 \tabularnewline
-~~0.1 $\tau$& 8.45& 0.57**&& 7.32&-0.23**&& 5.59& 0.02 && 6.08& 0.07 \tabularnewline
+~~mean&12.46& 0.55 &&10.94&-0.31*&& 8.82& 0.06 && 9.08& 0.12 \tabularnewline
+~~0.9 $\tau$&19.25& 0.72*&&17.22&-0.36*&&14.87& 0.13 &&16.25& 0.16 \tabularnewline
+~~0.1 $\tau$& 8.45& 0.56**&& 7.32&-0.23**&& 5.59& 0.03 && 6.07& 0.07 \tabularnewline
 \hline
 {\bfseries MTB}&&&&&&&&&&&\tabularnewline
-~~mean&10.33& 0.77***&&10.05&-0.34***&& 7.51&-0.04 && 6.39& 0.01 \tabularnewline
-~~0.9 $\tau$&15.45& 1.27***&&16.40&-0.65***&&11.61&-0.11 && 9.46&-0.05 \tabularnewline
-~~0.1 $\tau$& 6.88& 0.46**&& 6.81&-0.14 && 5.29&-0.05 && 4.57& 0.05 \tabularnewline
+~~mean&10.43& 0.78***&&10.13&-0.34***&& 7.61&-0.04 && 6.45& 0.01 \tabularnewline
+~~0.9 $\tau$&15.51& 1.26***&&16.54&-0.64***&&11.72&-0.11 && 9.54&-0.04 \tabularnewline
+~~0.1 $\tau$& 7.02& 0.46**&& 6.88&-0.14 && 5.37&-0.05 && 4.63& 0.05 \tabularnewline
 \hline
 {\bfseries LTB}&&&&&&&&&&&\tabularnewline
-~~mean& 4.68& 0.33**&& 4.39&-0.11*&& 3.88& 0.07 && 4.06& 0.02 \tabularnewline
-~~0.9 $\tau$& 8.32& 0.42 && 8.05&-0.13 && 6.82& 0.12 && 6.56&-0.12*\tabularnewline
-~~0.1 $\tau$& 2.84& 0.22**&& 2.62&-0.10**&& 2.29& 0.07**&& 2.75& 0.07***\tabularnewline
+~~mean& 4.65& 0.33**&& 4.37&-0.11*&& 3.93& 0.08 && 4.07& 0.02 \tabularnewline
+~~0.9 $\tau$& 8.29& 0.43 && 8.02&-0.13 && 6.90& 0.14 && 6.65&-0.13**\tabularnewline
+~~0.1 $\tau$& 2.81& 0.22**&& 2.61&-0.10**&& 2.35& 0.09***&& 2.76& 0.07***\tabularnewline
 \hline
 {\bfseries }&&&&&&&&&&&\tabularnewline
 \cline{2-3} \cline{5-6} \cline{8-9} \cline{11-12}
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{$\Delta$ chl-\textit{a}}\tabularnewline
 \hline
 {\bfseries HB}&&&&&&&&&&&\tabularnewline
-~~mean&10.65&-0.45***&&13.75&-0.44***&&22.37&-0.33***&&14.88&-0.39***\tabularnewline
-~~0.9 $\tau$&18.20&-0.72***&&23.83&-0.98***&&39.67&-0.77***&&26.48&-0.56***\tabularnewline
-~~0.1 $\tau$& 6.49&-0.32***&& 8.58&-0.21***&&14.35&-0.19***&& 9.43&-0.26***\tabularnewline
+~~mean&10.67&-0.45***&&13.76&-0.44***&&22.29&-0.34***&&14.80&-0.39***\tabularnewline
+~~0.9 $\tau$&18.23&-0.72***&&23.85&-0.97***&&39.49&-0.79***&&26.31&-0.56***\tabularnewline
+~~0.1 $\tau$& 6.50&-0.32***&& 8.60&-0.21***&&14.34&-0.19***&& 9.42&-0.26***\tabularnewline
 \hline
 {\bfseries OTB}&&&&&&&&&&&\tabularnewline
-~~mean& 5.49&-0.10***&& 8.88&-0.12***&&15.09&-0.06***&&10.46&-0.12***\tabularnewline
-~~0.9 $\tau$& 9.81&-0.19***&&13.72&-0.11***&&24.84& 0.17***&&18.19&-0.22***\tabularnewline
-~~0.1 $\tau$& 3.53&-0.07***&& 6.28&-0.06***&& 9.92&-0.07***&& 6.67&-0.09***\tabularnewline
+~~mean& 5.45&-0.10***&& 8.88&-0.13***&&15.01&-0.07***&&10.53&-0.12***\tabularnewline
+~~0.9 $\tau$& 9.76&-0.19***&&13.71&-0.11***&&24.64& 0.16***&&18.31&-0.22***\tabularnewline
+~~0.1 $\tau$& 3.50&-0.07***&& 6.29&-0.06***&& 9.88&-0.07***&& 6.72&-0.09***\tabularnewline
 \hline
 {\bfseries MTB}&&&&&&&&&&&\tabularnewline
-~~mean& 5.23&-0.13***&& 7.50&-0.18***&&11.95&-0.15***&& 8.14&-0.12***\tabularnewline
-~~0.9 $\tau$& 8.86&-0.25***&&11.33&-0.28***&&17.71&-0.23***&&12.85&-0.22***\tabularnewline
-~~0.1 $\tau$& 3.55&-0.08***&& 5.31&-0.11***&& 8.47&-0.10***&& 5.37&-0.05***\tabularnewline
+~~mean& 5.26&-0.13***&& 7.65&-0.18***&&11.98&-0.15***&& 8.27&-0.12***\tabularnewline
+~~0.9 $\tau$& 8.89&-0.26***&&11.52&-0.28***&&17.71&-0.23***&&13.03&-0.22***\tabularnewline
+~~0.1 $\tau$& 3.58&-0.08***&& 5.44&-0.11***&& 8.54&-0.10***&& 5.46&-0.05**\tabularnewline
 \hline
 {\bfseries LTB}&&&&&&&&&&&\tabularnewline
-~~mean& 2.70&-0.01***&& 3.41&-0.01*&& 5.97& 0.00 && 4.67&-0.05***\tabularnewline
-~~0.9 $\tau$& 4.91&-0.05***&& 5.85&-0.03***&& 9.96&-0.05***&& 8.34&-0.15***\tabularnewline
-~~0.1 $\tau$& 1.71& 0.01***&& 2.22& 0.00 && 3.73& 0.00 && 2.78& 0.00 \tabularnewline
+~~mean& 2.68&-0.01***&& 3.35&-0.01*&& 6.04& 0.00 && 4.70&-0.05***\tabularnewline
+~~0.9 $\tau$& 4.88&-0.05***&& 5.76&-0.03***&&10.12&-0.04**&& 8.46&-0.15***\tabularnewline
+~~0.1 $\tau$& 1.70& 0.01***&& 2.21& 0.00 && 3.79& 0.01 && 2.79& 0.00 \tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -466,46 +457,46 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \multicolumn{1}{l}{{\bf Models}}&\multicolumn{1}{c}{{\bf 1974-1980}}&\multicolumn{1}{c}{{\bf 1980-1990}}&\multicolumn{1}{c}{{\bf 1990-2000}}&\multicolumn{1}{c}{{\bf 2000-2012}}\tabularnewline
 \hline
 {\bfseries HB\textsuperscript{\textit{a}}}&&&&\tabularnewline
-~~mean&13.3&32.2&41.5&45.2\tabularnewline
-~~0.9 $\tau$&24.2&37.2&41.4&49.1\tabularnewline
-~~0.1 $\tau$&16.7&35.2&45.8&48.6\tabularnewline
+~~mean&13.3&32.1&41.0&44.9\tabularnewline
+~~0.9 $\tau$&24.5&37.2&40.6&48.6\tabularnewline
+~~0.1 $\tau$&16.6&34.8&45.9&48.6\tabularnewline
 \hline
 {\bfseries OTB}&&&&\tabularnewline
-~~mean&33.6&34.9&41.7&47.4\tabularnewline
-~~0.9 $\tau$&26.4&30.4&43.0&54.3\tabularnewline
-~~0.1 $\tau$&35.3&35.5&46.1&43.7\tabularnewline
+~~mean&33.4&34.8&41.6&47.3\tabularnewline
+~~0.9 $\tau$&26.3&30.3&42.9&54.0\tabularnewline
+~~0.1 $\tau$&35.0&35.4&46.2&43.8\tabularnewline
 \hline
 {\bfseries MTB}&&&&\tabularnewline
-~~mean&27.4&30.4&42.0&39.5\tabularnewline
-~~0.9 $\tau$&25.0&26.4&37.5&39.1\tabularnewline
-~~0.1 $\tau$&31.1&33.8&42.9&39.1\tabularnewline
+~~mean&27.3&30.3&41.8&39.3\tabularnewline
+~~0.9 $\tau$&24.8&26.2&37.2&38.9\tabularnewline
+~~0.1 $\tau$&30.9&33.8&43.2&38.9\tabularnewline
 \hline
 {\bfseries LTB}&&&&\tabularnewline
-~~mean&34.4&34.1&36.6&34.8\tabularnewline
-~~0.9 $\tau$&37.2&31.6&34.7&33.5\tabularnewline
-~~0.1 $\tau$&36.8&37.4&33.2&32.7\tabularnewline
+~~mean&34.8&35.0&37.9&36.3\tabularnewline
+~~0.9 $\tau$&37.7&32.5&35.9&35.7\tabularnewline
+~~0.1 $\tau$&36.8&37.7&36.3&33.9\tabularnewline
 \hline
 ~~&{\bf winter\textsuperscript{\textit{b}}}&{\bf spring}&{\bf summer}&{\bf fall}\tabularnewline
 \hline
 {\bfseries HB}&&&&\tabularnewline
-~~mean&53.1&41.8&20.5&39.9\tabularnewline
-~~0.9 $\tau$&47.9&55.6&29.4&35.5\tabularnewline
-~~0.1 $\tau$&65.3&35.9&21.8&44.2\tabularnewline
+~~mean&53.1&41.7&20.5&40.1\tabularnewline
+~~0.9 $\tau$&47.9&55.4&29.9&35.5\tabularnewline
+~~0.1 $\tau$&65.3&35.6&21.4&44.4\tabularnewline
 \hline
 {\bfseries OTB}&&&&\tabularnewline
-~~mean&23.0&29.3&13.9&30.5\tabularnewline
-~~0.9 $\tau$&23.9&25.8&20.1&31.3\tabularnewline
-~~0.1 $\tau$&29.0&31.1&13.6&33.2\tabularnewline
+~~mean&23.2&29.3&13.8&30.4\tabularnewline
+~~0.9 $\tau$&24.1&25.6&20.0&31.3\tabularnewline
+~~0.1 $\tau$&29.1&31.0&13.5&33.2\tabularnewline
 \hline
 {\bfseries MTB}&&&&\tabularnewline
-~~mean&33.0&33.0&18.5&31.9\tabularnewline
-~~0.9 $\tau$&38.0&36.4&20.6&31.4\tabularnewline
-~~0.1 $\tau$&30.6&29.4&19.2&31.2\tabularnewline
+~~mean&32.8&32.8&18.3&32.8\tabularnewline
+~~0.9 $\tau$&38.2&36.2&20.2&32.1\tabularnewline
+~~0.1 $\tau$&30.5&29.4&19.0&32.6\tabularnewline
 \hline
 {\bfseries LTB}&&&&\tabularnewline
-~~mean&12.5&18.7&13.0&25.9\tabularnewline
-~~0.9 $\tau$&17.8&16.9&17.8&28.6\tabularnewline
-~~0.1 $\tau$&13.6&21.8&15.7&27.1\tabularnewline
+~~mean&12.1&18.2&13.3&26.6\tabularnewline
+~~0.9 $\tau$&17.1&17.0&17.1&29.4\tabularnewline
+~~0.1 $\tau$&13.2&20.9&16.0&27.8\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -523,24 +514,24 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{seagrass}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{annual}&\multicolumn{1}{c}{season}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{load}&\multicolumn{1}{c}{conc.}\tabularnewline
 \hline
 {\bfseries HB\textsuperscript{\textit{a}}}&&&&&&&\tabularnewline
-~~mean&0.23 &&0.25 &0.03 &&0.03 &0.11*\tabularnewline
-~~0.9 $\tau$&0.26 &&0.16 &0.01 &&0.00 &0.07 \tabularnewline
-~~0.1 $\tau$&-0.07 &&0.30 &0.04 &&0.02 &0.12*\tabularnewline
+~~mean&0.15 &&0.23 &0.01 &&0.07 &0.15*\tabularnewline
+~~0.9 $\tau$&0.25 &&0.09 &-0.04 &&-0.03 &0.04 \tabularnewline
+~~0.1 $\tau$&0.22 &&0.34*&0.04 &&0.00 &0.06 \tabularnewline
 \hline
 {\bfseries MTB}&&&&&&&\tabularnewline
-~~mean&-0.40 &&0.10 &-0.04 &&0.00 &0.11 \tabularnewline
-~~0.9 $\tau$&-0.24 &&0.06 &-0.01 &&0.06 &0.12*\tabularnewline
-~~0.1 $\tau$&-0.43 &&0.06 &-0.07 &&-0.06 &0.12*\tabularnewline
+~~mean&-0.30 &&0.15 &-0.04 &&-0.05 &0.10 \tabularnewline
+~~0.9 $\tau$&-0.05 &&0.06 &-0.02 &&0.08 &0.14*\tabularnewline
+~~0.1 $\tau$&-0.14 &&0.09 &-0.06 &&-0.09 &0.11 \tabularnewline
 \hline
 {\bfseries OTB}&&&&&&&\tabularnewline
-~~mean&0.04 &&0.08 &-0.04 &&0.06 &0.19***\tabularnewline
-~~0.9 $\tau$&0.23 &&0.02 &-0.06 &&0.16**&0.11 \tabularnewline
-~~0.1 $\tau$&-0.03 &&0.07 &-0.04 &&0.03 &0.23***\tabularnewline
+~~mean&0.26 &&0.10 &-0.03 &&0.05 &0.11 \tabularnewline
+~~0.9 $\tau$&0.39 &&0.03 &-0.08 &&0.14*&0.09 \tabularnewline
+~~0.1 $\tau$&0.40 &&0.04 &-0.06 &&0.12 &0.12*\tabularnewline
 \hline
 {\bfseries LTB}&&&&&&&\tabularnewline
-~~mean&0.09 &&0.08 &0.00 &&0.01 &0.20***\tabularnewline
-~~0.9 $\tau$&0.28 &&0.08 &0.03 &&0.06 &0.10 \tabularnewline
-~~0.1 $\tau$&-0.19 &&0.07 &-0.02 &&0.01 &0.33***\tabularnewline
+~~mean&0.05 &&-0.04 &-0.08 &&-0.08 &0.05 \tabularnewline
+~~0.9 $\tau$&0.23 &&0.01 &-0.04 &&-0.04 &-0.10 \tabularnewline
+~~0.1 $\tau$&-0.15 &&-0.02 &-0.05 &&-0.01 &0.11 \tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -615,7 +606,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 
 }
 
-\caption[Predicted and observed \ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date]{Predicted and observed \ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} percentile ($\tau$) distributions.\label{fig:hbslice}}
+\caption[Predicted and observed \ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date]{Predicted and observed \ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the the 10\textsuperscript{th}, 50\textsuperscript{th}, and and 90\textsuperscript{th} percentile ($\tau$) distributions.\label{fig:hbslice}}
 \end{figure}
 
 
@@ -627,7 +618,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 
 }
 
-\caption[Weighted regression predictions and salinity-normalized results aggregated by year for the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} quantile ($\tau$) distributions]{Weighted regression predictions and salinity-normalized results aggregated by year for the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} quantile ($\tau$) distributions.\label{fig:salnrm}}
+\caption[Weighted regression predictions and salinity-normalized results aggregated by year for  the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantile ($\tau$) distributions]{Weighted regression predictions and salinity-normalized results aggregated by year for  the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantile ($\tau$) distributions.\label{fig:salnrm}}
 \end{figure}
 
 
@@ -639,7 +630,7 @@ LTB&$246.6$&$121.6$&$3.8$&$ 330.5$&$4.1$&$32.2$\tabularnewline
 
 }
 
-\caption[Salinity-normalized results for the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} quantile ($\tau$) distributions]{Salinity-normalized results for the mean response and the 10\textsuperscript{th} and 90\textsuperscript{th} quantile ($\tau$) distributions. Note changes in intra-annual variability by Bay segment.\label{fig:salnrm2}}
+\caption[Salinity-normalized results for the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantile ($\tau$) distributions]{Salinity-normalized results for the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} quantile ($\tau$) distributions. Note changes in intra-annual variability by Bay segment.\label{fig:salnrm2}}
 \end{figure}
 
 
@@ -672,7 +663,7 @@ Please see the online repository (\href{https://github.com/fawda123/wtreg\_for\_
 
 }
 
-\caption[Predicted (lines) and observed (circles) \ac{chl} concentrations for Tampa Bay segments by month]{Predicted (lines) and observed (circles) \ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the mean response.\label{fig:sup}}
+\caption[Predicted (lines) and observed (circles) \ac{chl} concentrations for Tampa Bay segments by month]{Predicted (lines) and observed (circles) \ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the median response.\label{fig:sup}}
 \end{figure}
 
 

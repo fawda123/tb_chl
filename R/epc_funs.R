@@ -124,7 +124,10 @@ rsq.rq.fun<-function(resid, resid.null, tau){
   V1 <- sum(rho.fun(resid, tau), na.rm = T) #minimum sum of deviations,
   V0 <- sum(rho.fun(resid.null, tau), na.rm = T) # null sum of deviations
   
-  return(1-V1/V0)
+  out <- 1 - V1/V0
+  if(any(c(Inf, -Inf) %in% out)) out <- NA
+  
+  return(out)
   
   }
 
