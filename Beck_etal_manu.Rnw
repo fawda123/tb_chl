@@ -73,7 +73,7 @@
 .libPaths('C:\\Users\\mbeck\\R\\library')
 library(knitr)
 # set global chunk options
-opts_chunk$set(fig.path='figs', fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
+opts_chunk$set(fig.path=paste0(getwd(), '/figs/'), fig.align='center', fig.show='hold',message=F,echo=F,results='asis',dev='pdf',dev.args=list(family='serif'),fig.pos='!ht',warning=F)
 options(replace.assign=TRUE,width=90,digits=1)
 @
 
@@ -91,29 +91,29 @@ sal.nrm$seg<-factor(sal.nrm$seg,levels=seg.levs,labels=seg.names)
 sg.dat$seg<-factor(sg.dat$seg,levels=seg.levs,labels=seg.names)
 tb.chl$seg<-factor(tb.chl$seg,levels=seg.levs,labels=seg.names)
 
-#mean obs values for chl by seg
-chl.mean.o<-lapply(split(tb.dat,tb.dat$seg),function(x) exp(mean(x$Chla_ugl)))
+#median obs values for chl by seg
+chl.median.o<-lapply(split(tb.dat,tb.dat$seg),function(x) exp(median(x$Chla_ugl)))
 #percent decrease in obs chl by seg before and after 1980
 chl.per.o<-lapply(
   split(tb.dat,tb.dat$seg),
   function(x){
-    mean.prior<-exp(mean(x$Chla_ugl[as.numeric(x$year)<1980]))
-    mean.after<-exp(mean(x$Chla_ugl[as.numeric(x$year)>=1980]))
-    100*(mean.prior-mean.after)/mean.prior
+    median.prior<-exp(median(x$Chla_ugl[as.numeric(x$year)<1980]))
+    median.after<-exp(median(x$Chla_ugl[as.numeric(x$year)>=1980]))
+    100*(median.prior-median.after)/median.prior
     }
   )
 #percent decrease bay-wide
 chl.per.o2<-{
-  mean.prior<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)<1980]))
-  mean.after<-exp(mean(tb.dat$Chla_ugl[as.numeric(tb.dat$year)>=1980]))
-  100*(mean.prior-mean.after)/mean.prior
+  median.prior<-exp(median(tb.dat$Chla_ugl[as.numeric(tb.dat$year)<1980]))
+  median.after<-exp(median(tb.dat$Chla_ugl[as.numeric(tb.dat$year)>=1980]))
+  100*(median.prior-median.after)/median.prior
   }
 #percent decrease in chl for H Bay 1983 - 1984
 hdrop<-function(yr.1,yr.2){
   tmp<-tb.dat[tb.dat$seg=='HB',]
-  mean.prior<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.1]))
-  mean.after<-exp(mean(tmp$Chla_ugl[as.numeric(tmp$year)==yr.2]))
-  100*(mean.prior-mean.after)/mean.prior
+  median.prior<-exp(median(tmp$Chla_ugl[as.numeric(tmp$year)==yr.1]))
+  median.after<-exp(median(tmp$Chla_ugl[as.numeric(tmp$year)==yr.2]))
+  100*(median.prior-median.after)/median.prior
   }
 #observed maximum for el nino
 chl.nino.o<-lapply(
@@ -130,19 +130,19 @@ chl.nino.o<-lapply(
 chl.mo.o<-ddply(
   tb.dat,
   .(month.name),
-  .fun=function(x) exp(mean(x$Chla_ugl))
+  .fun=function(x) exp(median(x$Chla_ugl))
   )
 chl.mo.o<-chl.mo.o[chl.mo.o$month.name %in% c('February','September'),]
 #obs chl for month, by segment
 chl.mo.o2<-ddply(
   tb.dat,
   .(seg,month.name),
-  .fun=function(x) exp(mean(x$Chla_ugl))
+  .fun=function(x) exp(median(x$Chla_ugl))
   )
 chl.mo.o2<-chl.mo.o2[chl.mo.o2$month.name %in% c('February','September'),]
 #correlation of chlorophyll with sal all data
 sal.cor<-cor.test(tb.dat$sal.ref,tb.dat$Chla_ugl)
-#correlation of chlorophyll w/ sal before/after WWT
+#correlation of chlorophyll w/ sal by segment
 sal.cor2<-ddply(
   tb.dat,
   .(seg),
@@ -292,7 +292,7 @@ est.seas<-lapply(
   )
 est.seas<-do.call('rbind',est.seas)
 est.seas<-melt(est.seas,measure.vars=c('res.lo','res.md','res.hi'))
-est.seas<-aggregate(value~seg+year+season+variable,est.seas,mean)
+est.seas<-aggregate(value~seg+year+season+variable,est.seas,median)
 enso.seas<-enso[,c('year','season','cat.seas','enso.seas')]
 enso.est.seas<-merge(est.seas,enso.seas,by=c('year','season'))
 enso.est.seas<-subset(enso.est.seas,subset=seg=='LTB' & variable=='res.lo' & season=='AMJ')
@@ -398,7 +398,7 @@ R^1\left(\tau\right) = 1 - \hat{V}\left(\tau\right)/\tilde{V}\left(\tau\right)
 \begin{equation}
 RMSE = \sqrt {{\frac{{\sum\limits_{{i = 1}}^n {{{\left( {{y_i} - {{\hat{y}}_i}} \right)}^2}} }}{{n}}}}
 \end{equation}
-\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to non-weighted quantile models that fit a single parameter set to the entire time series for each segment.
+\noindent where $n$ is the number of observations for a given segment, $y_i$ is the observed value of $\ln\left(Chl\right)$ for observation $i$, and ${\hat{y}}_i$ is the predicted value for of $\ln\left(Chl\right)$ for observation $i$.  \ac{RMSE} values closer to zero represent model predictions closer to observed. The performance of weighted models was compared to non-weighted quantile models that fit a single parameter set to the entire time series for each segment.  In this context, `performance' describes the measure of fit to the observed data and is considered a relatively narrow definition of overall model value.  
 
 The \ac{WRTDS} approach was also used to normalize predicted values for a given explanatory variable.  Normalization is used to remove the variance in the response that is attributed to a predictor variable, allowing interpretation of trends that are independent of confounding sources of variation.  For example, water quality trends that are potentially related to management actions can be more precisely evaluated if changes in pollutant concentrations due to natural variation in discharge are removed.  Hirsch et al. \cite{Hirsch10} used the approach to normalize trends by flow, whereas our adapted approach was used to normalize by the fraction of freshwater as a measure of salinity, $Sal_{ff}$, which integrates freshwater inputs and tidal exchange.  Normalized predictions were obtained for each observation date by assuming that $Sal_{ff}$ values for the same month in each year were equally likely to occur across the time series.  That is, $Sal_{ff}$ is assumed to be uniformly distributed within the range of observed values for the same month between years.  For example, normalization for January 1\textsuperscript{st} 1974 considers all salinity values occuring on January 1\textsuperscript{st} for each year in the time series as equally likely to occur on the observed data.  A normalized value for January 1\textsuperscript{st} 1974 is the average of the predicted values using each of the $Sal_{ff}$ values as input, while holding month and year constant.  Normalization across the time series is repeated for each observation to obtain salinity-normalized predictions.    
 
@@ -412,33 +412,33 @@ Seagrass coverage in Tampa Bay has been estimated biennially since 1988 \cite{To
 
 \subsection{Observed trends in \acl{chl}}
 
-Observed \ac{chl} for all dates indicated mean values decreasing from Hillsborough (\Sexpr{chl.mean.o[['HB']]} \mugl), to Old (\Sexpr{chl.mean.o[['OTB']]}), to Middle (\Sexpr{chl.mean.o[['MTB']]}), and to Lower Tampa Bay (\Sexpr{chl.mean.o[['LTB']]}).  Observed trends from 1974 to 2012 indicated a consistent decrease from 1974 to present as previously documented, with the most dramatic declines observed in the 1980s (\cref{fig:obsyrmo1}).  Annual peaks in \ac{chl} have also been observed associated with El Ni\~{n}o effects \cite{Greening06} in the mid-1990s.  For example, \Sexpr{chl.nino.o[['OTB']]$Chla_ugl} \mugl of \ac{chl} was observed for Old Tampa Bay in \Sexpr{chl.nino.o[['OTB']]$month.name} \Sexpr{chl.nino.o[['OTB']]$year}.  More extreme observations have been observed for individual stations during El Ni\~{n}o events. 
+Observed \ac{chl} for all dates indicated median values decreasing from Hillsborough (\Sexpr{chl.median.o[['HB']]} \mugl), to Old (\Sexpr{chl.median.o[['OTB']]}), to Middle (\Sexpr{chl.median.o[['MTB']]}), and to Lower Tampa Bay (\Sexpr{chl.median.o[['LTB']]}).  Observed trends from 1974 to 2012 indicated a consistent decrease from 1974 to present as previously documented, with the most dramatic declines observed in the 1980s (\cref{fig:obsyrmo1}).  Annual peaks in \ac{chl} have also been observed associated with El Ni\~{n}o effects \cite{Greening06} in the mid-1990s.  For example, \Sexpr{chl.nino.o[['OTB']]$Chla_ugl} \mugl of \ac{chl} was observed for Old Tampa Bay in \Sexpr{chl.nino.o[['OTB']]$month.name} \Sexpr{chl.nino.o[['OTB']]$year}.  More extreme observations have been observed for individual stations during El Ni\~{n}o events. 
 
-Observed seasonality of \ac{chl} was consistent with the behavior observed in many estuaries.  Maximum concentrations were generally observed in late summer, whereas minimum concentrations were observed in mid winter (\cref{fig:obsyrmo2}).  Mean concentrations for the entire Bay were highest (\Sexpr{chl.mo.o[2,2]} \mugl) in September and lowest (\Sexpr{chl.mo.o[1,2]} \mugl) in February.  Seasonality was similar among Bay segments except that the amplitude of seasonal peaks diminished with proximity to the Gulf.  For example, mean September and February concentrations for Lower Tampa Bay were \Sexpr{chl.mo.o2[8,3]} and \Sexpr{chl.mo.o2[7,3]} \mugl, whereas concentrations in the same months for Hillsborough Bay were \Sexpr{chl.mo.o2[2,3]} and \Sexpr{chl.mo.o2[1,3]} \mugl.  Relationships between \ac{chl} and salinity (as $Sal_{ff}$) across all segments had a higher proportion of freshwater associated with higher \ac{chl} (Pearson $\rho=$ \Sexpr{sal.cor$estimate}, \Sexpr{p_form(sal.cor$p.value,T)}, all observations).  Correlations between \ac{chl} and salinity by Bay segment were similar (Pearson $\rho \approx$ 0.4, $p<0.005$ for all), with a slightly lower correlation for Old Tampa Bay ($\rho=$ \Sexpr{format(sal.cor2[sal.cor2$seg=='OTB','cor'],digits=2)}).
+Observed seasonality of \ac{chl} was consistent with the behavior observed in many estuaries.  Maximum concentrations were generally observed in late summer, whereas minimum concentrations were observed in mid winter (\cref{fig:obsyrmo2}).  Median concentrations for the entire Bay were highest (\Sexpr{chl.mo.o[2,2]} \mugl) in September and lowest (\Sexpr{chl.mo.o[1,2]} \mugl) in February.  Seasonality was similar among Bay segments except that the amplitude of seasonal peaks diminished with proximity to the Gulf.  For example, median September and February concentrations for Lower Tampa Bay were \Sexpr{chl.mo.o2[8,3]} and \Sexpr{chl.mo.o2[7,3]} \mugl, whereas concentrations in the same months for Hillsborough Bay were \Sexpr{chl.mo.o2[2,3]} and \Sexpr{chl.mo.o2[1,3]} \mugl.  Relationships between \ac{chl} and salinity (as $Sal_{ff}$) across all segments had a higher proportion of freshwater associated with higher \ac{chl} (Pearson $\rho=$ \Sexpr{sal.cor$estimate}, \Sexpr{p_form(sal.cor$p.value,T)}, all observations).  Correlations between \ac{chl} and salinity by Bay segment were similar (Pearson $\rho \approx$ 0.4, $p<0.005$ for all), with a slightly lower correlation for Old Tampa Bay ($\rho=$ \Sexpr{format(sal.cor2[sal.cor2$seg=='OTB','cor'],digits=2)}).
 
 \subsection{Modeled trends in \acl{chl}}
 
-Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were more precise than non-weighted additive linear regressions for all model types (\cref{tab:modperf}).   Mean explained variance using $R^2$ for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtq50.rsq[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq90.rsq[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq10.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq50.rsq[,2]),digits=2)} for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was \Sexpr{format(mean(perf.ls$wtq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtq50.rmse[,2]),digits=2)} for the 90\textsuperscript{th} percentile, 10\textsuperscript{th} percentile, and mean weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq90.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq10.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq50.rmse[,2]),digits=2)} for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the quantile models compared to the mean models (\cref{tab:modperf}).    
+Predicted values obtained from the adapted \ac{WRTDS} model accounted for the effects of time and salinity on \ac{chl} and generally followed visually observable trends (Figs. \ref{fig:predobs} and \ref{fig:sup}, Table \ref{tab:trendest}).  Weighted regressions were generally more precise than non-weighted regressions for all model types, except the \nine model for Lower Tampa Bay which was comprable (\cref{tab:modperf}). Median explained variance using $R^1\left(\tau\right)$ for all Bay segments was \Sexpr{format(median(perf.ls$wtq10.rsq[,2], na.rm = T),digits=2)}, \Sexpr{format(median(perf.ls$wtq50.rsq[,2]),digits=2)}, and \Sexpr{format(median(perf.ls$wtq90.rsq[,2]),digits=2)} for the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} percentile weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq10.rsq[,2], na.rm = T),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq50.rsq[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq90.rsq[,2]),digits=2)} for the non-weighted models.  Mean error using \ac{RMSE} for all Bay segments was \Sexpr{format(mean(perf.ls$wtq10.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$wtq50.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$wtq90.rmse[,2]),digits=2)} for the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} percentile weighted regression models, respectively, compared to \Sexpr{format(mean(perf.ls$nonwtq10.rmse[,2]),digits=2)}, \Sexpr{format(mean(perf.ls$nonwtq50.rmse[,2]),digits=2)}, and \Sexpr{format(mean(perf.ls$nonwtq90.rmse[,2]),digits=2)} for the non-weighted models.  The improvement in performance from non-weighted to weighted models was slightly higher for the extreme models (10\textsuperscript{th}, 90\textsuperscript{th}) compared to the median models (\cref{tab:modperf}).    
 
-Substantial variation in \ac{chl} response from the mean predicted values was observed despite high explained variance (\cref{fig:predobs}).  Observed values close to the mean response were fit well by the mean model, whereas extreme observations at low or high ends of the distribution (i.e., low or high biomass ``events'') were better predicted by the quantile models. For example, \cref{fig:hbslice} shows the predicted and observed values for a two year period in Hillsborough Bay such that model fit varies depending on the month of observation.  Model fit for peak observed \ac{chl} in September and October of 1994 is best fit by the \nine models, whereas a low seasonal peak observed in the winter of 1994 was best fit by the \ten model.  Larger differences between the predicted values for the 90\textsuperscript{th} and 10\textsuperscript{th} models were also observed early in the time series, such that the period from 1974-1980 had larger variation in predicted \ac{chl}, in addition to higher mean values (\cref{fig:predobs}).  
+Substantial variation in \ac{chl} response from the median predicted values was observed despite high explained variance (\cref{fig:predobs}).  Observed values close to the median response were fit well by the median model, whereas extreme observations at low or high ends of the distribution (i.e., low or high biomass ``events'') were better predicted by the quantile models. For example, \cref{fig:hbslice} shows the predicted and observed values for a two year period in Hillsborough Bay such that model fit varies depending on the month of observation.  Model fit for peak observed \ac{chl} in August and September of 1994 is best fit by the \nine models, whereas a low seasonal peak observed in the winter of 1994 was best fit by the \ten model.  Larger differences between the predicted values for the 90\textsuperscript{th} and 10\textsuperscript{th} models were also observed early in the time series, such that the period from 1974-1980 had larger variation in predicted \ac{chl}, in addition to higher median values (\cref{fig:predobs}).  
 
-Aggregation of model results by year allowed an evaluation of annual trends for predicted and salinity-normalized concentrations (\cref{fig:salnrm}).  Predicted values illustrated response of chlorophyll by model type, whereas salinity-normalized estimates indicated annual trends by model segment, independent of variation due to freshwater influence.  In general, trends were similar for the mean, \nine, and \ten predictions.  An exception is the \nine distribution, which showed that early in the time series high \ac{chl} events were more common.  A decrease in the variability of \ac{chl} in Lower Tampa Bay in recent years is also apparent such that the \nine model decreased, the \ten model increased, and the mean model was not changing.  Additionally, recent trends for Middle and Lower Tampa Bay for the \ten models suggest that \ac{chl} during low biomass is not as low as previously.  An annual peak in predicted \ac{chl} in 1998 was previously reported in \cref{fig:predobs} for all Bay segments, but was absent from the salinity-normalized predictions, suggesting this peak is tied to above normal freshwater inputs. Further aggregation of the salinity-normalized results in \cref{tab:trendsal} illustrated trends on decadal and seasonal time scales.  In particular, trends prior to reductions in point source pollution during 1974--1980 indicated high or increasing \ac{chl} for all segments and model types, excluding the \ten predictions for Hillsborough Bay, which declined in that period (\cref{fig:salnrm}).  In contrast, the most dramatic declines in \ac{chl} were estimated from 1980 to 1990 for all Bay segments.  Accordingly, mean \ac{chl} concentrations from 1980--1990 were less than during the previous time period.  A slight positive increase for the \ten for Lower Tampa Bay in recent years is also evident on a decadal time scale.  Seasonal trends in salinity-normalized estimates indicated higher \ac{chl} concentrations in warmer months and generally decreasing concentrations throughout the time series in both summer and winter (\cref{fig:predobs}).
+Aggregation of model results by year allowed an evaluation of annual trends for predicted and salinity-normalized concentrations (\cref{fig:salnrm}).  Predicted values illustrated response of chlorophyll by model type, whereas salinity-normalized estimates indicated annual trends by model segment, independent of variation due to freshwater influence.  In general, trends were similar for the \ten, \five, and \nine predictions.  An exception is the \nine distribution, which showed that early in the time series high \ac{chl} events were more common.  A decrease in the variability of \ac{chl} in Lower Tampa Bay in recent years is also apparent such that the \nine model decreased, the \ten model increased, and the median model was not changing.  An annual peak in predicted \ac{chl} in 1998 was previously reported in \cref{fig:predobs} for all Bay segments, but was absent from the salinity-normalized predictions, suggesting this peak is tied to above normal freshwater inputs. Further aggregation of the salinity-normalized results in \cref{tab:trendsal} described trends on decadal and seasonal time scales.  In particular, trends prior to reductions in point source pollution during 1974--1980 indicated high or increasing \ac{chl} for all segments and model types, excluding the \ten predictions for Hillsborough Bay, which declined in that period (\cref{fig:salnrm}).  In contrast, the most dramatic declines in \ac{chl} were estimated from 1980 to 1990 for all Bay segments.  Accordingly, median \ac{chl} concentrations from 1980--1990 were less than during the previous time period.  A slight positive increase for the \ten model and a slight decrease for the \nine model for Lower Tampa Bay in recent years is also evident on a decadal time scale.  Seasonal trends in salinity-normalized estimates indicated higher \ac{chl} concentrations in warmer months and generally decreasing concentrations throughout the time series in both summer and winter (\cref{fig:predobs}).
 
-Changes from year to year in salinity-normalized estimates indicates change not associated with discharge variation.  Specifically, intra-annual variation in \ac{chl} estimates for each model indicated that the annual range has not been constant throughout the time series (\cref{tab:nrmcv,fig:salnrm2}).  Maximum within-year variability (as annual standard deviation divided by the mean) for all models was generally observed in recent years, with exceptions for models in Lower Tampa Bay where maximum within-year variability was observed in \Sexpr{nrm.cv$OTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'V1']}\%) for the mean model, \Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'V1']}\%) for the \nine model, and \Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'V1']}\%) for the \ten model.  Increasing intra-year variability throughout the time series was particularly pronounced for the \nine model for Old Tampa Bay with annual variation ranging from \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'year']}  to \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'year']}.  Between-year variability by seasons in salinity-normalized \ac{chl} estimates were comparable, although variability was lower in summer (\cref{tab:nrmcv}).  Additionally, high variability was observed for Hillsborough Bay in winter and for Lower Tampa Bay in fall.
+Changes from year to year in salinity-normalized estimates indicates change not associated with discharge variation.  Specifically, intra-annual variation in \ac{chl} estimates for each model indicated that the annual range has not been constant throughout the time series (\cref{tab:nrmcv,fig:salnrm2}).  Maximum within-year variability (as annual standard deviation divided by the mean) for all models was generally observed in recent years, with exceptions for models in Lower Tampa Bay where maximum within-year variability was observed in \Sexpr{nrm.cv$OTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.md[which.max(nrm.cv$LTB$norm.md$V1),'V1']}\%) for the median model, \Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.hi[which.max(nrm.cv$LTB$norm.hi$V1),'V1']}\%) for the \nine model, and \Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'year']} (\Sexpr{nrm.cv$LTB$norm.lo[which.max(nrm.cv$LTB$norm.lo$V1),'V1']}\%) for the \ten model.  Increasing intra-year variability throughout the time series was particularly pronounced for the \nine model for Old Tampa Bay with annual variation ranging from \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.min(nrm.cv$OTB$norm.hi$V1),'year']}  to \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'V1']}\% in \Sexpr{nrm.cv$OTB$norm.hi[which.max(nrm.cv$OTB$norm.hi$V1),'year']}.  Between-year variability by seasons in salinity-normalized \ac{chl} estimates were comparable, although variability was lower in summer (\cref{tab:nrmcv}).  Additionally, high variability was observed for Hillsborough Bay in winter and for Lower Tampa Bay in fall.
 
-Changes in the response of \ac{chl} across salinity gradients for each Bay segment can be interpreted by plotting \ac{chl} against $Sal_{ff}$ for different dates (\cref{fig:dyna}) using results from the weighted regressions.  This showed that the response of \ac{chl} in Hillsborough Bay with increasing freshwater input for early years was minimal, whereas a strong positive relationship is observed in later years.  Higher freshwater inputs in some recent years caused a saturation effect such that \ac{chl} concentrations did not increase beyond a given value (e.g., 0.40 $Sal_{ff}$).  Other Bay segments also show changes in the relationship between \ac{chl} and freshwater inputs.  For example, Lower Tampa Bay shows a stronger relationship between \ac{chl} and $Sal_{ff}$ for recent years. 
+Changes in the response of \ac{chl} across salinity gradients for each Bay segment can be interpreted by plotting \ac{chl} against $Sal_{ff}$ for different dates using results from the weighted regressions (\cref{fig:dyna}).  This showed that the response of \ac{chl} in Hillsborough Bay with increasing freshwater input for early years was minimal, whereas a strong positive relationship is observed in later years.  Higher freshwater inputs in some recent years caused a saturation effect such that \ac{chl} concentrations did not increase beyond a given value (e.g., 0.40 $Sal_{ff}$).  Other Bay segments also show changes in the relationship between \ac{chl} and freshwater inputs.  For example, Lower Tampa Bay shows a stronger relationship between \ac{chl} and $Sal_{ff}$ for recent years. 
 
 \subsection{Evaluation of model residuals}
 
-Correlations of residuals to additional explanatory variables indicated that chloropyhll response could be attributed to factors other than time and salinity (\cref{tab:cormat}). Significant correlations were observed with \ac{TN} for all segments and models; correlations were observed for \ac{TN} concentration rather than load, most likely because the model already accounted for variation due to discharge.  Residuals from eight of the 12 models had positive correlations with \ac{TN} concentration, the exceptions being the \nine model for Hillsborough, Old, and Lower Tampa Bay and the mean model for Middle Tampa Bay.  Only the \nine model for Old Tampa Bay was positively correlated with \ac{TN} load.  Correlations with seagrass coverage and \ac{ENSO} index values binned by year and season were not significant (\cref{tab:cormat}).  Regression models relating residuals to \ac{ENSO} categories by year and season (e.g., El Ni\~{n}o fall) were not signficant.  Regression models using continuous seasonal index values were also unable to resolve variance in the residuals, with the exception of the \ten model for Lower Tampa Bay such that a significant and positive relationship was observed between residuals and \ac{ENSO} index values for spring dates ($F=$ \Sexpr{enso.mod$fstatistic['value']}, $R^2 =$ \Sexpr{format(enso.mod$r.squared,digits=2)}, \Sexpr{p_form(enso.mod$coefficients['enso.seas','Pr(>|t|)'],T)}).  
+Correlations of residuals to additional explanatory variables indicated that chloropyhll response could be attributed to factors other than time and salinity (\cref{tab:cormat}). Significant correlations were observed with \ac{TN} for all segments except Lower Tampa Bay.  Residuals from the median model in Hillsborough Bay, the \nine model in Middle Tampa Bay, and the \ten model in Old Tampa Bay were positively correlated with \ac{TN} concentration.  Only the \nine model for Old Tampa Bay was positively correlated with \ac{TN} load.  Correlations with seagrass coverage and \ac{ENSO} index values binned by year and season were not significant, except the \ten model for Hillsborough Bay which was positively correlated to \ac{ENSO} year (\cref{tab:cormat}).  Regression models relating residuals to \ac{ENSO} categories by year and season (e.g., El Ni\~{n}o fall) were unable to resolve variance in the residuals.  
 
 \section{Discussion}
 
-Application of the \acf{WRTDS} model to a analyze a long-term record of \ac{chl} in 4 segments of Tampa Bay provided an improved quantitative description of long-term changes relative to commonly applied methods.  Because the descriptions are conceptually related to expected causes, the results enabled generation of informed hypotheses regarding ecosystem behavior and change and could suggest a potential approach for developing quantitative thresholds for water quality management.   These conclusions are supported by several key aspects of the results.  First, the \ac{WRTDS} model provided improved predictions of \ac{chl} relative to non-weighted regression, measured as both higher $R^2$ and lower \ac{RMSE} (\cref{tab:modperf}).  Second, \ac{WRTDS} results for segments of the Bay that were historically most impacted by nutrient loading pointed to shifts in the response of \ac{chl} to freshwater inflows, such that \ac{chl} was relatively unresponsive to inflows during earlier years, but shows a strong positive association with discharge in later years.  These changes are temporally coherent with known changes in nutrient sources, suggesting that the \ac{WRTDS} results quantify a response to changes in nutrient loading.  Finally, adaptation of \ac{WRTDS} to predict quantiles in addition to the mean response provided information about long-term shifts in phytoplankton dynamics that are ecologically informative.  In total, the results obtained by applying \ac{WRTDS} to the Tampa Bay \ac{chl} time series suggest that this model could be broadly useful for analyzing and interpreting the growing number of long-term data sets for water quality in estuaries.
+Application of the \acf{WRTDS} model to a analyze a long-term record of \ac{chl} in 4 segments of Tampa Bay provided an improved quantitative description of long-term changes relative to commonly applied methods.  Because the descriptions are conceptually related to expected causes, the results enabled generation of informed hypotheses regarding ecosystem behavior and change and could suggest a potential approach for developing quantitative thresholds for water quality management.   These conclusions are supported by several key aspects of the results.  First, the \ac{WRTDS} model provided improved predictions of \ac{chl} relative to non-weighted regression, measured as both higher $R^1\left(\tau\right)$ and lower \ac{RMSE} (\cref{tab:modperf}).  Second, \ac{WRTDS} results for segments of the Bay that were historically most impacted by nutrient loading pointed to shifts in the response of \ac{chl} to freshwater inflows, such that \ac{chl} was relatively unresponsive to inflows during earlier years, but shows a strong positive association with discharge in later years.  These changes are temporally coherent with known changes in nutrient sources, suggesting that the \ac{WRTDS} results quantify a response to changes in nutrient loading.  Finally, adaptation of \ac{WRTDS} to predict extreme quantiles in addition to the median response provided information about long-term shifts in phytoplankton dynamics that are ecologically informative.  In total, the results obtained by applying \ac{WRTDS} to the Tampa Bay \ac{chl} time series suggest that this model could be broadly useful for analyzing and interpreting the growing number of long-term data sets for water quality in estuaries.
 
 \subsection{Improved description of \ac{chl} using \ac{WRTDS}}
 
-The primary advantage of applying the \ac{WRTDS} approach to the Tampa Bay dataset was an empirical description of water quality trends that accounted for variation in freshwater inflows over time. The approach allows for reconstruction of observed trends  with more accuracy (\cref{fig:predobs,fig:sup}), as well as the ability to predict \ac{chl} response to changes in freshwater inputs for different periods of observation (\cref{tab:trendest}). The increased predictive abilities of the \ac{WRTDS} approach were apparent by comparison with an unweighted linear model (\cref{tab:modperf}).  Hirsch et al. \cite{Hirsch10} indicated similar improvements with application to Chesapeake Bay river inputs such that an increase in $R^2$ from 35\% to 56\% was observed using the weighted approach.  Relative increases in predictive performance were not as dramatic for the Tampa Bay dataset, although $R^2$ values were higher than those in Hirsch et al. \cite{Hirsch10}.  This improvement in performance emphasizes that traditional regression assumes model parameters are constant throughout the time series, whereas \ac{WRTDS} allows for dynamic interactions between response and predictor variables.  Improved model fit through flexible parameterization increases the ability of the model to describe historical patterns, but reduces application to predicting future \ac{chl}.  If drivers of \ac{chl} are changing over time, predicting future \ac{chl} while assuming that drivers are not changing could be of limited value.  For example, \ac{WRTDS} showed that the relationship between \ac{chl} and freshwater forcing changed over time, such that predictions of \ac{chl} in the near future would by necessity be based on the most recent estimates of the ecosystem response to freshwater forcing rather than the long-term average response.  As such, the primary use of the \ac{WRTDS} is a description of historical change that can lead to \textit{post hoc} formulation of hypotheses.  Hirsch et al. \cite{Hirsch10} also used WRTDS to quantify changes in ecological drivers, pointing to long-term changes in the strength and direction of discharge effects on nutrient concentrations in rivers.  Watershed drivers of changes described by Hirsch et al. \cite{Hirsch10} suggests similar conclusions can be made regardings drivers of observed changes in \ac{chl} in Tampa Bay.  
+The primary advantage of applying the \ac{WRTDS} approach to the Tampa Bay dataset was an empirical description of water quality trends that accounted for variation in freshwater inflows over time. The approach allows for reconstruction of observed trends  with more accuracy (\cref{fig:predobs,fig:sup}), as well as the ability to predict \ac{chl} response to changes in freshwater inputs for different periods of observation (\cref{tab:trendest}). The increased predictive abilities of the \ac{WRTDS} approach were apparent by comparison with an unweighted linear model (\cref{tab:modperf}).  Hirsch et al. \cite{Hirsch10} indicated similar improvements with application to Chesapeake Bay river inputs such that an increase in $R^2$ from 35\% to 56\% was observed using the weighted approach.  Relative increases in predictive performance were not as dramatic for the Tampa Bay dataset, although improvements were observed \cite{Hirsch10}.  This improvement in performance emphasizes that traditional regression assumes model parameters are constant throughout the time series, whereas \ac{WRTDS} allows for dynamic interactions between response and predictor variables.  Improved model fit through flexible parameterization increases the ability of the model to describe historical patterns, but reduces application to predicting future \ac{chl}.  If drivers of \ac{chl} are changing over time, predicting future \ac{chl} while assuming that drivers are not changing could be of limited value.  For example, \ac{WRTDS} showed that the relationship between \ac{chl} and freshwater forcing changed over time, such that predictions of \ac{chl} in the near future would by necessity be based on the most recent estimates of the ecosystem response to freshwater forcing rather than the long-term average response.  As such, the primary use of the \ac{WRTDS} is a description of historical change that can lead to \textit{post hoc} formulation of hypotheses.  Hirsch et al. \cite{Hirsch10} also used WRTDS to quantify changes in ecological drivers, pointing to long-term changes in the strength and direction of discharge effects on nutrient concentrations in rivers.  Watershed drivers of changes described by Hirsch et al. \cite{Hirsch10} suggests similar conclusions can be made regardings drivers of observed changes in \ac{chl} in Tampa Bay.  
 
 Pollutant sources for Tampa Bay have changed over time with an increasing dominance of non-point sources in recent years \cite{Pribble01}.  Changes in pollutant sources may affect the relationship between freshwater inputs, nutrient concentrations, and \ac{chl}.  Nutrient concentrations and discharge are correlated regardless of pollutant sources, whereas the relationship between nutrient loading and discharge may vary.  Increasing discharge with non-point sources of pollution is related to both increasing load and decreasing concentration of nutrients.  Conversely, increasing discharge with point-sources of pollution may only be related to decreasing concentration since total load remains constant. Reduction of point sources of pollution in Tampa Bay and increasing dominance of non-point sources suggests that \ac{chl} relationships with discharge may change over time.  Application of the \ac{WRTDS} model to the Tampa Bay dataset provided evidence of these shifts.  The shifts were most apparent for Bay segments that received large tributary inputs (\cref{fig:dyna}). For example, the relationship of salinity with chlorophyll for Hillsborough Bay during earlier periods indicated no trend, whereas a positive trend was present for later periods.  However, a primary distinction between the original \ac{WRTDS} method and our adapted approach is the  use of fraction of freshwater, rather than discharge, as a primary predictor of water quality response.  Fraction of freshwater incorporates the effects of tidal exchange, in addition to variation in freshwater inflows.  Hirsch et al. \cite{Hirsch10} developed the \ac{WRTDS} approach for rivers and streams where discharge effects are considered the primary variable affecting interpretation of water quality trends.  Therefore, salinity effects were included in \cref{eqn:funform} as being more appropriate for estuaries and the results should be interpreted in the context of natural variation in both tidal flow and freshwater inputs from tributaries \cite{Cloern96}.
 
@@ -446,17 +446,19 @@ The final objective of the analysis was to develop informed hypotheses regarding
 
 \subsection{Changes in \ac{chl} variability}
 
-Most analyses of changes in water quality focus on changes in mean water quality over time.  Linear models generally fit a constant seasonal cycle, a constant response to freshwater inflow, and a linear trend to describe the long-term change.  The flexible parameterization of the \ac{WRTDS} approach can substantially improve descriptions of water quality trends by addressing limitations of simple models.  Predicted values from \ac{WRTDS} results are appropriate for evaluating change in direction of the response. Salinity-normalized values are useful for evaluating changes independent of confounding effects of hydrologic changes.  Direction and magnitude of change were primarily in agreement with expectations, whereas changes in variation over time have not been previosly described.  Salinity-normalized predictions suggested that the variability of chlorophyll response between-years has generally been increasing, i.e., variability for most Bay segments has become larger than during the most heavily polluted periods in the 1970s (\cref{tab:nrmcv,fig:salnrm2}).  Differences were also observed by mean or quantile response, particularly for the \nine model in Old Tampa Bay.  Mechanisms describing heterogeneity of chlorophyll between years are uncertain, although increasing variation in water quality parameters has been suggested as an indicator of ecological transition in lakes \cite{Carpenter06}.   Variation in chlorophyll could be an indication of impending changes despite constant mean values for several decades.  We emphasize that characterization of between-year variation is only possible with methods such as \ac{WRTDS}.  Less complex approaches that are not data-driven may be unable to resolve this variation (e.g., additive seasonal models, \cite{Cloern10}).     
+Most analyses of changes in water quality focus on changes in mean water quality over time.  Linear models generally fit a constant seasonal cycle, a constant response to freshwater inflow, and a linear trend to describe the long-term change.  The flexible parameterization of the \ac{WRTDS} approach can substantially improve descriptions of water quality trends by addressing limitations of simple models.  Predicted values from \ac{WRTDS} results are appropriate for evaluating change in direction of the response. Salinity-normalized values are useful for evaluating changes independent of confounding effects of hydrologic changes.  Direction and magnitude of change were primarily in agreement with expectations, whereas changes in variation over time have not been previosly described.  Salinity-normalized predictions suggested that the variability of chlorophyll response between-years has generally been increasing, i.e., variability for most Bay segments has become larger than during the most heavily polluted periods in the 1970s (\cref{tab:nrmcv,fig:salnrm2}).  Differences were also observed by median or extreme quantile response, particularly for the \nine model in Old Tampa Bay.  Mechanisms describing heterogeneity of chlorophyll between years are uncertain, although increasing variation in water quality parameters has been suggested as an indicator of ecological transition in lakes \cite{Carpenter06}.   Variation in chlorophyll could be an indication of impending changes despite constant median values for several decades.  We emphasize that characterization of between-year variation is only possible with methods such as \ac{WRTDS}.  Less complex approaches that are not data-driven may be unable to resolve this variation (e.g., additive seasonal models, \cite{Cloern10}).     
 
-The inclusion of quantile models represents an important extension of the \ac{WRTDS} approach by allowing insight into conditional response of \ac{chl} not described by mean models.  Quantile models are particularly useful for characterizing response variables that exhibit considerable heterogeneity about the mean \cite{Terrell96,Cade03}.  Practical interpretation of the quantile models are such that the \nine models show variation in the occurrence of extreme events, whereas the \ten models characterize low productivity events.  Quantification of extreme events may provide a more informative measure of progress towards ecosystem change in response to management.  For example, a previous description for developing numeric criteria for Florida waters used the \nine value from cumulative distribution models of chlorophyll for multiple coastal segments \cite{Schaeffer12}.  The exact upper percentile for criteria definition is unimportant provided there is consistency among methods for computing and assessing criteria.  Similarly, variation in low productivity events could provide information of system departure from baseline or reference conditions \cite{Stoddard06}. For example, variation in the \ten model for Lower Tampa Bay in recent years suggests a consistent decrease in events with low chlorophyll concentrations (\cref{fig:salnrm}).
+The inclusion of quantile models represents an important extension of the \ac{WRTDS} approach by allowing insight into conditional response of \ac{chl} not described by median models.  Quantile models are particularly useful for characterizing response variables that exhibit considerable heterogeneity about the central tendency \cite{Terrell96,Cade03}.  Practical interpretation of the quantile models are such that the \nine models show variation in the occurrence of extreme events, whereas the \ten models characterize low productivity events.  Quantification of extreme events may provide a more informative measure of progress towards ecosystem change in response to management.  For example, a previous description for developing numeric criteria for Florida waters used the \nine value from cumulative distribution models of chlorophyll for multiple coastal segments \cite{Schaeffer12}.  The exact upper percentile for criteria definition is unimportant provided there is consistency among methods for computing and assessing criteria.  Similarly, variation in low productivity events could provide information of system departure from baseline or reference conditions \cite{Stoddard06}. For example, variation in the \ten model for Lower Tampa Bay in recent years suggests a consistent decrease in events with low chlorophyll concentrations (\cref{fig:salnrm}).
 
 \subsection{Limitations and future applications}
 
-The adaptation of the \ac{WRTDS} approach to quantify \ac{chl} trends in estuaries shows promise, although our analysis differs in several key aspects from the original model.  First, issues of spatial scale will continue to have relevance given specific research objectives.  The application of the \ac{WRTDS} approach to Tampa Bay considered individual segments as being most relevant given our goal to provide a quantitative history of eutrophication that has importance for regional planning and decision-making processes.  Different research objectives may warrant the use of Bay segments as inappropriate since phytoplankton growth patterns can be characterized at multiple scales.  Cloern \cite{Cloern96} reviews spatial patterns of phytoplankton growth in estuaries such that longitudinal, lateral, and vertical dynamics are commonly observed.  Growth dynamics may also be evident at scales ranging from meters to several kilometers.  More subtle differences in spatial patterns are likely observed at individual stations in the Bay, which could serve as a focus for additional evaluation. Similarly, phytoplankton dynamics may be evident at different temporal scales.  Hirsch et al. \cite{Hirsch10} developed the \ac{WRTDS} approach for daily water quality observations, although the Tampa Bay dataset prohibits analysis at time scales shorter than a month.  A second consideration in our adaptation of the \ac{WRTDS} model is the treatment of censored data.  All censored data were set to one half the detection limit, as compared to a more quantitative approach by the \ac{WRTDS} method using survival regression \cite{Moyer12}.  A post-hoc analysis of the Tampa Bay data suggested that the treatment of censored data affected the results, particularly for Lower Tampa Bay where \ac{chl} concentrations are generally lower.  However, effects were minimal and the overall conclusions were unchanged.  Regardless, future modifications of the approach should include more robust treatment  of censored data.
+The adaptation of the \ac{WRTDS} approach to quantify \ac{chl} trends in estuaries shows promise, although our analysis differs in several key aspects from the original model.  First, issues of spatial scale will continue to have relevance given specific research objectives.  The application of the \ac{WRTDS} approach to Tampa Bay considered individual segments as being most relevant given our goal to provide a quantitative history of eutrophication that has importance for regional planning.  Different research objectives may warrant the use of Bay segments as inappropriate since phytoplankton growth patterns can be characterized at multiple scales.  Cloern \cite{Cloern96} reviews spatial patterns of phytoplankton growth in estuaries such that longitudinal, lateral, and vertical dynamics are commonly observed.  Growth dynamics may also be evident at scales ranging from meters to several kilometers.  More subtle differences in spatial patterns are likely observed at individual stations in the Bay, which could serve as a focus for additional evaluation. Similarly, phytoplankton dynamics may be evident at different temporal scales.  Hirsch et al. \cite{Hirsch10} developed the \ac{WRTDS} approach for daily water quality observations, although the Tampa Bay dataset prohibits analysis at time scales shorter than a month.
 
 Additional considerations not unique to our adaption of the \ac{WRTDS} approach deserve further investigation.  The \ac{WRTDS} method currently does not provide measures of uncertainty associated with model predictions, although development is in progress (R. Hirsch, personal communication May 2014). Lack of confidence in model predictions is a primary disadvantage of the approach that distinguishes it from alternative methods.  For example, Moyer et al. \cite{Moyer12} compares the \ac{WRTDS} methods with ESTIMATOR, an alternative regression-based approach \cite{Cohn92}.  Although \ac{WRTDS} provided more accurate and precise descriptions, indications of uncertainty provided by ESTIMATOR suggested variation may be considerable in some cases.  Moreover, the determination of appropriate window widths for defining model weights has been an issue of concern since initial development of the approach.  A systematic evaluation of different combinations of window widths for reducing prediction error could be conducted to identify optimal widths.  However, results may be specific to individual datasets and computional time may be excessive such that the increase in predictive performance may be trivial relative to time spent defining optimum widths.  Regardless, the window widths used for our analysis produced useful results and could be used for additional applications.
 
-The lack of correlation between model residuals and additional variables was unexpected, particularly for the seagrass and \ac{ENSO} data.  Previous analyses have illustrated the effects of precipitation events associated with \ac{ENSO} on Tampa Bay.  For example, Schmidt and Luther \cite{Schmidt02} described \ac{ENSO} effects on salinity profiles for Tampa Bay such that high precipitation events (i.e., El Ni\~{n}o spring or winters) were correlated with depressed salinity profiles.  Our analyses indicated that residuals were not related to \ac{ENSO} variation.  The \ac{WRTDS} model included salinity effects such that residual variation accounts for changes in freshwater inputs, which potentially explains lack of correlation with \ac{ENSO}. Additionally, the normalized \ac{chl} estimates in \cref{fig:salnrm} differ substantially from predicted values in 1998 for all segments.  High rainfall associated with an El Ni\~{n}o event in the winter of 1997-1998 contributed to increased discharge and nutrient inputs into the Bay, as indicated by higher predicted \ac{chl} values.  Normalized values that removed the effects of freshwater inputs show \ac{chl} values independent of discharge, suggesting the model performs as expected by quantifying and removing this variation through normalization.  However, the variation in \ac{chl} response attributed to unique seasonal changes in discharge cannot be distinguished from extreme climate events using salinity as a proxy for freshwater inputs.  Finally, lack of correlation with seagrass data may have been related to sample size given that only annual estimates of seagrass coverage were available.  Additionally, correlations between seagrass growth and chlorophyll may have been present for lags in the time series that were not evaluated.  For example, high \ac{chl} concentrations may have an effect on seagrass growth the following year, rather than within the same year.
+The lack of correlation between model residuals and additional variables was unexpected, particularly for the seagrass and \ac{ENSO} data.  Previous analyses have illustrated the effects of precipitation events associated with \ac{ENSO} on Tampa Bay.  For example, Schmidt and Luther \cite{Schmidt02} described \ac{ENSO} effects on salinity profiles for Tampa Bay such that high precipitation events (i.e., El Ni\~{n}o spring or winters) were correlated with depressed salinity profiles.  Our analyses indicated that residuals were generally not related to \ac{ENSO} variation.  The \ac{WRTDS} model included salinity effects such that residual variation accounts for changes in freshwater inputs, which potentially explains lack of correlation with \ac{ENSO}. Additionally, the normalized \ac{chl} estimates in \cref{fig:salnrm} differ substantially from predicted values in 1998 for all segments.  High rainfall associated with an El Ni\~{n}o event in the winter of 1997-1998 contributed to increased discharge and nutrient inputs into the Bay, as indicated by higher predicted \ac{chl} values.  Normalized values that removed the effects of freshwater inputs show \ac{chl} values independent of discharge, suggesting the model performs as expected by quantifying and removing this variation through normalization.  However, the variation in \ac{chl} response attributed to unique seasonal changes in discharge cannot be distinguished from extreme climate events using salinity as a proxy for freshwater inputs.  Lack of correlation with seagrass data may have been related to sample size given that only annual estimates of seagrass coverage were available.  Correlations between seagrass growth and chlorophyll may have also been present for lags in the time series that were not evaluated.  For example, high \ac{chl} concentrations may have an effect on seagrass growth the following year, rather than within the same year.
+
+Finally, a comprehensive comparison of alternative methods for describing historical trends in water quality parameters using long-term datasets is needed.  Such a discussion will provide a context for the application of \ac{WRTDS} relative to other techniques that could provide comparable estimates of change.  For example, generalized additive models or locally estimated (loess) regression are similar methods for describing conditional response within discrete periods of time.  Such methods are less computationally intense than \ac{WRTDS} and likely provide similar improvements in the fit of the predicted values to the observed data. However, the true value of a model is problem-specific such that measure of fit may provide an incomplete description of a model's overall utility.  We stress that \ac{WRTDS} and the adaptation to modelling quantile distributions provides an approach to generating hypotheses of factors that act as system drivers of change which may not be possible with other techniques.  Application of \ac{WRTDS} to the Tampa Bay dataset allowed a temporally consistent description of water quality leading to the generation of such hypotheses.  However, \ac{WRTDS} may not be the most suitable technique for alternative questions of interest given sample size constraints or the need to predict future water quality trends under hypothetical scenarios.  Accordingly, the true value of an analysis technique may depend on its ability to address a predetermined question of interest.  Quantitative comparisons of \ac{WRTDS} with other techniques in the context of providing historical descriptions of change is needed.
 
 \subsection{Conclusions}
 
@@ -493,21 +495,21 @@ shore.km<-c(128.6,339.8,262.8,121.6)
 #wshed area, sqm converted to km2
 #chla in ug/l
 wshed.km2<-round(2.5899999 * c(1281.8,337.6,410.3,127.6), 1)
-chla.12<-round(exp(aggregate(Chla_ugl~seg,data=tb.dat[tb.dat$year==2012,],mean)[,2]),1)
-sal.12<-round(aggregate(Salinity_ppt~seg,data=tb.chl[tb.chl$year==2012,],mean)[,2],1)
+chla.12<-round(exp(aggregate(Chla_ugl~seg,data=tb.dat[tb.dat$year==2012,],median)[,2]),1)
+sal.12<-round(aggregate(Salinity_ppt~seg,data=tb.chl[tb.chl$year==2012,],median)[,2],1)
 
 #Lewis and Estevez 88
-#mean depth, ft conv to m
+# depth, ft conv to m
 depth.m<-round(0.3048 * c(10.5,9.3,13.5,12.5),1)
 
 #create data for table
 dat<-data.frame(area.km2,shore.km,depth.m,wshed.km2,chla.12,sal.12)
 
-cap.val<-'Summary of characteristics for Tampa Bay segments.  Mean chlorophyll and salinity data for 2012 are shown. Sources: \\cite{Lewis85,Lewis88}.'
+cap.val<-'Summary of characteristics for Tampa Bay segments.  Median chlorophyll and salinity data for 2012 are shown. Sources: \\cite{Lewis85,Lewis88}.'
 
 foot.val<-'\\footnotesize \\textit{\\textsuperscript{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay,  MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
-cnames<-c('Area (km$^2$)','Shoreline length (km)','Mean depth (m)','Watershed area (km$^2$)','Chlorophyll-\\textit{a} (\\mugl)','Salinity')
+cnames<-c('Area (km$^2$)','Shoreline length (km)','Average depth (m)','Watershed area (km$^2$)','Chlorophyll-\\textit{a} (\\mugl)','Salinity')
 cnames<-paste0('\\head{2cm}{',cnames,'}')
 
 latex(
@@ -621,7 +623,7 @@ res2 <- get_yrsum(c(2005, 2012))
 
 mods<-factor(res1$variable,
   levels = c('bt.lo', 'bt.md', 'bt.hi'), 
-  labels=c('0.1 $\\tau', '0.5 $\\tau$', '0.9 $\\tau$')
+  labels=c('0.1 $\\tau$', '0.5 $\\tau$', '0.9 $\\tau$')
   )
 
 segs <- as.character(unique(res1$seg))
@@ -660,11 +662,11 @@ latex(
 segs<-levels(null.dat$seg)
 segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 stat<-null.dat$stat
-stat<-factor(stat,levels=c('rsq','rmse'),labels=c('$R^2$','$RMSE$'))
+stat<-factor(stat,levels=c('rsq','rmse'),labels=c('$R^1\\left(\\tau\\right) $','$RMSE$'))
 #retain only data
 null.dat<-subset(null.dat,select=-c(seg,stat))
 
-cap.val<-'Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using a quantile regression goodness of fit described in Koenker and Mochado \\cite{Koenker99} and \\ac{RMSE}.  Goodness of fit for the \\ten models in Lower Tampa Bay is not shown because the null quantiles were inestimable with censored regression.'
+cap.val<-'Model performance by Bay segment comparing non-weighted (Non-wtd) and weighted (Wtd) regression.  Performance is evaluated using a quantile regression goodness of fit ($R^1\\left(\\tau\\right)$) described in Koenker and Mochado \\cite{Koenker99} and \\ac{RMSE}.  Goodness of fit for the \\ten models in Lower Tampa Bay is not shown because the null quantiles were inestimable with censored regression.'
 
 foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay' 
 
@@ -715,13 +717,13 @@ est$seas.cat<-cut(as.numeric(as.character(est$month.num)),break.vals,
   )
 col.seas<-paste0('{\\bf ',levels(est$seas.cat),'}') 
 
-est<-melt(est,measure.vars=c('norm.md','norm.hi','norm.lo'))
+est<-melt(est,measure.vars=c('norm.lo','norm.md','norm.hi'))
 
-#means by time periods
-mean.vals.yr<-ddply(
+#medians by time periods
+median.vals.yr<-ddply(
   est,
   .(seg,time.cat,variable),
-  .fun=function(x) mean(x$value)
+  .fun=function(x) median(x$value)
   )
 
 #slopes for model estimates by time periods
@@ -735,11 +737,11 @@ mod.dat.yr<-ddply(
     }
   )
 
-#means by season periods
-mean.vals.seas<-ddply(
+#medians by season periods
+median.vals.seas<-ddply(
   est,
   .(seg,seas.cat,variable),
-  .fun=function(x) mean(x$value)
+  .fun=function(x) median(x$value)
   )
 
 #slopes for model estimates by season periods
@@ -753,11 +755,11 @@ mod.dat.seas<-ddply(
     }
   )
 
-#merge mean values w/ slope estimates, years
-mod.dat1<-merge(mean.vals.yr,mod.dat.yr,by=c('seg','time.cat','variable'))
+#merge median values w/ slope estimates, years
+mod.dat1<-merge(median.vals.yr,mod.dat.yr,by=c('seg','time.cat','variable'))
 names(mod.dat1)[names(mod.dat1)=='variable']<-'model'
-#merge mean values w/ slope estimates, seasons
-mod.dat2<-merge(mean.vals.seas,mod.dat.seas,by=c('seg','seas.cat','variable'))
+#merge median values w/ slope estimates, seasons
+mod.dat2<-merge(median.vals.seas,mod.dat.seas,by=c('seg','seas.cat','variable'))
 names(mod.dat2)[names(mod.dat2)=='variable']<-'model'
 
 #format p values and combine with slope values, year table
@@ -772,13 +774,14 @@ mod.dat1$Estimate<-paste0(format(round(mod.dat1$Estimate,2),nsmall=dig.val),p.sy
 mod.dat1$V1<-format(round(mod.dat1$V1,dig.val),nsmall=dig.val)
 
 mod.dat1<-mod.dat1[,!names(mod.dat1) %in% 'Pr(>|t|)']
-names(mod.dat1)[names(mod.dat1) %in% 'V1']<-'mean'
+names(mod.dat1)[names(mod.dat1) %in% 'V1']<-'median'
 
 #melt and recast for table
-mod.dat1<-melt(mod.dat1,measure.vars=c('mean','Estimate'))
+mod.dat1<-melt(mod.dat1,measure.vars=c('median','Estimate'))
 mod.dat1<-data.frame(recast(mod.dat1,seg+model~time.cat+variable))
 
-mods<-factor(mod.dat1$model,labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
+mods<-factor(mod.dat1$model,levels = c('norm.lo', 'norm.md', 'norm.hi'), 
+  labels=c('0.1 $\\tau$','0.5 $\\tau$','0.9 $\\tau$'))
 segs<-levels(mod.dat1$seg)
 segs2 <- segs
 
@@ -796,23 +799,24 @@ mod.dat2$Estimate<-paste0(format(round(mod.dat2$Estimate,2),nsmall=dig.val),p.sy
 mod.dat2$V1<-format(round(mod.dat2$V1,dig.val),nsmall=dig.val)
 
 mod.dat2<-mod.dat2[,!names(mod.dat2) %in% 'Pr(>|t|)']
-names(mod.dat2)[names(mod.dat2) %in% 'V1']<-'mean'
+names(mod.dat2)[names(mod.dat2) %in% 'V1']<-'median'
 
 #melt and recast for table
-mod.dat2<-melt(mod.dat2,measure.vars=c('mean','Estimate'))
+mod.dat2<-melt(mod.dat2,measure.vars=c('median','Estimate'))
 mod.dat2<-data.frame(recast(mod.dat2,seg+model~seas.cat+variable))
 
-mods<-factor(mod.dat2$model,labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
+mods<-factor(mod.dat2$model,levels = c('norm.lo', 'norm.md', 'norm.hi'), 
+  labels=c('0.1 $\\tau$','0.5 $\\tau$','0.9 $\\tau$'))
 segs<-levels(mod.dat2$seg)
 segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 mod.dat2<-mod.dat2[,-c(1:2)]
 
 #combine yr and season tables
 mid_cols <- c(sapply(col.seas, function(x) c(x,'')))
-mid_cols2 <- rep(c('Mean','$\\Delta$ chl-\\textit{a}'),4)
+mid_cols2 <- rep(c('Median','$\\Delta$ chl-\\textit{a}'),4)
 est<-rbind(as.matrix(mod.dat1),mid_cols,mid_cols2,as.matrix(mod.dat2))
 
-cap.val<-'Decadal and seasonal summaries of salinity-normalized \\ac{chl} (\\mugl) trends by Bay segment. Trends are evaluated for models fit through the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} percentile ($\\tau$) distributions.  Mean and slope ($\\Delta$ chl-\\textit{a}) estimates are aggregated by year or season categories using monthly results.  Slopes indicate the change in \\ac{chl} with increasing time for each year or season category.'
+cap.val<-'Decadal and seasonal summaries of salinity-normalized \\ac{chl} (\\mugl) trends by Bay segment. Trends are evaluated for models fit through the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} percentile ($\\tau$) distributions.  Median and slope ($\\Delta$ chl-\\textit{a}) estimates are aggregated by year or season categories using monthly results.  Slopes indicate the change in \\ac{chl} with increasing time for each year or season category.'
 
 foot.val<-'\\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$\\\\\\textsuperscript{\\textit{a}}HB: Hillsborough Bay, OTB: Old Tampa Bay, MTB: Middle Tampa Bay, LTB: Lower Tampa Bay\\\\\\textsuperscript{\\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND' 
 
@@ -829,17 +833,17 @@ out.tab <- capture.output(latex(
   n.cgroup=rep(2,4),
   cgroup=col.yrs,
   rowname=c(as.character(mods), '', '', as.character(mods)),
-  colheads=rep(c('Mean','$\\Delta$ chl-\\textit{a}'),4),
+  colheads=rep(c('Median','$\\Delta$ chl-\\textit{a}'),4),
   label='tab:trendsal'
   ))
-copy_cols <- out.tab[9]
+copy_cols <- out.tab[8]
 for(i in 1:4){
   copy_cols <- gsub(col.yrs[i], col.seas[i], copy_cols, fixed = T)
   }
 copy_cols <- gsub('Models', '', copy_cols, fixed = T)
-out.tab <- out.tab[-c(34:36)]
-out.tab[33] <- copy_cols
-out.tab <- c(out.tab[1:33],out.tab[10],out.tab[34:length(out.tab)])
+out.tab <- out.tab[-c(33:35)]
+out.tab[32] <- copy_cols
+out.tab <- c(out.tab[1:32],out.tab[9],out.tab[33:length(out.tab)])
 out.tab<-paste(out.tab,collapse='\n')
 cat(out.tab)
 
@@ -862,9 +866,9 @@ est$seas.cat<-cut(as.numeric(as.character(est$month.num)),break.vals,
   )
 col.seas<-paste0('{\\bf ',levels(est$seas.cat),'}') 
 
-est<-melt(est,measure.vars=c('norm.md','norm.hi','norm.lo'))
+est<-melt(est,measure.vars=c('norm.lo','norm.md','norm.hi'))
 
-#means by time periods
+#cvs by time periods
 yr.est<-ddply(
   est,
   .(seg,yr.cat,variable),
@@ -880,8 +884,8 @@ seas.est<-ddply(
 yr.est<-format(data.frame(recast(yr.est,seg+variable~yr.cat)),digits=options()$digits,nsmall=1)
 seas.est<-format(data.frame(recast(seas.est,seg+variable~seas.cat)),digits=options()$digits,nsmall=1)
 mods<-factor(seas.est$variable,
-  labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'),
-  levels=c('norm.md','norm.hi','norm.lo')
+  labels=c('0.1 $\\tau$','0.5 $\\tau$','0.9 $\\tau$'),
+  levels=c('norm.lo','norm.md','norm.hi')
   )
 mods<-c(as.character(mods),'',as.character(mods))
 
@@ -893,7 +897,7 @@ segs2 <- segs
 segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 est<-est[,-c(1:2)]
 
-cap.val<-'Variability in \\ac{chl} (\\mugl) for Bay segments by year and seasons using salinity-normalized predictions.  Variability (\\%) was quantified as the standard deviation of predictions by year (or season) category divided by the mean of predictions by year (or season) category.  Trends are evaluated for models fit through the mean response and the 10\\textsuperscript{th} and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'
+cap.val<-'Variability in \\ac{chl} (\\mugl) for Bay segments by year and seasons using salinity-normalized predictions.  Variability (\\%) was quantified as the standard deviation of predictions by year (or season) category divided by the mean of predictions by year (or season) category.  Trends are evaluated for models fit through the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'
 
 foot.val<-'\\footnotesize \\textsuperscript{\\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay\\\\\\textsuperscript{\\textit{b}}winter: JFM, spring: AMJ, summer: JAS, fall: OND' 
 
@@ -929,14 +933,14 @@ library(rms)
 #import data
 
 #seagrass
-sg.est<-aggregate(cbind(res.md,res.hi,res.lo)~year+seg,epc.est.act,mean)
+sg.est<-aggregate(cbind(res.md,res.hi,res.lo)~year+seg,epc.est.act,median)
 sg.est<-merge(sg.est,sg.dat,by=c('year','seg'))
 
-seg.means<-aggregate(area_ha~seg,sg.est,mean)
-names(seg.means)[2]<-'area_mean'
-sg.est<-merge(sg.est,seg.means,by='seg')
-sg.est$area_resid<-sg.est$area_ha-sg.est$area_mean
-sg.est<-melt(sg.est,measure.vars=c('res.md','res.hi','res.lo'))
+seg.medians<-aggregate(area_ha~seg,sg.est,median)
+names(seg.medians)[2]<-'area_median'
+sg.est<-merge(sg.est,seg.medians,by='seg')
+sg.est$area_resid<-sg.est$area_ha-sg.est$area_median
+sg.est<-melt(sg.est,measure.vars=c('res.lo','res.md','res.hi'))
 
 #enso
 seas.ls<-list(
@@ -951,20 +955,20 @@ for(i in 1:length(seas.ls))
 
 enso.est<-epc.est.act
 enso.est$season<-season
-enso.est<-aggregate(cbind(res.md,res.hi,res.lo)~season+year+seg,data=enso.est,mean)
+enso.est<-aggregate(cbind(res.md,res.hi,res.lo)~season+year+seg,data=enso.est,median)
 enso.est<-merge(enso.est,enso,by=c('year','season'))
 enso.est$season<-factor(enso.est$season,levels=c('JFM','AMJ','JAS','OND'))
-enso.est.seas<-melt(enso.est,measure.vars=c('res.md','res.hi','res.lo'))
+enso.est.seas<-melt(enso.est,measure.vars=c('res.lo','res.md','res.hi'))
 
 #correct aggregation of enso categories by year
-est.yrs<-aggregate(cbind(res.md,res.hi,res.lo)~seg+year,epc.est.act,mean)
+est.yrs<-aggregate(cbind(res.md,res.hi,res.lo)~seg+year,epc.est.act,median)
 enso.yrs<-unique(enso[,c('year','enso.ave')])
 names(enso.yrs)[names(enso.yrs) %in% 'enso.seas']<-'enso.yr'
 enso.est.yrs<-merge(est.yrs,enso.yrs,by='year')
-enso.est.yrs<-melt(enso.est.yrs,measure.vars=c('res.md','res.hi','res.lo'))
+enso.est.yrs<-melt(enso.est.yrs,measure.vars=c('res.lo','res.md','res.hi'))
 
 #wq
-wq.est<-melt(epc.est.act,measure.vars=c('res.md','res.hi','res.lo'))
+wq.est<-melt(epc.est.act,measure.vars=c('res.lo','res.md','res.hi'))
 
 ######
 #corr matrix
@@ -1019,14 +1023,14 @@ cors<-cors[order(cors$seg,cors$variable),]
 # samps <- unique(samps[, !grepl('^variable', names(samps))])
 
 #factor of model names
-mods<-factor(cors$variable,levels=c('res.md','res.hi','res.lo'),labels=c('mean','0.9 $\\tau$','0.1 $\\tau$'))
+mods<-factor(cors$variable,levels=c('res.lo','res.md','res.hi'),labels=c('0.1 $\\tau$','0.5 $\\tau$','0.9 $\\tau$'))
 
 segs<-c('HB','MTB','OTB','LTB')
 segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 cors<-cors[,-c(1:2)]
 names(cors)<-c('seagrass','annual','season','load','conc.')
 
-cap.val<-'Pearson correlations between model residuals for each Bay segment and potential drivers of \\ac{chl} (\\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), mean ENSO index values by season and year, and total nitrogen load (kg$\\cdot$mo$^{-1}$) and concentration (\\mugl).  Samples sizes for correlations were 11 for seagrass area, 156 for ENSO index by season, 156 for ENSO index by year, 275 for nitrogen load, and 303 for nitogren concentration with slight variation by segment depending on data availability.'
+cap.val<-'Correlations between model residuals for each Bay segment and potential drivers of \\ac{chl} (\\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), median ENSO index values by season and year, and total nitrogen load (kg$\\cdot$mo$^{-1}$) and concentration (\\mugl).  Samples sizes for correlations were 11 for seagrass area, 156 for ENSO index by season, 156 for ENSO index by year, 275 for nitrogen load, and 303 for nirtogen concentration with slight variation by segment depending on data availability.'
 
 foot.val<-'\\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$\\\\\\textsuperscript{\\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay' 
 
@@ -1158,8 +1162,9 @@ dev.off()
 \end{figure}
 
 %weighting example
-<<wtex,cache=T,fig.height=8.5,fig.width=7,out.width= "6in",fig.cap='Example of weighting for one observation in Hillsborough Bay.  The top plot shows all data weighted for October 2003 when the proportion freshwater was 0.39.  Point size and color are in proportion to weights (small blue points = 0, large red points = 1).  The bottom plots show the individual weights for month, year, proportion freshwater, and all weights combined.'>>=
+<<wtex,cache=F,fig.height=8.5,fig.width=7,out.width= "6in",fig.cap='Example of weighting for one observation in Hillsborough Bay.  The top plot shows all data weighted for October 2003 when the proportion freshwater was 0.39.  Point size and color are in proportion to weights (small blue points = 0, large red points = 1).  The bottom plots show the individual weights for month, year, proportion freshwater, and all weights combined.'>>=
 
+#
 dat.in<-tb.dat[tb.dat$seg=='HB',]
 
 ref.in<-dat.in[342,]
@@ -1248,8 +1253,8 @@ grid.arrange(
 @
 
 %predictions from model, all data
-<<predobs,cache=T,fig.height=5,fig.width=8.5,out.width= "6in",fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments in January (dry season) and July (wet season) (see supplements for all months).  Predicted values are for the weighted regression models fit through the mean response.'>>=
-
+<<predobs,cache=F,fig.height=5,fig.width=8.5,out.width= "6in",fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments in January (dry season) and July (wet season) (see supplements for all months).  Predicted values are for the weighted regression models fit through the median response.'>>=
+# 
 #y axis label for plots
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 sel_vec <- epc.est$month.name %in% c('January','July')
@@ -1287,8 +1292,8 @@ print(p1)
 
 @
 
-<<hbslice,cache=T,fig.height=2.5,fig.width=4.25,out.width= "3in",fig.cap='Predicted and observed \\ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'>>=
-
+<<hbslice,cache=F,fig.height=2.5,fig.width=4.25,out.width= "3in",fig.cap='Predicted and observed \\ac{chl} concentrations for Hillsborough Bay for 1993 to 1995 illustrating variation in model fit based on observation date. Predicted values are for the weighted regression models fit through the the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and and 90\\textsuperscript{th} percentile ($\\tau$) distributions.'>>=
+#
 #y axis label for plots
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
@@ -1343,7 +1348,8 @@ ggplot(epc.est[sel.vec,],aes(x=date.f)) +
     )
 @    
 
-<<salnrm,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Weighted regression predictions and salinity-normalized results aggregated by year for  the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions.'>>=
+<<salnrm,cache=F,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Weighted regression predictions and salinity-normalized results aggregated by year for  the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions.'>>=
+#
 #plot of predicted and salinity normalized data, aggregated by year
 ylabs<-expression(paste('Chloropyhll-',italic(a),' (',italic('\u03bc'),'g ',L^-1,')'))
 
@@ -1352,10 +1358,10 @@ quantsmd<-expression(paste(italic('\u03c4'),' ',0.5))
 quantslo<-expression(paste(italic('\u03c4'),' ',0.1))
 
 est<-epc.est
-est<-aggregate(cbind(bt.md,bt.hi,bt.lo,Chla_ugl)~seg+year,est,mean)
+est<-aggregate(cbind(bt.md,bt.hi,bt.lo,Chla_ugl)~seg+year,est,median)
 
 est2<-sal.nrm
-est2<-aggregate(cbind(norm.md,norm.hi,norm.lo,Chla_ugl)~seg+year,est2,mean)
+est2<-aggregate(cbind(norm.md,norm.hi,norm.lo,Chla_ugl)~seg+year,est2,median)
 
 to.plo <- est2
 
@@ -1418,7 +1424,8 @@ ggplot(to.plo,aes(x=as.numeric(year))) +
 
 @
 
-<<salnrm2,cache=T,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Salinity-normalized results for the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions. Note changes in intra-annual variability by Bay segment.'>>=
+<<salnrm2,cache=F,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Salinity-normalized results for the 10\\textsuperscript{th}, 50\\textsuperscript{th}, and 90\\textsuperscript{th} quantile ($\\tau$) distributions. Note changes in intra-annual variability by Bay segment.'>>=
+#
 est<-sal.nrm
 
 #y axis label for plots
@@ -1470,7 +1477,8 @@ ggplot(to.plo,aes(x=as.numeric(dec.time),group=seg)) +
     ) 
 @
 
-<<dyna, cache=F,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Variation in the relationship between \\ac{chl} and salinity as fraction of freshwater ($Sal_{ff}$) across time series for Tampa Bay. Data are for July months to reduce seasonal variation. Only the mean response models are shown.'>>=
+<<dyna, cache=F,fig.height=5,fig.width=8.5,out.width="6in",fig.cap='Variation in the relationship between \\ac{chl} and salinity as fraction of freshwater ($Sal_{ff}$) across time series for Tampa Bay. Data are for July months to reduce seasonal variation. Only the median response models are shown.'>>=
+#
 to.plo <- sal.grd
 labs <- c('January', 'February', 'March', 'April', 'May', 'June', 'July', 
   'August', 'September', 'October', 'November', 'December')
@@ -1536,8 +1544,8 @@ Please see the online repository (\href{https://github.com/fawda123/wtreg\_for\_
 %predictions from model, all data
 \begin{landscape}
 \centering\vspace*{\fill}
-<<sup,cache=T,fig.height=4.5,fig.width=11.5,fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the median response.', out.width = '9in'>>=
-
+<<sup,cache=F,fig.height=4.5,fig.width=11.5,fig.cap='Predicted (lines) and observed (circles) \\ac{chl} concentrations for Tampa Bay segments by month.  Predicted values are for the weighted regression models fit through the median response.', out.width = '9in'>>=
+#
 to.plo <- epc.est
 
 # reassign factor for facets
