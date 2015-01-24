@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  23 JAN 2015 13:32
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  23 JAN 2015 17:58
 entering extended mode
 **Beck_etal_manu.tex
 (M:\docs\manuscripts\tb_chl\Beck_etal_manu.tex
@@ -898,10 +898,10 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 677.
  ) 
 Here is how much of TeX's memory you used:
- 11083 strings out of 493921
- 176759 string characters out of 3147282
+ 11082 strings out of 493921
+ 176749 string characters out of 3147282
  335428 words of memory out of 3000000
- 14066 multiletter control sequences out of 15000+200000
+ 14065 multiletter control sequences out of 15000+200000
  46099 words of font info for 101 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  36i,12n,47p,2444b,527s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -918,7 +918,7 @@ rogram Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKT
 eX 2.9/fonts/type1/urw/times/utmbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
 e1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr
 i8a.pfb>
-Output written on Beck_etal_manu.pdf (22 pages, 909711 bytes).
+Output written on Beck_etal_manu.pdf (22 pages, 903911 bytes).
 PDF statistics:
  631 PDF objects out of 1000 (max. 8388607)
  116 named destinations out of 1000 (max. 500000)

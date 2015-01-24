@@ -436,7 +436,7 @@ Correlations of residuals to additional explanatory variables indicated that chl
 
 \section{Discussion}
 
-Application of the \acf{WRTDS} model to a analyze a long-term record of \ac{chl} in 4 segments of Tampa Bay provided an improved quantitative description of long-term changes relative to commonly applied methods.  Because the descriptions are conceptually related to expected causes, the results enabled generation of informed hypotheses regarding ecosystem behavior and change and could suggest a potential approach for developing quantitative thresholds for water quality management.   These conclusions are supported by several key aspects of the results.  First, the \ac{WRTDS} model provided improved predictions of \ac{chl} relative to non-weighted regression, measured as both higher $R^1\left(\tau\right)$ and lower \ac{RMSE} (\cref{tab:modperf}).  Second, adaptation of \ac{WRTDS} to predict extreme quantiles in addition to the median response provided information about long-term shifts in phytoplankton dynamics that are ecologically informative.  Third and most important, \ac{WRTDS} results for segments of the Bay that were historically most impacted by nutrient loading pointed to shifts in the response of \ac{chl} to freshwater inflows.  An example is provided by Hillsborough Bay where both the \ac{chl} concentration and the relationship with freshwater inflow changed over several decades.  Specifically, concentrations were high and unresponsive to changes in freshwater inflow in the beginning of the time series, whereas concentrations decreased and showed a strong positive relationship with freshwater inflow later in the time series (top left, \cref{fig:dyna}).  This suggests a period of nutrient repletion followed by increasing nutrient limitation.  Additional shifts were also apparent, as in Lower Tampa Bay where increasing positive relationships between \ac{chl} and inflow were observed later in the time series (bottom right, \cref{fig:dyna}). These results indicate that the \ac{WRTDS} application to tidal waters can be used for generating and evaluating hypotheses of factors that influence complex relationships between water quality variables.
+Application of the \acf{WRTDS} model to a analyze a long-term record of \ac{chl} in 4 segments of Tampa Bay provided an improved quantitative description of long-term changes relative to commonly applied methods.  Because the descriptions are conceptually related to expected causes, the results enabled generation of informed hypotheses regarding ecosystem behavior and change and could suggest a potential approach for developing quantitative thresholds for water quality management.   These conclusions are supported by several key aspects of the results.  First, the \ac{WRTDS} model provided improved predictions of \ac{chl} relative to non-weighted regression, measured as both higher $R^1\left(\tau\right)$ and lower \ac{RMSE} (\cref{tab:modperf}).  Second, adaptation of \ac{WRTDS} to predict extreme quantiles in addition to the median response provided information about long-term shifts in phytoplankton dynamics that are ecologically informative.  Third and most important, \ac{WRTDS} results for segments of the Bay that were historically most impacted by nutrient loading pointed to shifts in the response of \ac{chl} to freshwater inflows.  An example is provided by Hillsborough Bay where both the \ac{chl} concentration and the relationship with freshwater inflow changed over several decades.  Specifically, concentrations were high and unresponsive to changes in freshwater inflow in the beginning of the time series, whereas concentrations decreased and showed a strong positive relationship with freshwater inflow later in the time series (top left, \cref{fig:dyna}).  This suggests a period of nutrient repletion followed by increasing nutrient limitation.  Additional shifts were also apparent, as in Lower Tampa Bay where increasing positive relationships between \ac{chl} and inflow were observed later in the time series (bottom right, \cref{fig:dyna}). These results indicate that the \ac{WRTDS} application to tidal waters can be used to describe complex relationships between water quality variables over time, leading to hypotheses regarding causal factors.
 
 \subsection{Improved description of \ac{chl} using \ac{WRTDS}}
 
@@ -460,7 +460,7 @@ Additional considerations not unique to our adaption of the \ac{WRTDS} approach 
 
 The lack of correlation between model residuals and additional variables was unexpected, particularly for the seagrass and \ac{ENSO} data.  Previous analyses have illustrated the effects of precipitation events associated with \ac{ENSO} on Tampa Bay.  For example, Schmidt and Luther \cite{Schmidt02} described \ac{ENSO} effects on salinity profiles for Tampa Bay such that high precipitation events (i.e., El Ni\~{n}o spring or winters) were correlated with depressed salinity profiles.  Our analyses indicated that residuals were not related to \ac{ENSO} variation.  The \ac{WRTDS} model included salinity effects such that residual variation accounts for changes in freshwater inputs, which likely explains lack of correlation with \ac{ENSO}. Additionally, the normalized \ac{chl} estimates in \cref{fig:salnrm} differ substantially from predicted values in 1998 for all segments.  High rainfall associated with an El Ni\~{n}o event in the winter of 1997-1998 contributed to increased discharge and nutrient inputs into the Bay, as indicated by higher predicted \ac{chl} values.  Normalized values that removed the effects of freshwater inputs show \ac{chl} values independent of discharge, suggesting the model performs as expected by quantifying and removing this variation through normalization.  However, the variation in \ac{chl} response attributed to unique seasonal changes in discharge cannot be distinguished from extreme climate events using salinity as a proxy for freshwater inputs.  Lack of correlation with seagrass data and nitrogen parameters was also unexpected, which further suggests that \ac{chl} variation is primarily affected by discharge within the constraints of the model.  These results may also be explained by temporal trends in \ac{chl} that parallels changes in these variables, such that changes in nitrogen and seagrass coverage are statistically indistinguishable from the response variable.  
 
-The \ac{WRTDS} and the adaptation to modelling quantile distributions provides an approach for generating hypotheses describing factors that act as system drivers of change.  Application of \ac{WRTDS} to the Tampa Bay dataset allowed a temporally consistent description of water quality leading to the generation of such hypotheses.  Alternative analysis methods may be more appropriate for different research or management objectives, particularly given sample size constraints or the need to predict future water quality trends under hypothetical scenarios.  For example, generalized additive models or locally estimated (loess) regression are similar methods for describing conditional response within discrete periods of time.  Such methods may provide similar improvements in the fit of the predicted values to the observed data, although predictive performance as indicated in \cref{tab:modperf} is a relatively simple metric that inadequately describes the true value of a model. The true value of an analysis technique depends more on its ability to address a specific question of interest.  For example, \ac{WRTDS} may be most appropriate for describing historical patterns to better understand drivers of change, given the ability to remove flow effects and describe relationships that change over time.  Quantitative comparisons of \ac{WRTDS} with other techniques in the context of providing historical descriptions could clarify the relative merits of different approaches, although this falls beyond the scope of the current analysis.
+The \ac{WRTDS} and the adaptation to modelling quantile distributions provides an approach for generating hypotheses describing factors that act as system drivers of change.  Application of \ac{WRTDS} to the Tampa Bay dataset allowed a temporally consistent description of water quality leading to the generation of such hypotheses.  Alternative analysis methods may be more appropriate for different research or management objectives, particularly given sample size constraints or the need to predict future water quality trends under hypothetical scenarios.  For example, generalized additive models or locally estimated (loess) regression are similar methods for describing conditional response within discrete periods of time.  Such methods may provide similar improvements in the fit of the predicted values to the observed data, although predictive performance as indicated in \cref{tab:modperf} is a relatively simple metric that inadequately describes the true value of a model. The true value of an analysis technique depends more on its ability to address a specific question of interest.  For example, \ac{WRTDS} may be most appropriate for describing historical patterns to better understand drivers of change, given the ability to remove flow effects and describe relationships that change over time.  Quantitative comparisons of \ac{WRTDS} with other techniques in the context of providing historical descriptions could clarify the relative merits of different approaches, although this falls beyond the scope of the current analysis.  Moreover, the adaptation to modelling conditional quantile distributions with \ac{WRTDS} provides a descriptive advantage that may not be possible with alternative techniques.
 
 \subsection{Conclusions}
 
@@ -472,7 +472,7 @@ Management over several decades has been successful in improving water quality i
 Overall, the ability to describe the data and aspects of long-term changes has been improved by adaptation of the \ac{WRTDS} approach to Tampa Bay. Such techniques are critical for informing the nutrient-response paradigm in coastal systems, providing an incentive for validation with additional long-term datasets.
 
 \begin{acknowledgements}
-We acknowledge the significant efforts of the Hillsborough County Environmental Protection Commission and the Tampa Bay Estuary Program in developing and providing access to high quality data sets.  We thank R. Hirsch for providing helpful comments on an earlier draft of the manuscript.  We acknowledge the efforts of R. Hirsch and colleagues for developing the original \ac{WRTDS} method. This study was funded by the US \acl{EPA}, but the contents are solely the views of the authors.  Use of trade names does not constitute endorsement by the US government.
+We acknowledge the significant efforts of the Hillsborough County Environmental Protection Commission and the Tampa Bay Estuary Program in developing and providing access to high quality data sets.  We thank R. Hirsch for providing helpful comments on an earlier draft of the manuscript.  The views expressed in this paper are those of the authors and do not necessarily reflect the views or policies of the U.S. Environmental Protection Agency.
 \end{acknowledgements}
 
 \bibliographystyle{spmpsci} 
@@ -1032,7 +1032,7 @@ segs[segs %in% 'HB'] <- 'HB\\textsuperscript{\\textit{a}}'
 cors<-cors[,-c(1:2)]
 names(cors)<-c('seagrass','annual','season','load','conc.')
 
-cap.val<-'Correlations between model residuals for each Bay segment and potential drivers of \\ac{chl} (\\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), median ENSO index values by season and year, and total nitrogen load (kg$\\cdot$mo$^{-1}$) and concentration (\\mugl).  Samples sizes for correlations were 11 for seagrass area, 156 for ENSO index by season, 156 for ENSO index by year, 275 for nitrogen load, and 303 for nirtogen concentration with slight variation by segment depending on data availability.'
+cap.val<-'Correlations between model residuals for each Bay segment and potential drivers of \\ac{chl} (\\mugl) independent of season, year, or salinity effects. Residuals were compared with seagrass area (hectares), median ENSO index values by season and year, and total nitrogen load (kg$\\cdot$mo$^{-1}$) and concentration (\\mugl).  Samples sizes for correlations were 11 for seagrass area, 156 for ENSO index by season, 156 for ENSO index by year, 275 for nitrogen load, and 303 for nitrogen concentration with slight variation by segment depending on data availability.'
 
 foot.val<-'\\footnotesize *$p<0.05$; **$p<0.01$; ***$p<0.001$\\\\\\textsuperscript{\\textit{a}}HB: Hillsborough Bay, MTB: Middle Tampa Bay, OTB: Old Tampa Bay, LTB: Lower Tampa Bay' 
 
@@ -1269,10 +1269,10 @@ seg.names<-c('HB','OTB','MTB','LTB')
 to.plo$seg <- factor(to.plo$seg, levels = seg.names, labels = seg.levs)
 
 # colors
-cols <- brewer.pal(11, 'Spectral')[c(9, 10, 11)]
+cols <- brewer.pal(11, 'Spectral')[c(10, 1)]
 
-p1 <- ggplot(to.plo,aes(x=dec.time, group = month.name, colour = month.name)) + 
-  geom_point(aes(y=exp(Chla_ugl)), shape = 16,
+p1 <- ggplot(to.plo,aes(x=dec.time, shape = month.name, group = month.name, colour = month.name)) + 
+  geom_point(aes(y=exp(Chla_ugl)),
     alpha=0.9) +
   geom_line(aes(y=bt.md),linetype = 1, alpha = 0.9, 
     ) +
@@ -1284,7 +1284,8 @@ p1 <- ggplot(to.plo,aes(x=dec.time, group = month.name, colour = month.name)) +
     breaks=seq(1975,2010,by=5),
     name='Date'
     ) +
-  scale_colour_manual(values = cols[c(2, 3)]) +
+  scale_shape_manual(values = c(16, 15)) + 
+  scale_colour_manual(values = cols[c(1, 2)]) +
 #   scale_colour_grey() +
   theme(
     legend.title=element_blank()
@@ -1304,11 +1305,11 @@ quantsmd<-expression(paste(italic('\u03c4'),' ',0.5))
 quantslo<-expression(paste(italic('\u03c4'),' ',0.1))
 
 # colors
-cols <- brewer.pal(11, 'Spectral')[c(9,10,11)]
+cols <- brewer.pal(10, 'Spectral')[c(1, 7, 9)]
 
 sel.vec<-epc.est$seg=='HB' & epc.est$year>=1993 & epc.est$year<1995
 ggplot(epc.est[sel.vec,],aes(x=date.f)) + 
-  geom_point(aes(y=exp(Chla_ugl),shape='Obs'),alpha=0.9,colour=cols[3]) +
+  geom_point(aes(y=exp(Chla_ugl),shape='Obs'),alpha=0.9,colour=cols[2]) +
   geom_line(aes(y=bt.hi,linetype='q1',colour='q1'),alpha=0.9) +
   geom_line(aes(y=bt.md,linetype='q2',colour='q2'),alpha=0.9) +
   geom_line(aes(y=bt.lo,linetype='q3',colour='q3'),alpha=0.9) +
@@ -1343,9 +1344,9 @@ ggplot(epc.est[sel.vec,],aes(x=date.f)) +
       'q3'=quantslo
       ),
     values=c(
-      'q1'=cols[2],
-      'q2'=cols[3],
-      'q3'=cols[2]
+      'q1'=cols[1],
+      'q2'=cols[2],
+      'q3'=cols[3]
       )
     )
 @    
@@ -1374,7 +1375,7 @@ to.plo$seg <- factor(to.plo$seg, levels = seg.names, labels = seg.levs)
 est$seg <- factor(est$seg, levels = seg.names, labels = seg.levs)
 
 # colors
-cols <- brewer.pal(11, 'Spectral')[c(10,11)]
+cols <- brewer.pal(10, 'Spectral')[c(1, 7, 9)]
 
 ##
 ggplot(to.plo,aes(x=as.numeric(year))) + 
@@ -1386,7 +1387,7 @@ ggplot(to.plo,aes(x=as.numeric(year))) +
   geom_line(aes(y=norm.md,linetype='q2'),colour = cols[2],alpha=0.9) +
   geom_point(data=est,aes(y=bt.lo,colour='q3',shape='q3'),
     alpha=0.9) +
-  geom_line(aes(y=norm.lo,linetype='q3'),colour=cols[1],alpha=0.9) +
+  geom_line(aes(y=norm.lo,linetype='q3'),colour=cols[3],alpha=0.9) +
   scale_y_continuous(ylabs) +
   theme_bw() +
   facet_wrap(~seg,scales='free_y') +
@@ -1395,7 +1396,7 @@ ggplot(to.plo,aes(x=as.numeric(year))) +
     name='Date'
     ) +
   guides(linetype=guide_legend(
-    override.aes=list(colour=c(cols[1], cols[2],cols[1]))
+    override.aes=list(colour=c(cols[1], cols[2],cols[3]))
     )) +
   scale_shape_manual(
     name='Predicted',
@@ -1421,7 +1422,7 @@ ggplot(to.plo,aes(x=as.numeric(year))) +
       'q2'=quantsmd,
       'q3'=quantslo
       ),
-    values = c(cols[1], cols[2], cols[1])
+    values = c(cols[1], cols[2], cols[3])
     ) 
 
 @
@@ -1445,12 +1446,12 @@ seg.names<-c('HB','OTB','MTB','LTB')
 to.plo$seg <- factor(to.plo$seg, levels = seg.names, labels = seg.levs)
 
 # colors
-cols <- brewer.pal(11, 'Spectral')[c(9,10,11)]
+cols <- brewer.pal(10, 'Spectral')[c(1, 7, 9)]
 
 ggplot(to.plo,aes(x=as.numeric(dec.time),group=seg)) + 
-  geom_line(aes(y=norm.lo,linetype='q1',colour='q1'),alpha=0.9) +
+  geom_line(aes(y=norm.hi,linetype='q1',colour='q1'),alpha=0.9) +
   geom_line(aes(y=norm.md,linetype='q2',colour='q2'),alpha=0.9) +
-  geom_line(aes(y=norm.hi,linetype='q3',colour='q3'),alpha=0.9) +
+  geom_line(aes(y=norm.lo,linetype='q3',colour='q3'),alpha=0.9) +
   scale_y_continuous(ylabs) +
   theme_bw() +
   facet_wrap(~seg,scales='free_y') +
@@ -1475,7 +1476,7 @@ ggplot(to.plo,aes(x=as.numeric(dec.time),group=seg)) +
       'q2'=quantsmd,
       'q3'=quantslo
       ),
-    values=c('q1'=cols[2],'q2'=cols[3],'q3'=cols[2])
+    values=c('q1'=cols[1],'q2'=cols[2],'q3'=cols[3])
     ) 
 @
 
